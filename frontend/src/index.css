@@ -1,0 +1,25 @@
+main {
+  min-height: 80vh;
+}
+
+.project-card {
+  width: 18.1rem;
+  height: 15rem;
+}
+
+.project-img {
+  height: 11rem !important;
+  width: 18rem !important;
+  object-fit: cover;
+}
+
+.review-card {
+  width: 18.1rem;
+  height: 20rem;
+}
+
+.review-img {
+  height: 11rem !important;
+  width: 18rem !important;
+  object-fit: cover;
+}
