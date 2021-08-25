@@ -28,6 +28,17 @@ temp/
 .env.test.local
 .env.production.local
 
+# python
+env/
+
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

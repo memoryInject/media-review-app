@@ -47,10 +47,6 @@ main {
   min-height: 8rem;
 }
 
-.top-row {
-  /* max-height: 40vh; */
-}
-
 .feedback {
   background-color: violet;
   min-height: 10rem;
