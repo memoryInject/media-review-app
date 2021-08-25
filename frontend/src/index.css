@@ -23,3 +23,35 @@ main {
   width: 18rem !important;
   object-fit: cover;
 }
+
+.player-wrapper {
+  width: auto;
+  height: auto;
+  /* max-width: 60vw; */
+  /* max-height: 30vh; */
+  /* min-height: 50vh; */
+}
+.react-player {
+  padding-top: 56.25%;
+  position: relative;
+}
+
+.react-player > div {
+  position: absolute;
+}
+
+.play-list-bottom {
+  /* position: fixed;
+  bottom: 0%; */
+  background-color: turquoise;
+  min-height: 8rem;
+}
+
+.top-row {
+  /* max-height: 40vh; */
+}
+
+.feedback {
+  background-color: violet;
+  min-height: 10rem;
+}
