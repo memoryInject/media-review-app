@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ProjectScreen from './screens/ProjectScreen';
 import ReviewScreen from './screens/ReviewScreen';
+import ReviewDetailScreen from './screens/ReviewDetailScreen';
 
 const App = () => {
   return (
@@ -13,7 +14,11 @@ const App = () => {
       <main className='py-3'>
         <Container>
           <Route path='/' component={ProjectScreen} exact />
-          <Route path='/projects/:id/reviews' component={ReviewScreen} />
+          <Route path='/projects/:id/reviews' component={ReviewScreen} exact />
+          <Route
+            path='/projects/:id/reviews/:reviewId'
+            component={ReviewDetailScreen}
+          />
         </Container>
       </main>
       <Footer />
