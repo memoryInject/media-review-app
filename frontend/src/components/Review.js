@@ -14,7 +14,7 @@ const Review = ({ review, projectId }) => {
         </Link>
         <Card.Text as='div'>
           <p>{review.items} items</p>
-          <p className='py-0 my-0'>{review.active ? 'Open' : 'Closed'}</p>
+          <p className='py-0 my-0'>{review.active ? 'Active' : 'Closed'}</p>
           <span>{review.users} members</span>
         </Card.Text>
       </Card.Body>
