@@ -8,20 +8,25 @@ orbs:
   python: circleci/python@1.2
 
 workflows:
-  dajngo-test: 
+  dajngo-test:
     jobs:
       - build-and-test
 
-
 jobs:
-  build-and-test: 
+  build-and-test:
     docker:
       - image: cimg/python:3.8
-    # Checkout the code as the first step. This is a dedicated CircleCI step.
-    # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
-    # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
-    # Then run your tests!
-    # CircleCI will report the results back to your VCS provider.
+      # Checkout the code as the first step. This is a dedicated CircleCI step.
+      # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
+      # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
+      # Then run your tests!
+      # CircleCI will report the results back to your VCS provider.
+      - image: circleci/postgres:9.6.5-alpine-ram
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: media_review_app_test
+          POSTGRES_PASSWORD: 1234
+
     steps:
       - checkout
       - python/install-packages:
@@ -33,5 +38,6 @@ jobs:
           command: |
             ls
             cd backend
-            python manage.py makemigrations
+            python manage.py wait_for_db
+            python manage.py migrate
             python manage.py test && flake8
