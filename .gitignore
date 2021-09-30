@@ -28,6 +28,7 @@ temp/
 .env.test.local
 .env.production.local
 .envrc
+.session.vim
 
 # python
 env/

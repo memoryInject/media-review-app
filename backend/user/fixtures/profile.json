@@ -1,0 +1,86 @@
+[
+   {
+      "fields" : {
+         "company_name" : null,
+         "created_at" : "2021-09-27T17:00:46.886Z",
+         "image_url" : null,
+         "is_admin" : true,
+         "updated_at" : "2021-09-29T08:37:47.558Z",
+         "user" : 1
+      },
+      "model" : "user.userprofile",
+      "pk" : 1
+   },
+   {
+      "fields" : {
+         "company_name" : null,
+         "created_at" : "2021-09-28T12:40:07.288Z",
+         "image_url" : null,
+         "is_admin" : true,
+         "updated_at" : "2021-09-29T12:25:06.996Z",
+         "user" : 2
+      },
+      "model" : "user.userprofile",
+      "pk" : 2
+   },
+   {
+      "fields" : {
+         "company_name" : null,
+         "created_at" : "2021-09-28T12:40:49.595Z",
+         "image_url" : null,
+         "is_admin" : false,
+         "updated_at" : "2021-09-28T12:40:49.655Z",
+         "user" : 3
+      },
+      "model" : "user.userprofile",
+      "pk" : 3
+   },
+   {
+      "fields" : {
+         "company_name" : null,
+         "created_at" : "2021-09-28T12:41:13.952Z",
+         "image_url" : "/imgs/jane.jpg",
+         "is_admin" : false,
+         "updated_at" : "2021-09-29T08:40:08.965Z",
+         "user" : 4
+      },
+      "model" : "user.userprofile",
+      "pk" : 4
+   },
+   {
+      "fields" : {
+         "company_name" : null,
+         "created_at" : "2021-09-28T12:44:40.247Z",
+         "image_url" : null,
+         "is_admin" : false,
+         "updated_at" : "2021-09-28T12:44:40.381Z",
+         "user" : 5
+      },
+      "model" : "user.userprofile",
+      "pk" : 5
+   },
+   {
+      "fields" : {
+         "company_name" : null,
+         "created_at" : "2021-09-28T12:45:35.262Z",
+         "image_url" : null,
+         "is_admin" : false,
+         "updated_at" : "2021-09-28T12:45:35.362Z",
+         "user" : 6
+      },
+      "model" : "user.userprofile",
+      "pk" : 6
+   },
+   {
+      "fields" : {
+         "company_name" : null,
+         "created_at" : "2021-09-28T15:56:16.990Z",
+         "image_url" : null,
+         "is_admin" : true,
+         "updated_at" : "2021-09-30T06:42:29.310Z",
+         "user" : 7
+      },
+      "model" : "user.userprofile",
+      "pk" : 7
+   }
+]
