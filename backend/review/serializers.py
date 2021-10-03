@@ -119,7 +119,7 @@ class MediaSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created_at', 'updated_at', 'user')
 
         # Depth will unfold asset and review field, so it shows details
-        # on asset and review insted of number, because of this we have to 
+        # on asset and review insted of number, because of this we have to
         # manually add asset and review for this serializer check out view.py
         # for more detail(perform_create)
         depth = 1
