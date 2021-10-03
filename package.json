@@ -1,0 +1,25 @@
+{
+  "name": "media-review-app",
+  "version": "1.0.0",
+  "description": "collaborative media review app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "cd backend && python manage.py runserver",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/memoryInject/media-review-app.git"
+  },
+  "author": "Mahesh MS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/memoryInject/media-review-app/issues"
+  },
+  "homepage": "https://github.com/memoryInject/media-review-app#readme",
+  "devDependencies": {
+    "concurrently": "^6.2.2"
+  }
+}

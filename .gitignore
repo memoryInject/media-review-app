@@ -29,6 +29,7 @@ temp/
 .env.production.local
 .envrc
 .session.vim
+.cache.fzf
 
 # python
 env/

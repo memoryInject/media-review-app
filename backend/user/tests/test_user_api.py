@@ -135,13 +135,13 @@ class PublicUserApiTests(TestCase):
         """Test that authentication is required for user detail"""
         res = self.client.get(USER_DETAILS_URL)
 
-        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_retrieve_all_users_forbidden(self):
         """Test that authentication is required for retrieveing all users"""
         res = self.client.get(USER_LIST_ADMIN_URL)
 
-        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateUserApiTest(TestCase):

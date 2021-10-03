@@ -111,10 +111,10 @@ class PublicMediaApiTest(TestCase):
     def test_login_required(self):
         """Test that login is required for media routes"""
         res = self.client.get(MEDIA_LIST_URL)
-        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
         res = self.client.get(media_detail_url())
-        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateMediaApiTest(TestCase):

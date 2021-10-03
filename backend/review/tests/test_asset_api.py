@@ -38,10 +38,10 @@ class PublicAssetApiTest(TestCase):
     def test_login_required(self):
         """Test that login is required for asset routes"""
         res = self.client.get(ASSET_LIST_URL)
-        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
         res = self.client.get(asset_detail_url())
-        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateAssetApiTest(TestCase):
