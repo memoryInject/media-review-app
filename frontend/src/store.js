@@ -4,17 +4,18 @@ import thunk from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import { userLoginReducer } from './reducers/userReducers';
+import { userDetailsReducer, userLoginReducer } from './reducers/userReducers';
 
 const reducer = combineReducers({
-  userLogin: userLoginReducer
+  userLogin: userLoginReducer,
+  userDetails: userDetailsReducer
 });
 
 // Config for local storage
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['userLogin'],
+  whitelist: ['userLogin', 'userDetails'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducer);
