@@ -10,7 +10,7 @@ const Review = ({ review, projectId }) => {
       </Link>
       <Card.Body>
         <Link to={`/projects/${projectId}/reviews/${review.id}`}>
-          <Card.Title>{review.name}</Card.Title>
+          <Card.Title>{review.reviewName}</Card.Title>
         </Link>
         <Card.Text as='div'>
           <p>{review.items} items</p>

@@ -1,31 +1,39 @@
 import React, { useEffect } from 'react';
-import { Col, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { Col, Row } from 'react-bootstrap';
 
-import Project from '../components/Project';
-import projects from '../projects';
+import Review from '../components/Review';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
+import { listProjectDetails } from '../actions/projectActions';
 
-const ProjectScreen = ({ location, history }) => {
+const ProjectScreen = ({ match, history }) => {
   const dispatch = useDispatch();
 
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
+  const projectDetails = useSelector((state) => state.projectDetails);
+  const { loading, error, project } = projectDetails;
 
   useEffect(() => {
-    if (!userInfo) {
-      history.push('/login');
-    }
-  }, [history, userInfo]);
+    dispatch(listProjectDetails(match.params.id));
+  }, [match.params.id, dispatch]);
 
   return (
     <div>
-      <h1>Projects screen</h1>
+      <h4>{project.projectName}</h4>
+      <h6 style={{fontSize: '12px'}}>REVIEWS:</h6>
       <Row>
-        {projects.map((project) => (
-          <Col sm={12} md={6} lg={4} xl={3}>
-            <Project project={project} />
-          </Col>
-        ))}
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Message variant='danger'>{error}</Message>
+        ) : (
+          project.reviews &&
+          project.reviews.map((review) => (
+            <Col sm={12} md={6} lg={5} xl={4} key={review.id.toString()}>
+              <Review projectId={match.params.id} review={review} />
+            </Col>
+          ))
+        )}
       </Row>
     </div>
   );
