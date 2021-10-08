@@ -66,3 +66,24 @@ class Media(models.Model):
 
     def __str__(self):
         return self.media_name
+
+
+class Feedback(models.Model):
+    """User feedback for media"""
+    content = models.TextField()
+    media_time = models.FloatField()
+    annotation_url = models.CharField(max_length=400, null=True, blank=True)
+    user = models.ForeignKey(get_user_model(),
+                             on_delete=models.SET_NULL, null=True,
+                             blank=True, related_name='feedbacks')
+    media = models.ForeignKey(
+        Media, on_delete=models.CASCADE, related_name='feedbacks')
+    parent = models.ForeignKey(
+        'Feedback', on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        if len(self.content) > 20:
+            return self.content[:20] + '...'
+        return self.content

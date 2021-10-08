@@ -51,3 +51,10 @@ class IsCollaboratorMedia(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.review.collaborators.filter(id=request.user.id)
+
+
+class IsCollaboratorFeedback(permissions.BasePermission):
+    """Check if the user in collaborators of assosiated media.review"""
+
+    def has_object_permission(self, request, view, obj):
+        return obj.media.review.collaborators.filter(id=request.user.id)

@@ -1,7 +1,7 @@
 # review/serializers.py
 from rest_framework import serializers
 
-from review.models import Project, Review, Asset, Media
+from review.models import Project, Review, Asset, Media, Feedback
 
 from user.serializers import UserViewSerializer
 
@@ -122,4 +122,17 @@ class MediaSerializer(serializers.ModelSerializer):
         # on asset and review insted of number, because of this we have to
         # manually add asset and review for this serializer check out view.py
         # for more detail(perform_create)
+        depth = 1
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    """Serializer for Feedback Model"""
+    user = UserViewSerializer(read_only=True)
+
+    class Meta:
+        model = Feedback
+        fields = ('id', 'content', 'media_time', 'annotation_url',
+                  'user', 'media', 'parent', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'created_at', 'updated_at', 'user')
+
         depth = 1

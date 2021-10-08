@@ -1,13 +1,13 @@
 # review/views.py
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import generics, serializers
+from rest_framework import generics, request, serializers
 from rest_framework.permissions import IsAuthenticated
 
-from review.models import Project, Review, Asset, Media
-from review.serializers import (ProjectSerializer, ReviewSerializer,
+from review.models import Feedback, Project, Review, Asset, Media
+from review.serializers import (FeedbackSerializer, ProjectSerializer, ReviewSerializer,
                                 AssetSerializer, MediaSerializer)
-from review.permissions import (IsAdmin, IsAdminOrReadOnly, IsCollaborator,
+from review.permissions import (IsAdmin, IsAdminOrReadOnly, IsCollaborator, IsCollaboratorFeedback,
                                 IsCollaboratorMedia, IsCreatorOrReadOnly)
 
 from user.utils import is_admin
@@ -212,3 +212,70 @@ class MediaDetail(generics.RetrieveUpdateDestroyAPIView):
                           IsCollaboratorMedia | IsAdmin,)
     queryset = Media.objects.all()
     serializer_class = MediaSerializer
+
+
+# Route: review/feedbacks/?<user=true>&<media=int:id>&<all=true>/
+# description: GET all the feedbacks created by the user
+class FeedbackList(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = FeedbackSerializer
+
+    def perform_create(self, serializer):
+        # Check if the user is in the requested media.review.collaborators list
+        if self.request.data.get('media'):
+            try:
+                media = Media.objects.get(id=self.request.data.get('media'))
+                if self.request.user not in media.review.collaborators.all():
+                    raise serializers.ValidationError(
+                        {"detail": "User is not a collaborator."})
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(
+                    {"detail": "Media does not exists"})
+
+            serializer.save(user=self.request.user, media=media)
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Feedback.objects.filter(user=user)
+
+        # Check the user query_params
+        user_param = self.request.query_params.get('user')
+
+        # Check the query_params for media=2, and return
+        # all the feedback for that media
+        try:
+            media_id = int(self.request.query_params.get('media'))
+        except (ValueError, TypeError,):
+            # If the review_id is str
+            media_id = 0
+
+        if media_id and is_admin(user):
+            queryset = Feedback.objects.filter(media__id=media_id)
+
+            # Check if the user_param supplied with media and user,
+            # eg: /?media=2&user=true
+            queryset = queryset.filter(user=user) if user_param else queryset
+        elif media_id:
+            # If the user is not admin then check if the user belong to
+            # collaborators of the review
+            queryset = Feedback.objects.filter(media__id=media_id).filter(
+                media__review__collaborators=user)
+
+            # Check if the user_param supplied with media and user,
+            # eg: /?media=2&user=true
+            queryset = queryset.filter(user=user) if user_param else queryset
+
+        # Check the query_params for all, and return
+        # all the media for admin user
+        if self.request.query_params.get('all') and is_admin(user):
+            queryset = Feedback.objects.all()
+
+        return queryset
+
+
+# Route: review/feedbacks/<int:pk>/
+class FeedbackDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticated, IsCreatorOrReadOnly,
+                          IsCollaboratorFeedback | IsAdmin,)
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
