@@ -15,16 +15,6 @@ MEDIA_LIST_CREATED_BY_USER_URL = MEDIA_LIST_URL + '?user=true'
 MEDIA_LIST_ALL_URL = MEDIA_LIST_URL + '?all=true'
 
 
-def review_list_by_project_url(project_id=1, user=False):
-    """Return review list by project"""
-    url = reverse('review_list') + f'?project={project_id}'
-
-    # filter reviews by project with created by logged in user
-    url = url + '&user=true' if user else url
-
-    return url
-
-
 def media_list_by_review(review_id=1, user=False):
     url = MEDIA_LIST_URL + f'?review={review_id}'
 
