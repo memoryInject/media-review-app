@@ -1,28 +1,73 @@
-import React from 'react';
-import { Col, Row } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Col, ListGroup, Row } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 
-import Review from '../components/Review';
-
-import projects from '../projects';
-import reviews from '../reviews';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
+import { listReviewDetails } from '../actions/reviewActions';
+import ReactPlayerComp from '../components/ReactPlayerComp';
+// import ReactPlayerComp from '../components/ReactPlayerComp';
 
 const ReviewScreen = ({ match }) => {
-  const project = projects.find((p) => p.id.toString() === match.params.id);
-  const projectReviews = reviews.filter(
-    (r) => r.projectId.toString() === match.params.id
-  );
+  const dispatch = useDispatch();
+
+  const reviewDetails = useSelector((state) => state.reviewDetails);
+  let { loading, error, review } = reviewDetails;
+
+  const [url, setUrl] = useState(null);
+
+  useEffect(() => {
+    dispatch(listReviewDetails(match.params.reviewId));
+  }, [match.params.reviewId, dispatch]);
+
+  useEffect(() => {
+    if (review && review.media.length > 0) {
+      setUrl(review.media[0].asset.url);
+    }
+    return () => setUrl(null);
+  }, [review]);
 
   return (
-    <div>
-      <h1>{project.name} Reviews</h1>
-      <Row>
-        {projectReviews.map((review) => (
-          <Col sm={12} md={6} lg={4} xl={3}>
-            <Review review={review} projectId={match.params.id} />
-          </Col>
-        ))}
-      </Row>
-    </div>
+    <>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant='danger'>{error}</Message>
+      ) : (
+        <>
+          <Row className='top-row'>
+            <Col xs lg='9'>
+              <ReactPlayerComp url={url} />
+              <div className='text-center my-2 feedback'>
+                <h1>Feedback</h1>
+              </div>
+            </Col>
+            <Col xs lg='2' md='auto'>
+              <h1>Comments</h1>
+            </Col>
+          </Row>
+          <Row>
+            {review && (
+              <Col>
+                {/*<h6>PLAYLIST</h6>*/}
+                <ListGroup horizontal='md'>
+                  {review.media.map((m, idx) => (
+                    <ListGroup.Item
+                      style={{ minHeight: '6rem' }}
+                      key={idx}
+                      action
+                      onClick={() => setUrl(m.asset.url)}
+                    >
+                      {m.mediaName}
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Col>
+            )}
+          </Row>
+        </>
+      )}
+    </>
   );
 };
 

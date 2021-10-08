@@ -19,7 +19,15 @@ const Header = () => {
       <Navbar bg='dark' variant='dark' expand='lg'>
         <Container>
           <LinkContainer to='/'>
-            <Navbar.Brand>Media-Review</Navbar.Brand>
+            <Navbar.Brand>
+              <span
+                class='material-icons-round'
+                style={{ position: 'relative', top: '4px' }}
+              >
+                movie
+              </span>
+              &nbsp; Media-Review
+            </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           {user && (

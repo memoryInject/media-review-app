@@ -6,12 +6,14 @@ import storage from 'redux-persist/lib/storage';
 
 import { userDetailsReducer, userLoginReducer } from './reducers/userReducers';
 import {projectDetailsReducer, projectListReducer} from './reducers/projectReducers';
+import {reviewDetailsReducer} from './reducers/reviewReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userDetails: userDetailsReducer,
   projectList: projectListReducer,
-  projectDetails: projectDetailsReducer
+  projectDetails: projectDetailsReducer,
+  reviewDetails: reviewDetailsReducer
 });
 
 // Config for local storage
