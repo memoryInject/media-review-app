@@ -5,15 +5,30 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import { userDetailsReducer, userLoginReducer } from './reducers/userReducers';
-import {projectDetailsReducer, projectListReducer} from './reducers/projectReducers';
-import {reviewDetailsReducer} from './reducers/reviewReducers';
+import {
+  projectDetailsReducer,
+  projectListReducer,
+} from './reducers/projectReducers';
+import { reviewDetailsReducer } from './reducers/reviewReducers';
+import { mediaDetailsReducer } from './reducers/mediaReducers';
+import {
+  feedbackCreateReducer,
+  feedbackListReducer,
+} from './reducers/feedbackReducers';
+import { playerDeatilsReducer } from './reducers/playerReducers';
+import {annotationDeatilsReducer} from './reducers/annotationReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userDetails: userDetailsReducer,
   projectList: projectListReducer,
   projectDetails: projectDetailsReducer,
-  reviewDetails: reviewDetailsReducer
+  reviewDetails: reviewDetailsReducer,
+  mediaDetails: mediaDetailsReducer,
+  feedbackList: feedbackListReducer,
+  feedbackCreate: feedbackCreateReducer,
+  playerDetails: playerDeatilsReducer,
+  annotationDeatils: annotationDeatilsReducer,
 });
 
 // Config for local storage

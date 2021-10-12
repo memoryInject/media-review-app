@@ -1,28 +1,84 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Button, Container, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
 import screenfull from 'screenfull';
+import { useDispatch, useSelector } from 'react-redux';
+
+import AnnotationCanvas from '../components/AnnotationCanvas';
+
+import {
+  heightPlayer,
+  widthPlayer,
+  topPlayer,
+  currentTimePlayer,
+  seekToPlayer,
+} from '../actions/playerActions';
+
+import { setActiveAnnotation } from '../actions/annotationActions';
 
 const ReactPlayerComp = ({ url }) => {
-  const [pip, setPip] = useState(false); // pip - picture in picture
+  // React Player states
   const [playing, setPlaying] = useState(false);
-  const [controls, setControls] = useState(false);
-  const [light, setLight] = useState(false);
   const [volume, setVolume] = useState(0.8);
   const [muted, setMuted] = useState(false);
   const [played, setPlayed] = useState(0);
-  const [loaded, setLoaded] = useState(0);
   const [duration, setDuration] = useState(0);
   const [seconds, setSeconds] = useState(0);
-  const [playbackRate, setPlaybackRate] = useState(1.0);
   const [loop, setLoop] = useState(false);
   const [seeking, setSeeking] = useState(false);
+
   const [volSeeking, setVolSeeking] = useState(false);
 
   const player = useRef(null);
   const progressHolder = useRef(null);
   const volProgressHolder = useRef(null);
+
+  const dispatch = useDispatch();
+
+  const playerDetails = useSelector((state) => state.playerDetails);
+  const { seekTo, height, width, top } = playerDetails;
+
+  const annotationDeatils = useSelector((state) => state.annotationDeatils);
+  const { active } = annotationDeatils;
+
+  const feedbackList = useSelector((state) => state.feedbackList);
+  const { feedbacks } = feedbackList;
+
+  // For jumpto specific feedback when user click the feeedback
+  useEffect(() => {
+    if (seekTo !== -1) {
+      setPlaying(false);
+      setSeeking(true);
+      player.current.seekTo(seekTo, 'seconds');
+      dispatch(seekToPlayer(-1));
+      setSeeking(false);
+    }
+
+    //return () => dispatch(seekToPlayer(0));
+  }, [seekTo, dispatch]);
+
+  useEffect(() => {
+    const updateWindowDimensions = () => {
+      if (player) {
+        dispatch(heightPlayer(player.current.wrapper.clientHeight));
+        dispatch(widthPlayer(player.current.wrapper.clientWidth));
+        dispatch(topPlayer(player.current.wrapper.offsetTop));
+      }
+    };
+
+    window.addEventListener('resize', updateWindowDimensions);
+
+    return () => window.removeEventListener('resize', updateWindowDimensions);
+  }, []);
+
+  const onReadyHandler = () => {
+    if (player) {
+      dispatch(heightPlayer(player.current.wrapper.clientHeight));
+      dispatch(widthPlayer(player.current.wrapper.clientWidth));
+      dispatch(topPlayer(player.current.wrapper.offsetTop));
+    }
+  };
 
   const handlePlayPause = () => {
     setSeeking(false);
@@ -30,12 +86,10 @@ const ReactPlayerComp = ({ url }) => {
   };
 
   const handlePlay = () => {
-    console.log('onPlay');
     setPlaying(true);
   };
 
   const handlePause = () => {
-    console.log('onPause');
     setPlaying(false);
   };
 
@@ -44,12 +98,14 @@ const ReactPlayerComp = ({ url }) => {
   };
 
   const handleEnded = () => {
-    console.log('onEnded');
     setPlaying(loop);
   };
 
   const handleProgress = (state) => {
+    dispatch(currentTimePlayer(state.playedSeconds));
+
     setSeconds(state.playedSeconds);
+
     if (!seeking) {
       setPlayed(state.played);
     }
@@ -59,32 +115,29 @@ const ReactPlayerComp = ({ url }) => {
     setDuration(state);
   };
 
-  const getCurrentTime = () => {
-    const secToDate = new Date(seconds * 1000).toISOString();
-    return `${secToDate.substr(14, 5)}:${secToDate.substr(20, 2)}`;
-  };
-
-  const getTotalTime = () => {
-    const secToDate = new Date(duration * 1000).toISOString();
+  const getTimeFormat = (timeInSeconds) => {
+    const secToDate = new Date(timeInSeconds * 1000).toISOString();
     return `${secToDate.substr(14, 5)}:${secToDate.substr(20, 2)}`;
   };
 
   const handleNextFrame = () => {
-    setSeeking(true)
-    const nextFrame = seconds + (1.0/24.0)
-    player.current.seekTo(nextFrame > duration ? duration : nextFrame, 'seconds')
-    setSeeking(false)
+    setSeeking(true);
+    const nextFrame = seconds + 1.0 / 24.0;
+    player.current.seekTo(
+      nextFrame > duration ? duration : nextFrame,
+      'seconds'
+    );
+    setSeeking(false);
   };
 
   const handlePrevFrame = () => {
-    setSeeking(true)
-    const prevFrame = seconds - (1.0/24.0)
-    player.current.seekTo(prevFrame < 0 ? 0 : prevFrame, 'seconds')
-    setSeeking(false)
+    setSeeking(true);
+    const prevFrame = seconds - 1.0 / 24.0;
+    player.current.seekTo(prevFrame < 0 ? 0 : prevFrame, 'seconds');
+    setSeeking(false);
   };
 
   const handleClickFullScreen = () => {
-    // TO DO
     screenfull.request(findDOMNode(player.current));
   };
 
@@ -167,25 +220,22 @@ const ReactPlayerComp = ({ url }) => {
   return (
     <div className='player-wrapper'>
       <Row>
-        <Col>
+        <Col style={{ position: 'relative' }}>
           <ReactPlayer
             url={url}
             width='100%'
             height='100%'
             ref={player}
             playing={playing}
-            controls={controls}
-            light={light}
+            controls={false}
+            light={false}
             loop={loop}
-            playbackRate={playbackRate}
+            playbackRate={1.0}
             volume={volume}
             muted={muted}
-            onReady={() => console.log('onReady')}
-            onStart={() => console.log('onStart')}
+            onReady={onReadyHandler}
             onPlay={handlePlay}
             onPause={handlePause}
-            onBuffer={() => console.log('onBuffer')}
-            onSeek={(e) => console.log('onSeek', e)}
             onEnded={handleEnded}
             onError={(e) => console.log('onError', e)}
             onProgress={handleProgress}
@@ -193,50 +243,92 @@ const ReactPlayerComp = ({ url }) => {
             progressInterval={1}
             style={{ backgroundColor: 'black' }}
           />
+          <div
+            style={{
+              position: 'absolute',
+              zIndex: '12',
+              top: `${top}px`,
+            }}
+          >
+            {active && <AnnotationCanvas />}
+          </div>
         </Col>
       </Row>
 
       <Row>
         <Col>
           {/*Play progress bar*/}
-          <div
-            onMouseDown={(e) => mouseDownSliderHandler(e)}
-            onMouseUp={(e) => mouseUpSliderHandler(e)}
-            onMouseMove={(e) => mouseMoveSliderHandler(e)}
-            ref={progressHolder}
-            className='rp-progress-control'
-          >
-            <div className='rp-progress-holder'>
+          <div className='rp-progress-control'>
+            <div
+              onMouseDown={(e) => mouseDownSliderHandler(e)}
+              onMouseUp={(e) => mouseUpSliderHandler(e)}
+              onMouseMove={(e) => mouseMoveSliderHandler(e)}
+              ref={progressHolder}
+              className='rp-progress-holder'
+            >
               <div
                 className='rp-play-progress'
                 style={{ width: `${played * 100}%` }}
               ></div>
             </div>
+
+            {/*Annotation bar start*/}
+            {feedbacks &&
+              feedbacks.map((f, idx) => (
+                <div
+                  key={idx}
+                  className='noselect'
+                  style={{
+                    position: 'absolute',
+                    marginTop: '0.2rem',
+                    marginLeft: `${(f.mediaTime / duration) * 100}%`,
+                    left: `${
+                      f.mediaTime < 0.3
+                        ? 0
+                        : f.mediaTime > duration - 0.35
+                        ? -12
+                        : -6
+                    }px`,
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => dispatch(seekToPlayer(f.mediaTime))}
+                >
+                  <span
+                    className='material-icons-round'
+                    style={{
+                      fontSize: '12px',
+                      color: '#3498db',
+                    }}
+                  >
+                    fiber_manual_record
+                  </span>
+                </div>
+              ))}
+            {/*Annotation bar end*/}
           </div>
         </Col>
       </Row>
 
-      <div className='playback-controls'>
+      <div
+        className='playback-controls'
+        style={{
+          paddingTop: '0.3rem',
+        }}
+      >
         <Row>
           <Col md='auto'>
             {/*Play Button*/}
             <div
               onClick={() => handlePlayPause()}
-              style={{ cursor: 'pointer'}}
+              style={{ cursor: 'pointer' }}
               className='noselect'
             >
               {playing ? (
-                <span
-                  className='material-icons-round'
-                  style={styleSize}
-                >
+                <span className='material-icons-round' style={styleSize}>
                   pause
                 </span>
               ) : (
-                <span
-                  className='material-icons-round'
-                  style={styleSize}
-                >
+                <span className='material-icons-round' style={styleSize}>
                   play_arrow
                 </span>
               )}
@@ -247,14 +339,11 @@ const ReactPlayerComp = ({ url }) => {
             {/*Loop Button*/}
             <div
               onClick={() => handleToggleLoop()}
-              style={{ cursor: 'pointer'}}
+              style={{ cursor: 'pointer' }}
               className='noselect'
             >
               {loop ? (
-                <span
-                  className='material-icons-round'
-                  style={styleSize}
-                >
+                <span className='material-icons-round' style={styleSize}>
                   repeat
                 </span>
               ) : (
@@ -272,10 +361,10 @@ const ReactPlayerComp = ({ url }) => {
             {/*Frame Backward*/}
             <div
               className='noselect'
-              style={{ cursor: 'pointer'}}
+              style={{ cursor: 'pointer' }}
               onClick={() => handlePrevFrame()}
             >
-              <span class='material-icons-round' style={styleSize}>
+              <span className='material-icons-round' style={styleSize}>
                 chevron_left
               </span>
             </div>
@@ -285,10 +374,10 @@ const ReactPlayerComp = ({ url }) => {
             {/*Frame Forward*/}
             <div
               className='noselect'
-              style={{ cursor: 'pointer'}}
+              style={{ cursor: 'pointer' }}
               onClick={() => handleNextFrame()}
             >
-              <span class='material-icons-round' style={styleSize}>
+              <span className='material-icons-round' style={styleSize}>
                 chevron_right
               </span>
             </div>
@@ -299,22 +388,22 @@ const ReactPlayerComp = ({ url }) => {
             <div
               onClick={(e) => volMuteHandler(e)}
               className='noselect'
-              style={{ cursor: 'pointer'}}
+              style={{ cursor: 'pointer' }}
             >
               {muted ? (
-                <span class='material-icons-round' style={styleSize}>
+                <span className='material-icons-round' style={styleSize}>
                   volume_off
                 </span>
               ) : volume > 0.5 ? (
-                <span class='material-icons-round' style={styleSize}>
+                <span className='material-icons-round' style={styleSize}>
                   volume_up
                 </span>
               ) : volume > 0.1 ? (
-                <span class='material-icons-round' style={styleSize}>
+                <span className='material-icons-round' style={styleSize}>
                   volume_down
                 </span>
               ) : (
-                <span class='material-icons-round' style={styleSize}>
+                <span className='material-icons-round' style={styleSize}>
                   volume_mute
                 </span>
               )}
@@ -341,15 +430,15 @@ const ReactPlayerComp = ({ url }) => {
 
           {/*Time Duration Start*/}
           <Col md='auto'>
-            <h6 style={{marginTop: '0.20rem'}}>{getCurrentTime()}</h6>
+            <h6 style={{ marginTop: '0.20rem' }}>{getTimeFormat(seconds)}</h6>
           </Col>
 
           <Col md='auto'>
-            <h6 style={{marginTop: '0.20rem'}}>/</h6>
+            <h6 style={{ marginTop: '0.20rem' }}>/</h6>
           </Col>
 
           <Col md='auto'>
-            <h6 style={{marginTop: '0.20rem'}}>{getTotalTime()}</h6>
+            <h6 style={{ marginTop: '0.20rem' }}>{getTimeFormat(duration)}</h6>
           </Col>
           {/*Time Duration End*/}
 
@@ -369,17 +458,11 @@ const ReactPlayerComp = ({ url }) => {
                 }}
               >
                 {screenfull.isFullscreen ? (
-                  <span
-                    class='material-icons-round'
-                    style={styleSize}
-                  >
+                  <span className='material-icons-round' style={styleSize}>
                     fullscreen_exit
                   </span>
                 ) : (
-                  <span
-                    class='material-icons-round'
-                    style={styleSize}
-                  >
+                  <span className='material-icons-round' style={styleSize}>
                     fullscreen
                   </span>
                 )}
@@ -393,7 +476,7 @@ const ReactPlayerComp = ({ url }) => {
 };
 
 const styleSize = {
-  fontSize: '26px'
-}
+  fontSize: '26px',
+};
 
 export default ReactPlayerComp;

@@ -1,0 +1,6 @@
+export const PLAYER_HEIGHT = 'PLAYER_HEIGHT';
+export const PLAYER_WIDTH = 'PLAYER_WIDTH';
+export const PLAYER_TOP = 'PLAYER_TOP';
+
+export const PLAYER_CURRENT_TIME = 'PLAYER_CURRENT_TIME';
+export const PLAYER_SEEK_TO = 'PLAYER_SEEK_TO';

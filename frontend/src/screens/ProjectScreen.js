@@ -21,7 +21,7 @@ const ProjectScreen = ({ match, history }) => {
     <div>
       <h4>{project.projectName}</h4>
       <h6 style={{fontSize: '12px'}}>REVIEWS:</h6>
-      <Row>
+      <Row xs='auto'>
         {loading ? (
           <Loader />
         ) : error ? (
@@ -29,7 +29,7 @@ const ProjectScreen = ({ match, history }) => {
         ) : (
           project.reviews &&
           project.reviews.map((review) => (
-            <Col sm={12} md={6} lg={5} xl={4} key={review.id.toString()}>
+            <Col key={review.id.toString()}>
               <Review projectId={match.params.id} review={review} />
             </Col>
           ))

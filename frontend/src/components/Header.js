@@ -21,7 +21,7 @@ const Header = () => {
           <LinkContainer to='/'>
             <Navbar.Brand>
               <span
-                class='material-icons-round'
+                className='material-icons-round'
                 style={{ position: 'relative', top: '4px' }}
               >
                 movie

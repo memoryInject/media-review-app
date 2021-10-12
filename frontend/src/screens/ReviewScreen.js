@@ -4,9 +4,16 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { listReviewDetails } from '../actions/reviewActions';
+import FeedbackList from '../components/FeedbackList';
 import ReactPlayerComp from '../components/ReactPlayerComp';
-// import ReactPlayerComp from '../components/ReactPlayerComp';
+import FeedbackForm from '../components/FeedbackForm';
+
+import { listReviewDetails } from '../actions/reviewActions';
+import { listFeedbacks } from '../actions/feedbackActions';
+import { listMediaDetails } from '../actions/mediaActions';
+import { FEEDBACK_LIST_RESET } from '../constants/feedbackConstants';
+import { REVIEW_DETAILS_RESET } from '../constants/reviewConstants';
+import { MEDIA_DETAILS_RESET } from '../constants/mediaConstants';
 
 const ReviewScreen = ({ match }) => {
   const dispatch = useDispatch();
@@ -18,14 +25,27 @@ const ReviewScreen = ({ match }) => {
 
   useEffect(() => {
     dispatch(listReviewDetails(match.params.reviewId));
+    return () => dispatch({ type: REVIEW_DETAILS_RESET });
   }, [match.params.reviewId, dispatch]);
 
   useEffect(() => {
     if (review && review.media.length > 0) {
       setUrl(review.media[0].asset.url);
+      dispatch(listMediaDetails(review.media[0].id));
+      dispatch(listFeedbacks(review.media[0].id));
     }
-    return () => setUrl(null);
-  }, [review]);
+    return () => {
+      setUrl(null);
+      dispatch({ type: FEEDBACK_LIST_RESET });
+      dispatch({ type: MEDIA_DETAILS_RESET });
+    };
+  }, [review, dispatch]);
+
+  const mediaHandler = (media) => {
+    setUrl(media.asset.url);
+    dispatch(listMediaDetails(media.id));
+    dispatch(listFeedbacks(media.id));
+  };
 
   return (
     <>
@@ -36,14 +56,12 @@ const ReviewScreen = ({ match }) => {
       ) : (
         <>
           <Row className='top-row'>
-            <Col xs lg='9'>
+            <Col xs={12} md={9}>
               <ReactPlayerComp url={url} />
-              <div className='text-center my-2 feedback'>
-                <h1>Feedback</h1>
-              </div>
+              <FeedbackForm />
             </Col>
-            <Col xs lg='2' md='auto'>
-              <h1>Comments</h1>
+            <Col>
+              <FeedbackList />
             </Col>
           </Row>
           <Row>
@@ -56,7 +74,7 @@ const ReviewScreen = ({ match }) => {
                       style={{ minHeight: '6rem' }}
                       key={idx}
                       action
-                      onClick={() => setUrl(m.asset.url)}
+                      onClick={() => mediaHandler(m)}
                     >
                       {m.mediaName}
                     </ListGroup.Item>

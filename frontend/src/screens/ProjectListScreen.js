@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
+import Loader from '../components/Loader';
+import Message from '../components/Message';
 import Project from '../components/Project';
 import { listProjects } from '../actions/projectActions';
 
@@ -12,27 +14,33 @@ const ProjectListScreen = ({ location, history }) => {
   const { userInfo } = userLogin;
 
   const projectList = useSelector((state) => state.projectList);
-  const { projects } = projectList;
+  const { loading, error, projects } = projectList;
 
   useEffect(() => {
     if (!userInfo) {
       history.push('/login');
     } else {
-      dispatch(listProjects())
+      dispatch(listProjects());
     }
   }, [history, userInfo, dispatch]);
 
   return (
-    <div>
+    <>
       <h4>PROJECTS</h4>
-      <Row>
-        {projects.map((project) => (
-          <Col sm={12} md={6} lg={4} xl={4} key={project.id.toString()}>
-            <Project project={project} />
-          </Col>
-        ))}
-      </Row>
-    </div>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant='danger'>{error}</Message>
+      ) : (
+        <Row xs='auto'>
+          {projects.map((project) => (
+            <Col key={project.id.toString()}>
+              <Project project={project} />
+            </Col>
+          ))}
+        </Row>
+      )}
+    </>
   );
 };
 

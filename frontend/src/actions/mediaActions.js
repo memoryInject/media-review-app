@@ -1,14 +1,14 @@
 import axios from 'axios';
 import {
-  REVIEW_DETAILS_FAIL,
-  REVIEW_DETAILS_REQUEST,
-  REVIEW_DETAILS_SUCCESS,
-} from '../constants/reviewConstants';
+  MEDIA_DETAILS_FAIL,
+  MEDIA_DETAILS_REQUEST,
+  MEDIA_DETAILS_SUCCESS,
+} from '../constants/mediaConstants';
 import getError from '../utils/getError';
 
-export const listReviewDetails = (id) => async (dispatch, getState) => {
+export const listMediaDetails = (id) => async (dispatch, getState) => {
   try {
-    dispatch({ type: REVIEW_DETAILS_REQUEST });
+    dispatch({ type: MEDIA_DETAILS_REQUEST });
 
     const {
       userLogin: { userInfo },
@@ -21,15 +21,15 @@ export const listReviewDetails = (id) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`/api/v1/review/reviews/${id}/`, config);
+    const { data } = await axios.get(`/api/v1/review/media/${id}/`, config);
 
     dispatch({
-      type: REVIEW_DETAILS_SUCCESS,
+      type: MEDIA_DETAILS_SUCCESS,
       payload: data,
     });
   } catch (error) {
     dispatch({
-      type: REVIEW_DETAILS_FAIL,
+      type: MEDIA_DETAILS_FAIL,
       payload: getError(error),
     });
   }
