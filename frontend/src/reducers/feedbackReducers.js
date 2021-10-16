@@ -28,7 +28,10 @@ export const feedbackListReducer = (state = { feedbacks: null }, action) => {
   }
 };
 
-export const feedbackCreateReducer = (state = {}, action) => {
+export const feedbackCreateReducer = (
+  state = { loading: false, feedback: null, error: null },
+  action
+) => {
   switch (action.type) {
     case FEEDBACK_CREATE_REQUEST:
       return { loading: true, feedback: null };
@@ -40,7 +43,7 @@ export const feedbackCreateReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
 
     case FEEDBACK_CREATE_RESET:
-      return {};
+      return { loading: false, feedback: null, error: null };
 
     default:
       return state;

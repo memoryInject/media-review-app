@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button } from 'react-bootstrap';
 import { Stage, Layer } from 'react-konva';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -9,9 +8,11 @@ import {
   FreePathDrawable,
 } from '../utils/drawables';
 
+import dataURLtoFile from '../utils/dataURLtoFile';
+
 import {
-  drawableTypeAnnotation,
   isEmptyAnnotation,
+  exportImageAnnotation,
 } from '../actions/annotationActions';
 
 const AnnotationCanvas = () => {
@@ -28,7 +29,7 @@ const AnnotationCanvas = () => {
   const { height, width } = playerDetails;
 
   const annotationDeatils = useSelector((state) => state.annotationDeatils);
-  const { drawableType, isEmpty, color } = annotationDeatils;
+  const { drawableType, isEmpty, color, image } = annotationDeatils;
 
   useEffect(() => {
     dispatch(isEmptyAnnotation(true));
@@ -49,6 +50,14 @@ const AnnotationCanvas = () => {
       setNewDrawable([]);
     }
   }, [isEmpty]);
+
+  useEffect(() => {
+    if (image && image.export) {
+      const uri = stageRef.current.toDataURL();
+      const file = dataURLtoFile(uri, 'image.png');
+      dispatch(exportImageAnnotation(file));
+    }
+  }, [dispatch, image]);
 
   const getNewDrawableBasedOnType = (x, y, type) => {
     const drawableClasses = {
@@ -99,16 +108,6 @@ const AnnotationCanvas = () => {
     }
   };
 
-  const handleExport = () => {
-    const uri = stageRef.current.toDataURL();
-    console.log(uri);
-    // we also can save uri as file
-    // but in the demo on Konva website it will not work
-    // because of iframe restrictions
-    // but feel free to use it in your apps:
-    // downloadURI(uri, 'stage.png');
-  };
-
   return (
     <div>
       <div className='konva-container'>
@@ -131,21 +130,6 @@ const AnnotationCanvas = () => {
           </Layer>
         </Stage>
       </div>
-      {/*<Button onClick={handleExport}>Export Image</Button>*/}
-      {/*<Button onClick={() => dispatch(drawableTypeAnnotation('ArrowDrawable'))}>*/}
-        {/*Arrow*/}
-      {/*</Button>*/}
-      {/*<Button*/}
-        {/*onClick={() => dispatch(drawableTypeAnnotation('CircleDrawable'))}*/}
-      {/*>*/}
-        {/*Circle*/}
-      {/*</Button>*/}
-      {/*<Button*/}
-        {/*onClick={() => dispatch(drawableTypeAnnotation('FreePathDrawable'))}*/}
-      {/*>*/}
-        {/*FreePath*/}
-      {/*</Button>*/}
-      {/*<Button onClick={() => dispatch(isEmptyAnnotation(true))}>Clear</Button>*/}
     </div>
   );
 };

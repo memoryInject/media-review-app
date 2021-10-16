@@ -14,8 +14,7 @@ import {
   currentTimePlayer,
   seekToPlayer,
 } from '../actions/playerActions';
-
-import { setActiveAnnotation } from '../actions/annotationActions';
+import AnnotationImages from './AnnotationImages';
 
 const ReactPlayerComp = ({ url }) => {
   // React Player states
@@ -29,6 +28,7 @@ const ReactPlayerComp = ({ url }) => {
   const [seeking, setSeeking] = useState(false);
 
   const [volSeeking, setVolSeeking] = useState(false);
+  const [showAnnotaionImage, setShowAnnotationImage] = useState(true);
 
   const player = useRef(null);
   const progressHolder = useRef(null);
@@ -70,7 +70,7 @@ const ReactPlayerComp = ({ url }) => {
     window.addEventListener('resize', updateWindowDimensions);
 
     return () => window.removeEventListener('resize', updateWindowDimensions);
-  }, []);
+  }, [dispatch]);
 
   const onReadyHandler = () => {
     if (player) {
@@ -217,6 +217,10 @@ const ReactPlayerComp = ({ url }) => {
     setMuted(!muted);
   };
 
+  const showAnnotaionImageHandler = () => {
+    setShowAnnotationImage(!showAnnotaionImage);
+  };
+
   return (
     <div className='player-wrapper'>
       <Row>
@@ -251,6 +255,15 @@ const ReactPlayerComp = ({ url }) => {
             }}
           >
             {active && <AnnotationCanvas />}
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              zIndex: '10',
+              top: `${top}px`,
+            }}
+          >
+            {showAnnotaionImage && <AnnotationImages />}
           </div>
         </Col>
       </Row>
@@ -316,11 +329,15 @@ const ReactPlayerComp = ({ url }) => {
         }}
       >
         <Row>
-          <Col md='auto'>
+          <Col style={{ position: 'relative' }}>
             {/*Play Button*/}
             <div
               onClick={() => handlePlayPause()}
-              style={{ cursor: 'pointer' }}
+              style={{
+                cursor: 'pointer',
+                display: 'inline',
+                padding: '0.25rem',
+              }}
               className='noselect'
             >
               {playing ? (
@@ -333,13 +350,15 @@ const ReactPlayerComp = ({ url }) => {
                 </span>
               )}
             </div>
-          </Col>
 
-          <Col md='auto'>
             {/*Loop Button*/}
             <div
               onClick={() => handleToggleLoop()}
-              style={{ cursor: 'pointer' }}
+              style={{
+                cursor: 'pointer',
+                display: 'inline',
+                padding: '0.25rem',
+              }}
               className='noselect'
             >
               {loop ? (
@@ -355,40 +374,46 @@ const ReactPlayerComp = ({ url }) => {
                 </span>
               )}
             </div>
-          </Col>
 
-          <Col md='auto'>
             {/*Frame Backward*/}
             <div
               className='noselect'
-              style={{ cursor: 'pointer' }}
+              style={{
+                cursor: 'pointer',
+                display: 'inline',
+                padding: '0.25rem',
+              }}
               onClick={() => handlePrevFrame()}
             >
               <span className='material-icons-round' style={styleSize}>
                 chevron_left
               </span>
             </div>
-          </Col>
 
-          <Col md='auto'>
             {/*Frame Forward*/}
             <div
               className='noselect'
-              style={{ cursor: 'pointer' }}
+              style={{
+                cursor: 'pointer',
+                display: 'inline',
+                padding: '0.25rem',
+              }}
               onClick={() => handleNextFrame()}
             >
               <span className='material-icons-round' style={styleSize}>
                 chevron_right
               </span>
             </div>
-          </Col>
 
-          <Col md='auto'>
             {/*Volume Button*/}
             <div
               onClick={(e) => volMuteHandler(e)}
               className='noselect'
-              style={{ cursor: 'pointer' }}
+              style={{
+                cursor: 'pointer',
+                display: 'inline',
+                padding: '0.25rem',
+              }}
             >
               {muted ? (
                 <span className='material-icons-round' style={styleSize}>
@@ -408,9 +433,7 @@ const ReactPlayerComp = ({ url }) => {
                 </span>
               )}
             </div>
-          </Col>
 
-          <Col md='auto'>
             {/*Volume controller*/}
             <div
               className='rp-volume-control noselect'
@@ -427,46 +450,62 @@ const ReactPlayerComp = ({ url }) => {
               </div>
             </div>
           </Col>
-
-          {/*Time Duration Start*/}
-          <Col md='auto'>
-            <h6 style={{ marginTop: '0.20rem' }}>{getTimeFormat(seconds)}</h6>
-          </Col>
-
-          <Col md='auto'>
-            <h6 style={{ marginTop: '0.20rem' }}>/</h6>
-          </Col>
-
-          <Col md='auto'>
-            <h6 style={{ marginTop: '0.20rem' }}>{getTimeFormat(duration)}</h6>
-          </Col>
-          {/*Time Duration End*/}
-
-          <Col>
+          <Col md={3} className='d-none d-sm-block d-sm-none d-md-block'>
+            {/*Time Duration Start*/}
             <div
-              className='noselect'
               style={{
-                textAlign: 'right',
+                display: 'inline',
+                position: 'relative',
+                fontSize: '14px',
               }}
             >
-              <div
-                onClick={() => handleClickFullScreen()}
-                className='noselect'
-                style={{
-                  cursor: 'pointer',
-                  display: 'inline-block',
-                }}
-              >
-                {screenfull.isFullscreen ? (
-                  <span className='material-icons-round' style={styleSize}>
-                    fullscreen_exit
+              <span>{getTimeFormat(seconds)}</span>
+              <span>&nbsp;/&nbsp;</span>
+              <span>{getTimeFormat(duration)}</span>
+            </div>
+            {/*Time Duration End*/}
+          </Col>
+
+          <Col md={2} xs={3} style={{ position: 'relative' , marginLeft: '0.3rem'}}>
+            {/*Full Screen Button*/}
+            <div
+              className='noselect text-end'
+              style={{
+                cursor: 'pointer',
+                marginRight: '0.25rem',
+              }}
+            >
+              {screenfull.isFullscreen ? (
+                <span
+                  className='material-icons-round'
+                  onClick={() => handleClickFullScreen()}
+                  style={styleSize}
+                >
+                  fullscreen_exit
+                </span>
+              ) : (
+                <>
+                  <span
+                    onClick={showAnnotaionImageHandler}
+                    className='material-icons-round noselect'
+                    style={{
+                      cursor: 'pointer',
+                      fontSize: '20px',
+                      transform: 'translate(-6px, -3px)',
+                      color: `${showAnnotaionImage ? '#FFFFFF' : '#222222'}`,
+                    }}
+                  >
+                    brush
                   </span>
-                ) : (
-                  <span className='material-icons-round' style={styleSize}>
+                  <span
+                    onClick={() => handleClickFullScreen()}
+                    className='material-icons-round'
+                    style={styleSize}
+                  >
                     fullscreen
                   </span>
-                )}
-              </div>
+                </>
+              )}
             </div>
           </Col>
         </Row>

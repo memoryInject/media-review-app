@@ -71,16 +71,19 @@ main {
 }
 
 .rp-volume-control {
-  min-height: 36px;
+  /*min-height: 36px;*/
   position: relative; 
   width: 5rem;
+  display: inline-block;
 }
 
 .rp-volume-holder {
   background-color: #ADB5BD;
-  min-height: 0.2rem;
-  margin-top: 11px;
+  /*min-height: 0.2rem;*/
+  margin: 0px;
+  padding: 0px;
   position: absolute;
+  top: -14px;
   width: 100%;
 }
 
@@ -124,22 +127,28 @@ main {
 
 .scrollbar
 {
-	background: #222222;
+	background: #303030;
 }
 
 #style-1::-webkit-scrollbar-track
 {
-	background-color: #222222;
+	background-color: #303030;
 }
 
 #style-1::-webkit-scrollbar
 {
 	width: 6px;
-	background-color: #222222;
+	background-color: #303030;
 }
 
 #style-1::-webkit-scrollbar-thumb
 {
 	border-radius: 10px;
 	background-color: #3A3A3A;
+}
+
+@media (min-width: 1200px) {
+    .container{
+        max-width: 90%;
+    }
 }

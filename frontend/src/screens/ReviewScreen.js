@@ -11,7 +11,10 @@ import FeedbackForm from '../components/FeedbackForm';
 import { listReviewDetails } from '../actions/reviewActions';
 import { listFeedbacks } from '../actions/feedbackActions';
 import { listMediaDetails } from '../actions/mediaActions';
-import { FEEDBACK_LIST_RESET } from '../constants/feedbackConstants';
+import {
+  FEEDBACK_CREATE_RESET,
+  FEEDBACK_LIST_RESET,
+} from '../constants/feedbackConstants';
 import { REVIEW_DETAILS_RESET } from '../constants/reviewConstants';
 import { MEDIA_DETAILS_RESET } from '../constants/mediaConstants';
 
@@ -38,6 +41,7 @@ const ReviewScreen = ({ match }) => {
       setUrl(null);
       dispatch({ type: FEEDBACK_LIST_RESET });
       dispatch({ type: MEDIA_DETAILS_RESET });
+      dispatch({ type: FEEDBACK_CREATE_RESET });
     };
   }, [review, dispatch]);
 
@@ -45,6 +49,7 @@ const ReviewScreen = ({ match }) => {
     setUrl(media.asset.url);
     dispatch(listMediaDetails(media.id));
     dispatch(listFeedbacks(media.id));
+    dispatch({ type: FEEDBACK_CREATE_RESET });
   };
 
   return (
@@ -56,12 +61,37 @@ const ReviewScreen = ({ match }) => {
       ) : (
         <>
           <Row className='top-row'>
-            <Col xs={12} md={9}>
+            <Col>
               <ReactPlayerComp url={url} />
               <FeedbackForm />
             </Col>
-            <Col>
+            <Col md={4}>
               <FeedbackList />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <div
+                style={{
+                  borderRadius: '0.25rem',
+                  border: '1px solid #303030',
+                  marginBottom: '10px',
+                }}
+              >
+                <span
+                  className='material-icons-round'
+                  style={{
+                    fontSize: '20px',
+                    transform: 'translate(2px, 4px)',
+                    color: '#375A7F',
+                  }}
+                >
+                  theaters
+                </span>
+                <span style={{ padding: '0.3rem', color: '#888888' }}>
+                  &nbsp;Media Name Here
+                </span>
+              </div>
             </Col>
           </Row>
           <Row>

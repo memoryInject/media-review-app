@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createFeedback } from '../actions/feedbackActions';
+import Loader from './Loader';
+import Message from './Message';
+
+import { listFeedbacks, createFeedback } from '../actions/feedbackActions';
 import {
   drawableTypeAnnotation,
   isEmptyAnnotation,
   setColorAnnotation,
   setActiveAnnotation,
 } from '../actions/annotationActions';
+import {
+  ANNOTATION_IMAGE_EXPORT,
+  ANNOTATION_IMAGE_RESET,
+} from '../constants/annotationConstants';
 
 const FeedbackForm = () => {
   const [feedback, setFeedback] = useState('');
@@ -17,20 +24,56 @@ const FeedbackForm = () => {
   const dispatch = useDispatch();
 
   const annotationDeatils = useSelector((state) => state.annotationDeatils);
-  let { drawableType, color, active } = annotationDeatils;
+  let { drawableType, color, active, image, isEmpty } = annotationDeatils;
 
   const mediaDetails = useSelector((state) => state.mediaDetails);
   let { media } = mediaDetails;
 
+  const playerDetails = useSelector((state) => state.playerDetails);
+  let { currentTime } = playerDetails;
+
+  const feedbackCreate = useSelector((state) => state.feedbackCreate);
+  let {
+    loading: feedbackCreateLoading,
+    error: feedbackCreateError,
+    feedback: feedbackCreateSuccess,
+  } = feedbackCreate;
+
+  useEffect(() => {
+    if (image && image.url) {
+      dispatch(
+        createFeedback({
+          media: media.id,
+          content: feedback,
+          mediaTime: currentTime,
+          annotationUrl: image.url,
+        })
+      );
+      dispatch({ type: ANNOTATION_IMAGE_RESET });
+    }
+  }, [dispatch, image, feedback, media, currentTime]);
+
+  useEffect(() => {
+    if (feedbackCreateSuccess && media) {
+      dispatch(listFeedbacks(media.id));
+      dispatch(isEmptyAnnotation(true));
+      dispatch(setActiveAnnotation(false));
+    }
+  }, [feedbackCreateSuccess, media, dispatch]);
+
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(
-      createFeedback({
-        media: media.id,
-        content: feedback,
-        mediaTime: 5.0,
-      })
-    );
+    if (!isEmpty) {
+      dispatch({ type: ANNOTATION_IMAGE_EXPORT });
+    } else {
+      dispatch(
+        createFeedback({
+          media: media.id,
+          content: feedback,
+          mediaTime: currentTime,
+        })
+      );
+    }
   };
 
   const drawableTypeHandler = (type) => {
@@ -47,221 +90,238 @@ const FeedbackForm = () => {
 
   return (
     <Row className='justify-content-md-center'>
-      <Col md={8}>
-        <div
-          className='my-2 p-3'
-          style={{
-            backgroundColor: '#303030',
-            borderRadius: '.25rem',
-            //marginLeft: '12rem',
-            //marginRight: '12rem',
-            width: '100%',
-            display: 'inline-block',
-          }}
-        >
-          <Form onSubmit={submitHandler}>
-            <Form.Group controlId='email'>
-              <Form.Control
-                as='textarea'
-                rows={2}
-                placeholder='Write feedback...'
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                className='text-white'
-                style={{
-                  backgroundColor: '#3A3A3A',
-                  border: '0px',
-                }}
-              ></Form.Control>
-            </Form.Group>
-            <Button
-              type='submit'
-              variant='primary'
-              className='float-end'
-              style={{
-                marginTop: '0.65rem',
-              }}
-            >
-              POST
-            </Button>
-          </Form>
-
-          {/*Canvas Draw Options Start*/}
+      {image && image.loading ? (
+        <Loader />
+      ) : feedbackCreateLoading ? (
+        <Loader />
+      ) : (
+        <Col md={10}>
           <div
+            className='my-2 p-3'
             style={{
-              marginTop: '1.0rem',
-              top: '-6px',
-              border: '1px solid #222222',
-              borderRadius: '0.25rem',
+              backgroundColor: '#303030',
+              borderRadius: '.25rem',
+              //marginLeft: '12rem',
+              //marginRight: '12rem',
+              width: '100%',
               display: 'inline-block',
             }}
           >
-            {/*TODO: refactor onClick action and set active annotation*/}
-            <span
-              className='material-icons-round noselect'
-              style={{
-                cursor: 'pointer',
-                padding: '0 0.65rem',
-                color: `${
-                  drawableType === 'CircleDrawable' && active
-                    ? '#FFFFFF'
-                    : '#222222'
-                }`,
-              }}
-              onClick={() => drawableTypeHandler('CircleDrawable')}
-            >
-              radio_button_unchecked
-            </span>
+            <Form onSubmit={submitHandler}>
+              <Form.Group controlId='email'>
+                <Form.Control
+                  as='textarea'
+                  rows={2}
+                  placeholder='Write feedback...'
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  className='text-white'
+                  style={{
+                    backgroundColor: '#3A3A3A',
+                    border: '0px',
+                  }}
+                ></Form.Control>
+              </Form.Group>
+              <Button
+                type='submit'
+                variant='primary'
+                className='float-end'
+                style={{
+                  marginTop: '0.65rem',
+                }}
+              >
+                POST
+              </Button>
+            </Form>
 
-            <span
-              className='material-icons-round noselect'
+            {/*Canvas Draw Options Start*/}
+            <div
               style={{
-                //transform: 'rotate(-45deg)',
-                cursor: 'pointer',
-                fontSize: '28px',
-                padding: '0 0.65rem',
-                color: `${
-                  drawableType === 'ArrowDrawable' && active
-                    ? '#FFFFFF'
-                    : '#222222'
-                }`,
+                marginTop: '1.0rem',
+                top: '-6px',
+                border: '1px solid #222222',
+                borderRadius: '0.25rem',
+                display: 'inline-block',
               }}
-              onClick={() => drawableTypeHandler('ArrowDrawable')}
             >
-              trending_flat
-            </span>
+              {/*TODO: refactor onClick action and set active annotation*/}
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0 0.65rem',
+                  color: `${
+                    drawableType === 'CircleDrawable' && active
+                      ? '#FFFFFF'
+                      : '#222222'
+                  }`,
+                }}
+                onClick={() => drawableTypeHandler('CircleDrawable')}
+              >
+                radio_button_unchecked
+              </span>
 
-            <span
-              className='material-icons-round noselect'
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  //transform: 'rotate(-45deg)',
+                  cursor: 'pointer',
+                  fontSize: '28px',
+                  padding: '0 0.65rem',
+                  color: `${
+                    drawableType === 'ArrowDrawable' && active
+                      ? '#FFFFFF'
+                      : '#222222'
+                  }`,
+                }}
+                onClick={() => drawableTypeHandler('ArrowDrawable')}
+              >
+                trending_flat
+              </span>
+
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0 0.65rem',
+                  color: `${
+                    drawableType === 'FreePathDrawable' && active
+                      ? '#FFFFFF'
+                      : '#222222'
+                  }`,
+                }}
+                onClick={() => drawableTypeHandler('FreePathDrawable')}
+              >
+                brush
+              </span>
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0 0.65rem',
+                  color: '#E74C3C',
+                }}
+                onClick={clearAnnotationHandler}
+              >
+                highlight_off
+              </span>
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0 0.65rem',
+                  color: color,
+                }}
+                onClick={() => setShowColorPalette(!showColorPalette)}
+              >
+                circle
+              </span>
+            </div>
+
+            {/*Color Palette Start*/}
+            <div
               style={{
-                cursor: 'pointer',
-                padding: '0 0.65rem',
-                color: `${
-                  drawableType === 'FreePathDrawable' && active
-                    ? '#FFFFFF'
-                    : '#222222'
-                }`,
+                //backgroundColor: '#222222',
+                borderRadius: '0.25rem',
+                marginTop: '0.4rem',
+                display: `${showColorPalette ? 'block' : 'none'}`,
               }}
-              onClick={() => drawableTypeHandler('FreePathDrawable')}
+              className='text-center'
             >
-              brush
-            </span>
-            <span
-              className='material-icons-round noselect'
-              style={{
-                cursor: 'pointer',
-                padding: '0 0.65rem',
-                color: '#E74C3C',
-              }}
-              onClick={clearAnnotationHandler}
-            >
-              highlight_off
-            </span>
-            <span
-              className='material-icons-round noselect'
-              style={{
-                cursor: 'pointer',
-                padding: '0 0.65rem',
-                color: color,
-              }}
-              onClick={() => setShowColorPalette(!showColorPalette)}
-            >
-              circle
-            </span>
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0.4rem 0.2rem',
+                  color: '#E74C3C',
+                }}
+                onClick={() => dispatch(setColorAnnotation('#E74C3C'))}
+              >
+                circle
+              </span>
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0.4rem 0.2rem',
+                  color: '#F38D1C',
+                }}
+                onClick={() => dispatch(setColorAnnotation('#F38D1C'))}
+              >
+                circle
+              </span>
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0.4rem 0.2rem',
+                  color: '#00BC71',
+                }}
+                onClick={() => dispatch(setColorAnnotation('#00BC71'))}
+              >
+                circle
+              </span>
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0.4rem 0.2rem',
+                  color: '#3498DB',
+                }}
+                onClick={() => dispatch(setColorAnnotation('#3498DB'))}
+              >
+                circle
+              </span>
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0.4rem 0.2rem',
+                  color: '#841397',
+                }}
+                onClick={() => dispatch(setColorAnnotation('#841397'))}
+              >
+                circle
+              </span>
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0.4rem 0.2rem',
+                  color: 'white',
+                }}
+                onClick={() => dispatch(setColorAnnotation('white'))}
+              >
+                circle
+              </span>
+              <span
+                className='material-icons-round noselect'
+                style={{
+                  cursor: 'pointer',
+                  padding: '0.4rem 0.2rem',
+                  color: 'black',
+                }}
+                onClick={() => dispatch(setColorAnnotation('black'))}
+              >
+                circle
+              </span>
+            </div>
+            {/*Color Palette end*/}
+            {/*Canvas Draw Options End*/}
+            {image && image.error ? (
+              <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
+                <Message>{image.error}</Message>
+              </div>
+            ) : (
+              feedbackCreateError && (
+                <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
+                  <Message>Error {feedbackCreateError}</Message>
+                </div>
+              )
+            )}
           </div>
-
-          {/*Color Palette Start*/}
-          <div
-            style={{
-              //backgroundColor: '#222222',
-              borderRadius: '0.25rem',
-              marginTop: '0.4rem',
-              display: `${showColorPalette ? 'block' : 'none'}`,
-            }}
-            className='text-center'
-          >
-            <span
-              className='material-icons-round noselect'
-              style={{
-                cursor: 'pointer',
-                padding: '0.4rem 0.2rem',
-                color: '#E74C3C',
-              }}
-              onClick={() => dispatch(setColorAnnotation('#E74C3C'))}
-            >
-              circle
-            </span>
-            <span
-              className='material-icons-round noselect'
-              style={{
-                cursor: 'pointer',
-                padding: '0.4rem 0.2rem',
-                color: '#F38D1C',
-              }}
-              onClick={() => dispatch(setColorAnnotation('#F38D1C'))}
-            >
-              circle
-            </span>
-            <span
-              className='material-icons-round noselect'
-              style={{
-                cursor: 'pointer',
-                padding: '0.4rem 0.2rem',
-                color: '#00BC71',
-              }}
-              onClick={() => dispatch(setColorAnnotation('#00BC71'))}
-            >
-              circle
-            </span>
-            <span
-              className='material-icons-round noselect'
-              style={{
-                cursor: 'pointer',
-                padding: '0.4rem 0.2rem',
-                color: '#3498DB',
-              }}
-              onClick={() => dispatch(setColorAnnotation('#3498DB'))}
-            >
-              circle
-            </span>
-            <span
-              className='material-icons-round noselect'
-              style={{
-                cursor: 'pointer',
-                padding: '0.4rem 0.2rem',
-                color: '#841397',
-              }}
-              onClick={() => dispatch(setColorAnnotation('#841397'))}
-            >
-              circle
-            </span>
-            <span
-              className='material-icons-round noselect'
-              style={{
-                cursor: 'pointer',
-                padding: '0.4rem 0.2rem',
-                color: 'white',
-              }}
-              onClick={() => dispatch(setColorAnnotation('white'))}
-            >
-              circle
-            </span>
-            <span
-              className='material-icons-round noselect'
-              style={{
-                cursor: 'pointer',
-                padding: '0.4rem 0.2rem',
-                color: 'black',
-              }}
-              onClick={() => dispatch(setColorAnnotation('black'))}
-            >
-              circle
-            </span>
-          </div>
-          {/*Color Palette end*/}
-          {/*Canvas Draw Options End*/}
-        </div>
-      </Col>
+        </Col>
+      )}
     </Row>
   );
 };

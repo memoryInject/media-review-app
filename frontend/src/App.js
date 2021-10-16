@@ -17,7 +17,11 @@ const App = () => {
         <Container>
           <Route path='/' component={ProjectListScreen} exact />
           <Route path='/login' component={LoginScreen} exact />
-          <Route path='/projects/:id/reviews' component={ReviewListScreen} exact />
+          <Route
+            path='/projects/:id/reviews'
+            component={ReviewListScreen}
+            exact
+          />
           <Route path='/projects/:id' component={ProjectScreen} exact />
           <Route
             path='/projects/:id/reviews/:reviewId'
@@ -25,7 +29,7 @@ const App = () => {
           />
         </Container>
       </main>
-      <Footer />
+      {/*<Footer />*/}
     </Router>
   );
 };

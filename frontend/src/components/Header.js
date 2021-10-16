@@ -15,8 +15,8 @@ const Header = () => {
   };
 
   return (
-    <header>
-      <Navbar bg='dark' variant='dark' expand='lg'>
+    <header >
+      <Navbar bg='dark' variant='dark' expand='lg' style={{height: '4rem'}}>
         <Container>
           <LinkContainer to='/'>
             <Navbar.Brand>

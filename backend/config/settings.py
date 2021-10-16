@@ -11,6 +11,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+import cloudinary
 
 from pathlib import Path
 
@@ -28,6 +29,15 @@ SECRET_KEY = os.environ.get('DJANGO_SECRECT_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+# Cloudinary setup
+cloudinary.config(
+        cloud_name=os.environ.get('CD_NAME'),
+        api_key=os.environ.get('CD_API_KEY'),
+        api_secret=os.environ.get('CD_API_SECRET'),
+        secure=True
+)
+
 
 
 # Application definition
@@ -50,10 +60,13 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'invitations',
+    'cloudinary',
 
     # local
     'user.apps.UserConfig',
     'review.apps.ReviewConfig',
+    'upload.apps.UploadConfig',
+    'cloud.apps.CloudConfig',
 ]
 
 MIDDLEWARE = [
@@ -141,6 +154,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Custom config
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'uploads', 'site_static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'uploads', 'static')
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads', 'media')
+MEDIA_URL = '/media/'
+
 SITE_ID = 1
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
@@ -188,3 +207,4 @@ REST_FRAMEWORK = {
 REST_AUTH_SERIALIZERS = {
         'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
     }
+
