@@ -10,13 +10,18 @@ import {
   projectListReducer,
 } from './reducers/projectReducers';
 import { reviewDetailsReducer } from './reducers/reviewReducers';
-import { mediaDetailsReducer } from './reducers/mediaReducers';
+import {
+  mediaCreateReducer,
+  mediaDetailsReducer,
+  mediaUpdateReducer,
+} from './reducers/mediaReducers';
 import {
   feedbackCreateReducer,
   feedbackListReducer,
 } from './reducers/feedbackReducers';
 import { playerDeatilsReducer } from './reducers/playerReducers';
-import {annotationDeatilsReducer} from './reducers/annotationReducers';
+import { annotationDeatilsReducer } from './reducers/annotationReducers';
+import { assetCreateReducer } from './reducers/assetReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -25,10 +30,13 @@ const reducer = combineReducers({
   projectDetails: projectDetailsReducer,
   reviewDetails: reviewDetailsReducer,
   mediaDetails: mediaDetailsReducer,
+  mediaCreate: mediaCreateReducer,
+  mediaUpdate: mediaUpdateReducer,
   feedbackList: feedbackListReducer,
   feedbackCreate: feedbackCreateReducer,
   playerDetails: playerDeatilsReducer,
   annotationDeatils: annotationDeatilsReducer,
+  assetCreate: assetCreateReducer,
 });
 
 // Config for local storage

@@ -38,7 +38,14 @@ class Review(models.Model):
 class Asset(models.Model):
     """Asset for media, video/pdf/pics etc"""
     asset_name = models.CharField(max_length=200)
-    url = models.CharField(max_length=240)
+    url = models.CharField(max_length=500)
+    height = models.IntegerField(blank=True, null=True)
+    width = models.IntegerField(blank=True, null=True)
+    asset_format = models.CharField(max_length=100, blank=True, null=True)
+    duration = models.FloatField(blank=True, null=True)
+    frame_rate = models.FloatField(blank=True, null=True)
+    resource_type = models.CharField(max_length=100, blank=True, null=True) 
+
     user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL,
                              null=True, blank=True, related_name='assets')
     created_at = models.DateTimeField(auto_now_add=True)

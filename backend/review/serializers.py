@@ -102,7 +102,8 @@ class AssetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Asset
-        fields = ('id', 'asset_name', 'url', 'user',
+        fields = ('id', 'asset_name', 'url', 'height', 'width',
+                  'asset_format', 'duration', 'frame_rate','resource_type', 'user',
                   'created_at', 'updated_at')
         read_only_fields = ('id', 'created_at', 'updated_at', 'user')
 

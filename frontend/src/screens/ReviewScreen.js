@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Col, ListGroup, Row } from 'react-bootstrap';
+import { Col, ListGroup, Row, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Loader from '../components/Loader';
@@ -7,6 +7,7 @@ import Message from '../components/Message';
 import FeedbackList from '../components/FeedbackList';
 import ReactPlayerComp from '../components/ReactPlayerComp';
 import FeedbackForm from '../components/FeedbackForm';
+import MediaInfoBar from '../components/MediaInfoBar';
 
 import { listReviewDetails } from '../actions/reviewActions';
 import { listFeedbacks } from '../actions/feedbackActions';
@@ -17,6 +18,7 @@ import {
 } from '../constants/feedbackConstants';
 import { REVIEW_DETAILS_RESET } from '../constants/reviewConstants';
 import { MEDIA_DETAILS_RESET } from '../constants/mediaConstants';
+import VideoUpload from '../components/VideoUpload';
 
 const ReviewScreen = ({ match }) => {
   const dispatch = useDispatch();
@@ -60,6 +62,11 @@ const ReviewScreen = ({ match }) => {
         <Message variant='danger'>{error}</Message>
       ) : (
         <>
+          <Row>
+            <Col>
+              <MediaInfoBar />
+            </Col>
+          </Row>
           <Row className='top-row'>
             <Col>
               <ReactPlayerComp url={url} />
@@ -67,31 +74,6 @@ const ReviewScreen = ({ match }) => {
             </Col>
             <Col md={4}>
               <FeedbackList />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <div
-                style={{
-                  borderRadius: '0.25rem',
-                  border: '1px solid #303030',
-                  marginBottom: '10px',
-                }}
-              >
-                <span
-                  className='material-icons-round'
-                  style={{
-                    fontSize: '20px',
-                    transform: 'translate(2px, 4px)',
-                    color: '#375A7F',
-                  }}
-                >
-                  theaters
-                </span>
-                <span style={{ padding: '0.3rem', color: '#888888' }}>
-                  &nbsp;Media Name Here
-                </span>
-              </div>
             </Col>
           </Row>
           <Row>
@@ -112,6 +94,16 @@ const ReviewScreen = ({ match }) => {
                 </ListGroup>
               </Col>
             )}
+            <Col md={4} className='text-center'>
+              <VideoUpload />
+              <Button
+                variant='outline-info'
+                style={{ minHeight: '6rem', width: '49%' }}
+              >
+                <span className='material-icons-round'>people</span>
+                <h6>Collaborators</h6>
+              </Button>{' '}
+            </Col>
           </Row>
         </>
       )}

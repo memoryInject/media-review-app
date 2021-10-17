@@ -44,7 +44,7 @@ const FeedbackList = () => {
   };
 
   const getHeight = () => {
-    return height ? `${height + 177}px` : '70vh';
+    return height ? `${height + 176}px` : '70vh';
   };
 
   const seekToHandler = (time) => {
@@ -64,6 +64,7 @@ const FeedbackList = () => {
           paddingTop: '0.3rem',
           color: '#888888',
         }}
+        className='text-center'
       >
         Feedback
       </h6>
