@@ -28,7 +28,8 @@ class MediaField(serializers.RelatedField):
             'asset': {
                 'id': value.asset.id,
                 'name': value.asset.asset_name,
-                'url': value.asset.url
+                'url': value.asset.url,
+                'image_url': value.asset.image_url,
             }
         }
         return fields
@@ -103,7 +104,7 @@ class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asset
         fields = ('id', 'asset_name', 'url', 'height', 'width',
-                  'asset_format', 'duration', 'frame_rate','resource_type', 'user',
+                  'asset_format', 'duration', 'frame_rate','resource_type','image_url', 'user',
                   'created_at', 'updated_at')
         read_only_fields = ('id', 'created_at', 'updated_at', 'user')
 

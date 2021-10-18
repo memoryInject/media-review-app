@@ -15,9 +15,7 @@ import axios from 'axios';
 import Loader from './Loader';
 import Message from './Message';
 
-import { createAsset } from '../actions/assetActions';
 import { createMedia, updateMedia } from '../actions/mediaActions';
-import { ASSET_CREATE_RESET } from '../constants/assetConstants';
 import {
   MEDIA_CREATE_RESET,
   MEDIA_UPDATE_RESET,
@@ -48,9 +46,6 @@ const VideoUpload = () => {
   const reviewDetails = useSelector((state) => state.reviewDetails);
   const { review } = reviewDetails;
 
-  const assetCreate = useSelector((state) => state.assetCreate);
-  const { loading, error, asset } = assetCreate;
-
   const mediaCreate = useSelector((state) => state.mediaCreate);
   const { loading: mediaLoading, error: mediaError, media } = mediaCreate;
 
@@ -72,29 +67,10 @@ const VideoUpload = () => {
       setProgressMessage('Uploading video it may take a while');
       setMediaName('');
       setMediaVersion(0);
-      dispatch({ type: ASSET_CREATE_RESET });
       dispatch({ type: MEDIA_CREATE_RESET });
       dispatch({ type: MEDIA_UPDATE_RESET });
     }
   }, [showUpload, dispatch]);
-
-  // This will create a new media after the asset creation
-  useEffect(() => {
-    if (asset) {
-      dispatch(
-        createMedia({
-          mediaName: asset.assetName,
-          asset: asset.id,
-          review: review.id,
-          mediaType: asset.resourceType,
-        })
-      );
-
-      dispatch({ type: ASSET_CREATE_RESET });
-      setProgress(85);
-      setProgressMessage('Creating media');
-    }
-  }, [asset, dispatch, review]);
 
   useEffect(() => {
     if (media) {
@@ -136,21 +112,18 @@ const VideoUpload = () => {
           config
         );
 
-        const asset = {
-          assetName: data.originalFilename,
-          url: data.url,
-          height: data.height,
-          width: data.width,
-          assetFormat: data.format,
-          duration: data.duration,
-          frameRate: data.frameRate,
-          resourceType: data.resourceType,
-        };
-        dispatch(createAsset(asset));
+        dispatch(
+          createMedia({
+            mediaName: data.assetName,
+            asset: data.id,
+            review: review.id,
+            mediaType: data.resourceType,
+          })
+        );
       }
       setUploading(false);
       setProgress(70);
-      setProgressMessage('Creating asset');
+      setProgressMessage('Creating media');
     } catch (error) {
       console.log(error);
       setShowButton(true);
@@ -173,8 +146,8 @@ const VideoUpload = () => {
         style={{ minHeight: '6rem', width: '49%' }}
         onClick={() => setShowUpload(true)}
       >
-        <span className='material-icons-round'>computer</span>
-        <h6>Upload from computer</h6>
+        <span className='material-icons-round'>cloud_upload</span>
+        <h6>Upload</h6>
       </Button>{' '}
       <Offcanvas
         show={showUpload}
@@ -192,14 +165,13 @@ const VideoUpload = () => {
             style={{ paddingTop: '10vh' }}
           >
             <Col md={10}>
-              {(uploading || loading || mediaLoading) && (
+              {(uploading || mediaLoading) && (
                 <>
                   <h6 className='text-center loading'>{progressMessage}</h6>
                   <ProgressBar animated now={progress} />
                 </>
               )}
               {mediaUpdateLoading && <Loader />}
-              {error && <Message>{error}</Message>}
               {mediaError && <Message>{mediaError}</Message>}
               {mediaUpdateError && <Message>{mediaUpdateError}</Message>}
               {successMessage && (

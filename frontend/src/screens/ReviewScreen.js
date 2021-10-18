@@ -19,6 +19,7 @@ import {
 import { REVIEW_DETAILS_RESET } from '../constants/reviewConstants';
 import { MEDIA_DETAILS_RESET } from '../constants/mediaConstants';
 import VideoUpload from '../components/VideoUpload';
+import Playlist from '../components/Playlist';
 
 const ReviewScreen = ({ match }) => {
   const dispatch = useDispatch();
@@ -78,20 +79,21 @@ const ReviewScreen = ({ match }) => {
           </Row>
           <Row>
             {review && (
-              <Col>
+              <Col md={8}>
+                <Playlist />
                 {/*<h6>PLAYLIST</h6>*/}
-                <ListGroup horizontal='md'>
-                  {review.media.map((m, idx) => (
-                    <ListGroup.Item
-                      style={{ minHeight: '6rem' }}
-                      key={idx}
-                      action
-                      onClick={() => mediaHandler(m)}
-                    >
-                      {m.mediaName}
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
+                {/*<ListGroup horizontal='md'>*/}
+                  {/*{review.media.map((m, idx) => (*/}
+                    {/*<ListGroup.Item*/}
+                      {/*style={{ minHeight: '6rem' }}*/}
+                      {/*key={idx}*/}
+                      {/*action*/}
+                      {/*onClick={() => mediaHandler(m)}*/}
+                    {/*>*/}
+                      {/*{m.mediaName}*/}
+                    {/*</ListGroup.Item>*/}
+                  {/*))}*/}
+                {/*</ListGroup>*/}
               </Col>
             )}
             <Col md={4} className='text-center'>
@@ -101,7 +103,7 @@ const ReviewScreen = ({ match }) => {
                 style={{ minHeight: '6rem', width: '49%' }}
               >
                 <span className='material-icons-round'>people</span>
-                <h6>Collaborators</h6>
+                <h6>Members</h6>
               </Button>{' '}
             </Col>
           </Row>
