@@ -5,6 +5,8 @@ import ReactPlayer from 'react-player';
 import screenfull from 'screenfull';
 import { useDispatch, useSelector } from 'react-redux';
 
+import Loader from '../components/Loader';
+import Message from '../components/Message';
 import AnnotationCanvas from '../components/AnnotationCanvas';
 
 import {
@@ -16,7 +18,7 @@ import {
 } from '../actions/playerActions';
 import AnnotationImages from './AnnotationImages';
 
-const ReactPlayerComp = ({ url }) => {
+const ReactPlayerComp = () => {
   // React Player states
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.8);
@@ -37,7 +39,7 @@ const ReactPlayerComp = ({ url }) => {
   const dispatch = useDispatch();
 
   const playerDetails = useSelector((state) => state.playerDetails);
-  const { seekTo, height, width, top } = playerDetails;
+  const { seekTo, top } = playerDetails;
 
   const annotationDeatils = useSelector((state) => state.annotationDeatils);
   const { active } = annotationDeatils;
@@ -45,9 +47,12 @@ const ReactPlayerComp = ({ url }) => {
   const feedbackList = useSelector((state) => state.feedbackList);
   const { feedbacks } = feedbackList;
 
+  const mediaDetails = useSelector((state) => state.mediaDetails);
+  const { media, loading, error } = mediaDetails;
+
   // For jumpto specific feedback when user click the feeedback
   useEffect(() => {
-    if (seekTo !== -1) {
+    if (seekTo !== -1 && player.current) {
       setPlaying(false);
       setSeeking(true);
       player.current.seekTo(seekTo, 'seconds');
@@ -225,28 +230,50 @@ const ReactPlayerComp = ({ url }) => {
     <div className='player-wrapper'>
       <Row>
         <Col style={{ position: 'relative' }}>
-          <ReactPlayer
-            url={url}
-            width='100%'
-            height='100%'
-            ref={player}
-            playing={playing}
-            controls={false}
-            light={false}
-            loop={loop}
-            playbackRate={1.0}
-            volume={volume}
-            muted={muted}
-            onReady={onReadyHandler}
-            onPlay={handlePlay}
-            onPause={handlePause}
-            onEnded={handleEnded}
-            onError={(e) => console.log('onError', e)}
-            onProgress={handleProgress}
-            onDuration={handleDuration}
-            progressInterval={1}
-            style={{ backgroundColor: 'black' }}
-          />
+          {error && <Message>{error}</Message>}
+          {loading && (
+            <>
+              <div
+                style={{
+                  zIndex: '12',
+                  height: '15vh',
+                  width: '100%',
+                }}
+              ></div>
+              <Loader />
+              <div
+                style={{
+                  zIndex: '12',
+                  height: '15vh',
+                  width: '100%',
+                }}
+              ></div>
+            </>
+          )}
+          {media && media.asset.url && (
+            <ReactPlayer
+              url={media.asset.url}
+              width='100%'
+              height='100%'
+              ref={player}
+              playing={playing}
+              controls={false}
+              light={false}
+              loop={loop}
+              playbackRate={1.0}
+              volume={volume}
+              muted={muted}
+              onReady={onReadyHandler}
+              onPlay={handlePlay}
+              onPause={handlePause}
+              onEnded={handleEnded}
+              onError={(e) => console.log('onError', e)}
+              onProgress={handleProgress}
+              onDuration={handleDuration}
+              progressInterval={1}
+              style={{ backgroundColor: 'black' }}
+            />
+          )}
           <div
             style={{
               position: 'absolute',
@@ -466,7 +493,11 @@ const ReactPlayerComp = ({ url }) => {
             {/*Time Duration End*/}
           </Col>
 
-          <Col md={2} xs={3} style={{ position: 'relative' , marginLeft: '0.3rem'}}>
+          <Col
+            md={2}
+            xs={3}
+            style={{ position: 'relative', marginLeft: '0.3rem' }}
+          >
             {/*Full Screen Button*/}
             <div
               className='noselect text-end'
@@ -485,6 +516,7 @@ const ReactPlayerComp = ({ url }) => {
                 </span>
               ) : (
                 <>
+                  {/*Display Annotation Button*/}
                   <span
                     onClick={showAnnotaionImageHandler}
                     className='material-icons-round noselect'

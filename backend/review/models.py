@@ -44,7 +44,7 @@ class Asset(models.Model):
     asset_format = models.CharField(max_length=100, blank=True, null=True)
     duration = models.FloatField(blank=True, null=True)
     frame_rate = models.FloatField(blank=True, null=True)
-    resource_type = models.CharField(max_length=100, blank=True, null=True) 
+    resource_type = models.CharField(max_length=100, blank=True, null=True)
     image_url = models.CharField(max_length=500, blank=True, null=True)
 
     user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL,

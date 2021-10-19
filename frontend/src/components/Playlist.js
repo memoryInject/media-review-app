@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { ListGroup, Card, Image } from 'react-bootstrap';
+import { Image } from 'react-bootstrap';
+import {listMediaDetails} from '../actions/mediaActions';
+import {listFeedbacks} from '../actions/feedbackActions';
+import {FEEDBACK_CREATE_RESET} from '../constants/feedbackConstants';
 
 const Playlist = () => {
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
   const mediaDetails = useSelector((state) => state.mediaDetails);
   const { media } = mediaDetails;
 
@@ -11,7 +14,7 @@ const Playlist = () => {
   const { review } = reviewDetails;
 
   const playerDetails = useSelector((state) => state.playerDetails);
-  const { height, width } = playerDetails;
+  const { width } = playerDetails;
   const url =
     'https://images.unsplash.com/photo-1470217957101-da7150b9b681?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2148&q=80';
 
@@ -32,6 +35,22 @@ const Playlist = () => {
   const scroll = (scrollOffset) => {
     playlist.current.scrollLeft += scrollOffset;
   };
+
+  const mediaHandler = (media) => {
+    dispatch(listMediaDetails(media.id));
+    dispatch(listFeedbacks(media.id));
+    dispatch({ type: FEEDBACK_CREATE_RESET });
+  };
+
+  const styleDefault = {
+    height: '83px',
+    opacity: '0.5',
+    filter: 'grayscale(60%)',
+  }
+
+  const styleSelect= {
+    height: '83px',
+  }
 
   return (
     <>
@@ -62,12 +81,13 @@ const Playlist = () => {
                 cursor: 'pointer',
               }}
               className='noselect'
+              onClick={()=>mediaHandler(m)}
             >
               <Image
                 variant='top'
                 src={m.asset.imageUrl}
                 //src={url}
-                style={{ height: '83px' }}
+                style={media && media.id === m.id ? styleSelect : styleDefault}
               />
             </div>
           ))}

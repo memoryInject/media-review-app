@@ -50,8 +50,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path(API + 'auth/', include('user.urls')),
     path(API + 'review/', include('review.urls')),
-    path(API + 'upload/', include('upload.urls') ),
-    path(API + 'cloud/', include('cloud.urls') ),
+    path(API + 'upload/', include('upload.urls')),
+    path(API + 'cloud/', include('cloud.urls')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

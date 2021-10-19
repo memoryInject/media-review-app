@@ -5,3 +5,4 @@ exclude =
   manage.py,
   settings.py,
   __temp__.py,
+  cloud/views.py,
