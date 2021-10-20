@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import {
   Button,
@@ -7,21 +8,37 @@ import {
   Tooltip,
   Form,
   ListGroup,
+  ToastContainer,
+  Toast,
 } from 'react-bootstrap';
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import getError from '../utils/getError';
+import Loader from './Loader';
+import Message from './Message';
 
 const Collaborators = () => {
   const [showCollaborators, setShowCollaborators] = useState(false);
   const [collabInfo, setCollabInfo] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [email, setEmail] = useState('');
+  const [sendInvitaion, setSendInvitation] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   const reviewDetails = useSelector((state) => state.reviewDetails);
   const { review } = reviewDetails;
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   useEffect(() => {
     setCollabInfo(null);
     setShowForm(false);
+    setEmail('');
+    setSendInvitation(false);
+    setErrorMessage('');
   }, [showCollaborators]);
 
   const collabInfoHandler = (collab) => {
@@ -34,9 +51,31 @@ const Collaborators = () => {
     setCollabInfo(null);
   };
 
-  const invitationHandler = (e) => {
+  const invitationHandler = async (e) => {
     e.preventDefault();
-    console.log('hello');
+
+    setSendInvitation(true);
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${userInfo.key}`,
+      },
+    };
+
+    try {
+      if (email) {
+        await axios.post('/api/v1/auth/invite/', { email }, config);
+      }
+
+      setToastMessage(`Email successfully send to ${email}`);
+      setSendInvitation(false);
+      setShowToast(true);
+      setShowCollaborators(false);
+    } catch (error) {
+      setSendInvitation(false);
+      setErrorMessage(getError(error));
+    }
   };
 
   return (
@@ -96,6 +135,8 @@ const Collaborators = () => {
                 </div>
               ))}
           </div>
+
+          {/*Add collaborator button*/}
           <div className='py-3'>
             <OverlayTrigger
               placement='bottom'
@@ -103,18 +144,20 @@ const Collaborators = () => {
             >
               <Button
                 variant='outline-info'
-                style={{ borderRadius: '50px', width: '50px', height: '50px' }}
+                style={{ borderRadius: '42px', width: '42px', height: '42px' }}
                 onClick={() => addCollabHandler()}
               >
                 <span
                   className='material-icons-round'
-                  style={{ transform: 'translate(0, 2px)' }}
+                  style={{ transform: 'translate(-5px, 2px)' }}
                 >
                   person_add
                 </span>
               </Button>
             </OverlayTrigger>
           </div>
+
+          {/*Show collaborator info when click the profile*/}
           {collabInfo && (
             <>
               <ListGroup as='ol'>
@@ -179,27 +222,57 @@ const Collaborators = () => {
             </>
           )}
 
-          {showForm && (
-            <Form onSubmit={invitationHandler} className='py-3'>
-              <Form.Group className='mb-3' controlId='formBasicEmail'>
-                <Form.Label>
-                  {' '}
-                  Send an email invitation to add a collaborator
-                </Form.Label>
-                <Form.Control type='email' placeholder='Enter email' />
-                <Form.Text className='text-muted'>
-                  The invitation contains all the information about how to sign
-                  up on this review: {review.reviewName}
-                </Form.Text>
-              </Form.Group>
+          {/*Email invitation form to add new collaborator*/}
+          {sendInvitaion ? (
+            <Loader />
+          ) : (
+            showForm && (
+              <>
+                {errorMessage && <Message>{errorMessage}</Message>}
+                <Form onSubmit={invitationHandler} className='py-3'>
+                  <Form.Group className='mb-3' controlId='formBasicEmail'>
+                    <Form.Label>
+                      {' '}
+                      Send an email invitation to add a collaborator
+                    </Form.Label>
+                    <Form.Control
+                      type='email'
+                      placeholder='Enter email'
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <Form.Text className='text-muted'>
+                      The invitation contains all the information about how to
+                      sign up on this review: {review.reviewName}
+                    </Form.Text>
+                  </Form.Group>
 
-              <Button variant='primary' type='submit'>
-                Send invitation
-              </Button>
-            </Form>
+                  <Button variant='primary' type='submit'>
+                    Send invitation
+                  </Button>
+                </Form>
+              </>
+            )
           )}
         </Offcanvas.Body>
       </Offcanvas>
+      {/*Success toast after the invitation send*/}
+      <ToastContainer position='top-end' className='p-3'>
+        <Toast
+          onClose={() => setShowToast(false)}
+          show={showToast}
+          delay={3000}
+          autohide
+          bg='success'
+        >
+          <Toast.Header>
+            <span className='material-icons-round'>movie</span>
+            <strong className='me-auto'>&nbsp;Media-Review</strong>
+            <small className='text-muted'>just now</small>
+          </Toast.Header>
+          <Toast.Body>{toastMessage}</Toast.Body>
+        </Toast>
+      </ToastContainer>
     </>
   );
 };

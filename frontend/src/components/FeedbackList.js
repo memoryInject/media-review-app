@@ -1,19 +1,23 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+
+import getFormattedFeedbacks from '../utils/getFormattedFeedbacks';
 import {
   FEEDBACK_LIST_RESET,
   FEEDBACK_CREATE_RESET,
+  FEEDBACK_ACTIVE_RESET,
 } from '../constants/feedbackConstants';
 import Loader from './Loader';
 import Message from './Message';
 import { seekToPlayer } from '../actions/playerActions';
+import {activeFeedback, replyFeedback} from '../actions/feedbackActions';
 
 const FeedbackList = () => {
   const dispatch = useDispatch();
 
   const feedbackList = useSelector((state) => state.feedbackList);
-  const { loading, error, feedbacks } = feedbackList;
+  const { loading, error, feedbacks, active } = feedbackList;
 
   const feedbackCreate = useSelector((state) => state.feedbackCreate);
   let {
@@ -27,16 +31,25 @@ const FeedbackList = () => {
 
   const cardFocus = useRef(null);
 
+  const [formattedFeedbacks, setFormattedFeedbacks] = useState([]);
+
   useEffect(() => {
     if (feedbackCreateSuccess) {
       dispatch(seekToPlayer(feedbackCreateSuccess.mediaTime));
-      if (cardFocus && cardFocus.current) {
-        cardFocus.current.scrollIntoView();
-      }
     } else {
       dispatch(seekToPlayer(0.0));
     }
+
+    if (feedbacks) {
+      setFormattedFeedbacks(getFormattedFeedbacks(feedbacks));
+    }
   }, [dispatch, feedbacks, feedbackCreateSuccess]);
+
+  useEffect(() => {
+    if (cardFocus && cardFocus.current) {
+      cardFocus.current.scrollIntoView();
+    }
+  }, [formattedFeedbacks, active]);
 
   const getTime = (seconds) => {
     const secToDate = new Date(seconds * 1000).toISOString();
@@ -47,9 +60,14 @@ const FeedbackList = () => {
     return height ? `${height + 176}px` : '70vh';
   };
 
-  const seekToHandler = (time) => {
-    dispatch(seekToPlayer(time));
+  const seekToHandler = (feedback) => {
+    dispatch(seekToPlayer(feedback.mediaTime));
+    dispatch({type: FEEDBACK_ACTIVE_RESET})
   };
+
+  const replyHandler = (feedbackToReplay) => {
+    dispatch(replyFeedback(feedbackToReplay))
+  }
 
   return (
     <div
@@ -85,19 +103,20 @@ const FeedbackList = () => {
       >
         {loading ? <Loader /> : error && <Message>{error}</Message>}
         {feedbacks &&
-          feedbacks.map((f, idx) => (
+          formattedFeedbacks.map((f, idx) => (
             <Card
               key={idx}
               className='my-2'
               style={{
                 backgroundColor: `${
-                  feedbackCreateSuccess && feedbackCreateSuccess.id === f.id
+                  active && active.id === f.id
                     ? '#2C343A'
                     : '#3A3A3A'
                 }`,
+                marginLeft: `${f.depth * 5}%`,
               }}
             >
-              {feedbackCreateSuccess && feedbackCreateSuccess.id === f.id && (
+              {active && active.id === f.id && (
                 <span ref={cardFocus}></span>
               )}
               <Card.Body>
@@ -108,7 +127,7 @@ const FeedbackList = () => {
                     fontSize: '0.8rem',
                     cursor: 'pointer',
                   }}
-                  onClick={() => seekToHandler(f.mediaTime)}
+                  onClick={() => seekToHandler(f)}
                 >
                   {getTime(f.mediaTime)}
                   {f.annotationUrl && (
@@ -136,6 +155,7 @@ const FeedbackList = () => {
                   textDecoration: 'none',
                   fontSize: '14px',
                 }}
+                onClick={()=>replyHandler(f)}
               >
                 REPLY
               </Card.Link>

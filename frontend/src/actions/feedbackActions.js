@@ -6,6 +6,8 @@ const {
   FEEDBACK_CREATE_REQUEST,
   FEEDBACK_CREATE_SUCCESS,
   FEEDBACK_CREATE_FAIL,
+  FEEDBACK_REPLY_REQUEST,
+  FEEDBACK_ACTIVE_REQUEST,
 } = require('../constants/feedbackConstants');
 const { default: getError } = require('../utils/getError');
 
@@ -72,4 +74,12 @@ export const createFeedback = (feedback) => async (dispatch, getState) => {
       payload: getError(error),
     });
   }
+};
+
+export const replyFeedback = (feedbackToReplay) => {
+  return { type: FEEDBACK_REPLY_REQUEST, payload: feedbackToReplay };
+};
+
+export const activeFeedback = (feedback) => {
+  return { type: FEEDBACK_ACTIVE_REQUEST, payload: feedback };
 };

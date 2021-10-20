@@ -17,7 +17,7 @@ const Header = () => {
   return (
     <header >
       <Navbar bg='dark' variant='dark' expand='lg' style={{height: '4rem'}}>
-        <Container>
+        <Container fluid>
           <LinkContainer to='/'>
             <Navbar.Brand>
               <span

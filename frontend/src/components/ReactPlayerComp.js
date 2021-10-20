@@ -17,6 +17,7 @@ import {
   seekToPlayer,
 } from '../actions/playerActions';
 import AnnotationImages from './AnnotationImages';
+import { activeFeedback } from '../actions/feedbackActions';
 
 const ReactPlayerComp = () => {
   // React Player states
@@ -200,8 +201,6 @@ const ReactPlayerComp = () => {
 
   const volMouseDownSliderHandler = (e) => {
     setVolSeeking(true);
-    const value = getVolSliderValue(e);
-    console.log(value);
   };
 
   const volMouseUpSliderHandler = (e) => {
@@ -224,6 +223,11 @@ const ReactPlayerComp = () => {
 
   const showAnnotaionImageHandler = () => {
     setShowAnnotationImage(!showAnnotaionImage);
+  };
+
+  const annotaionBarHandler = (feedback) => {
+    dispatch(seekToPlayer(feedback.mediaTime));
+    dispatch(activeFeedback(feedback));
   };
 
   return (
@@ -331,7 +335,7 @@ const ReactPlayerComp = () => {
                     }px`,
                     cursor: 'pointer',
                   }}
-                  onClick={() => dispatch(seekToPlayer(f.mediaTime))}
+                  onClick={() => annotaionBarHandler(f)}
                 >
                   <span
                     className='material-icons-round'

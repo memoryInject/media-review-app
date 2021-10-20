@@ -5,7 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import Loader from './Loader';
 import Message from './Message';
 
-import { listFeedbacks, createFeedback } from '../actions/feedbackActions';
+import {
+  listFeedbacks,
+  createFeedback,
+  activeFeedback,
+} from '../actions/feedbackActions';
 import {
   drawableTypeAnnotation,
   isEmptyAnnotation,
@@ -16,6 +20,8 @@ import {
   ANNOTATION_IMAGE_EXPORT,
   ANNOTATION_IMAGE_RESET,
 } from '../constants/annotationConstants';
+
+import { FEEDBACK_REPLY_RESET } from '../constants/feedbackConstants';
 
 const FeedbackForm = () => {
   const [feedback, setFeedback] = useState('');
@@ -37,27 +43,43 @@ const FeedbackForm = () => {
     loading: feedbackCreateLoading,
     error: feedbackCreateError,
     feedback: feedbackCreateSuccess,
+    reply,
   } = feedbackCreate;
 
   useEffect(() => {
     if (image && image.url) {
-      dispatch(
-        createFeedback({
-          media: media.id,
-          content: feedback,
-          mediaTime: currentTime,
-          annotationUrl: image.url,
-        })
-      );
+      if (reply) {
+        dispatch(
+          createFeedback({
+            media: media.id,
+            content: feedback,
+            mediaTime: currentTime,
+            annotationUrl: image.url,
+            parent: reply.id,
+          })
+        );
+      } else {
+        dispatch(
+          createFeedback({
+            media: media.id,
+            content: feedback,
+            mediaTime: currentTime,
+            annotationUrl: image.url,
+          })
+        );
+      }
       dispatch({ type: ANNOTATION_IMAGE_RESET });
     }
-  }, [dispatch, image, feedback, media, currentTime]);
+  }, [dispatch, image, feedback, media, currentTime, reply]);
 
   useEffect(() => {
     if (feedbackCreateSuccess && media) {
       dispatch(listFeedbacks(media.id));
       dispatch(isEmptyAnnotation(true));
       dispatch(setActiveAnnotation(false));
+      dispatch({ type: FEEDBACK_REPLY_RESET });
+      setFeedback('');
+      dispatch(activeFeedback(feedbackCreateSuccess));
     }
   }, [feedbackCreateSuccess, media, dispatch]);
 
@@ -65,6 +87,15 @@ const FeedbackForm = () => {
     e.preventDefault();
     if (!isEmpty) {
       dispatch({ type: ANNOTATION_IMAGE_EXPORT });
+    } else if (reply) {
+      dispatch(
+        createFeedback({
+          media: media.id,
+          content: feedback,
+          mediaTime: currentTime,
+          parent: reply.id,
+        })
+      );
     } else {
       dispatch(
         createFeedback({
@@ -112,7 +143,11 @@ const FeedbackForm = () => {
                 <Form.Control
                   as='textarea'
                   rows={2}
-                  placeholder='Write feedback...'
+                  placeholder={
+                    reply
+                      ? `@${reply.user.username}: ${reply.content}`
+                      : 'Write feedback...'
+                  }
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
                   className='text-white'
@@ -130,8 +165,22 @@ const FeedbackForm = () => {
                   marginTop: '0.65rem',
                 }}
               >
-                POST
+                {reply ? 'REPLY' : 'POST'}
               </Button>
+              {reply && (
+                <Button
+                  type='submit'
+                  variant='danger'
+                  className='float-end'
+                  style={{
+                    marginTop: '0.65rem',
+                    marginRight: '0.35rem',
+                  }}
+                  onClick={() => dispatch({ type: FEEDBACK_REPLY_RESET })}
+                >
+                  CLOSE
+                </Button>
+              )}
             </Form>
 
             {/*Canvas Draw Options Start*/}

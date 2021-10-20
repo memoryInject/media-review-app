@@ -234,7 +234,18 @@ class FeedbackList(generics.ListCreateAPIView):
                 raise serializers.ValidationError(
                     {"detail": "Media does not exists"})
 
-            serializer.save(user=self.request.user, media=media)
+            # Check if the request has parent
+            if self.request.data.get('parent'):
+                try:
+                    feedback = Feedback.objects.get(
+                        id=self.request.data.get('parent'))
+                except ObjectDoesNotExist:
+                    raise serializers.ValidationError(
+                        {"detail": "Parent feedback does not exists"})
+                serializer.save(
+                    user=self.request.user, media=media, parent=feedback)
+            else:
+                serializer.save(user=self.request.user, media=media)
 
     def get_queryset(self):
         user = self.request.user
