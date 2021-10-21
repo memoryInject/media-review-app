@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card } from 'react-bootstrap';
+import { Card, Row, Col, ToastContainer, Toast } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import getFormattedFeedbacks from '../utils/getFormattedFeedbacks';
@@ -7,17 +7,35 @@ import {
   FEEDBACK_LIST_RESET,
   FEEDBACK_CREATE_RESET,
   FEEDBACK_ACTIVE_RESET,
+  FEEDBACK_TO_UPDATE,
+  FEEDBACK_REPLY_RESET,
+  FEEDBACK_TO_UPDATE_RESET,
+  FEEDBACK_TO_DELETE,
+  FEEDBACK_DELETE_RESET,
+  FEEDBACK_TO_DELETE_RESET,
 } from '../constants/feedbackConstants';
 import Loader from './Loader';
 import Message from './Message';
+import ModalDialog from './ModalDialog';
 import { seekToPlayer } from '../actions/playerActions';
-import {activeFeedback, replyFeedback} from '../actions/feedbackActions';
+import {
+  activeFeedback,
+  deleteFeedback,
+  listFeedbacks,
+  replyFeedback,
+} from '../actions/feedbackActions';
 
 const FeedbackList = () => {
   const dispatch = useDispatch();
 
   const feedbackList = useSelector((state) => state.feedbackList);
   const { loading, error, feedbacks, active } = feedbackList;
+
+  const mediaDetails = useSelector((state) => state.mediaDetails);
+  let { media } = mediaDetails;
+
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
 
   const feedbackCreate = useSelector((state) => state.feedbackCreate);
   let {
@@ -26,12 +44,24 @@ const FeedbackList = () => {
     feedback: feedbackCreateSuccess,
   } = feedbackCreate;
 
+  const feedbackDelete = useSelector((state) => state.feedbackDelete);
+  let {
+    loading: feedbackDeleteLoading,
+    error: feedbackDeleteError,
+    success: feedbackDeleteSuccess,
+    delete: feedbackToDelete,
+  } = feedbackDelete;
+
   const playerDetails = useSelector((state) => state.playerDetails);
   const { height } = playerDetails;
 
   const cardFocus = useRef(null);
 
   const [formattedFeedbacks, setFormattedFeedbacks] = useState([]);
+
+  const [showModal, setShowModal] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     if (feedbackCreateSuccess) {
@@ -51,6 +81,23 @@ const FeedbackList = () => {
     }
   }, [formattedFeedbacks, active]);
 
+  // Run this after the confirm from ModelDialog
+  useEffect(() => {
+    if (confirmDelete && feedbackToDelete) {
+      dispatch(deleteFeedback(feedbackToDelete.id));
+      setConfirmDelete(false);
+    }
+  }, [confirmDelete, feedbackToDelete, dispatch]);
+
+  // Run this after the feedback delete is successful
+  useEffect(() => {
+    if (feedbackDeleteSuccess && media) {
+      dispatch({ type: FEEDBACK_DELETE_RESET });
+      dispatch(listFeedbacks(media.id));
+      setShowToast(true);
+    }
+  }, [feedbackDeleteSuccess, media, dispatch]);
+
   const getTime = (seconds) => {
     const secToDate = new Date(seconds * 1000).toISOString();
     return `${secToDate.substr(14, 5)}:${secToDate.substr(20, 2)}`;
@@ -62,12 +109,29 @@ const FeedbackList = () => {
 
   const seekToHandler = (feedback) => {
     dispatch(seekToPlayer(feedback.mediaTime));
-    dispatch({type: FEEDBACK_ACTIVE_RESET})
+    dispatch({ type: FEEDBACK_ACTIVE_RESET });
   };
 
   const replyHandler = (feedbackToReplay) => {
-    dispatch(replyFeedback(feedbackToReplay))
-  }
+    dispatch(replyFeedback(feedbackToReplay));
+    dispatch({ type: FEEDBACK_TO_UPDATE_RESET });
+    seekToHandler(feedbackToReplay);
+  };
+
+  const updateFeedbackHandler = (feedback) => {
+    dispatch({ type: FEEDBACK_TO_UPDATE, payload: feedback });
+    dispatch({ type: FEEDBACK_REPLY_RESET });
+    seekToHandler(feedback);
+  };
+
+  const confirmDeleteHandler = () => {
+    setConfirmDelete(true);
+  };
+
+  const deleteFeedbackHandler = (feedback) => {
+    dispatch({ type: FEEDBACK_TO_DELETE, payload: feedback });
+    setShowModal(true);
+  };
 
   return (
     <div
@@ -101,7 +165,12 @@ const FeedbackList = () => {
           position: 'relative',
         }}
       >
-        {loading ? <Loader /> : error && <Message>{error}</Message>}
+        {loading || feedbackDeleteLoading ? (
+          <Loader />
+        ) : (
+          error && <Message>{error}</Message>
+        )}
+        {feedbackDeleteError && <Message>{feedbackDeleteError}</Message>}
         {feedbacks &&
           formattedFeedbacks.map((f, idx) => (
             <Card
@@ -109,16 +178,12 @@ const FeedbackList = () => {
               className='my-2'
               style={{
                 backgroundColor: `${
-                  active && active.id === f.id
-                    ? '#2C343A'
-                    : '#3A3A3A'
+                  active && active.id === f.id ? '#2C343A' : '#3A3A3A'
                 }`,
                 marginLeft: `${f.depth * 5}%`,
               }}
             >
-              {active && active.id === f.id && (
-                <span ref={cardFocus}></span>
-              )}
+              {active && active.id === f.id && <span ref={cardFocus}></span>}
               <Card.Body>
                 <Card.Title>{f.user.username}</Card.Title>
                 <Card.Subtitle
@@ -146,22 +211,76 @@ const FeedbackList = () => {
                 </Card.Subtitle>
                 <Card.Text>{f.content}</Card.Text>
               </Card.Body>
-              <Card.Link
-                href='#'
-                className='text-end'
-                style={{
-                  paddingRight: '0.6rem',
-                  paddingBottom: '0.2rem',
-                  textDecoration: 'none',
-                  fontSize: '14px',
-                }}
-                onClick={()=>replyHandler(f)}
-              >
-                REPLY
-              </Card.Link>
+              <Row>
+                {user && user.id === f.user.id && (
+                  <Col>
+                    <span
+                      className='material-icons-round text-light feed-edit'
+                      style={{
+                        transform: 'translate(8px, 0px)',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => updateFeedbackHandler(f)}
+                    >
+                      edit_note
+                    </span>
+                    <span
+                      className='material-icons-round text-light feed-del'
+                      style={{
+                        transform: 'translate(8px, 0px)',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => deleteFeedbackHandler(f)}
+                    >
+                      delete_forever
+                    </span>
+                  </Col>
+                )}
+                <Col className='text-end'>
+                  <Card.Link
+                    href='#'
+                    style={{
+                      paddingRight: '0.6rem',
+                      paddingLeft: '0.6rem',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                    }}
+                    onClick={() => replyHandler(f)}
+                  >
+                    REPLY
+                  </Card.Link>
+                </Col>
+              </Row>
             </Card>
           ))}
       </div>
+
+      {/*Confirm dialog for feedback delete*/}
+      <ModalDialog
+        title='Delete Feedback'
+        content={'This will delete the feedback forever!'}
+        state={showModal}
+        stateCallback={setShowModal}
+        callback={confirmDeleteHandler}
+      />
+
+      {/*Feedback delete successful toast*/}
+      <ToastContainer position='top-end' className='p-3'>
+        <Toast
+          onClose={() => setShowToast(false)}
+          show={showToast}
+          delay={3000}
+          autohide
+          bg='success'
+        >
+          <Toast.Header>
+            <span className='material-icons-round'>movie</span>
+            <strong className='me-auto'>&nbsp;Media-Review</strong>
+            <small className='text-muted'>just now</small>
+          </Toast.Header>
+          <Toast.Body>Feedback successfully deleted.</Toast.Body>
+        </Toast>
+      </ToastContainer>
     </div>
   );
 };

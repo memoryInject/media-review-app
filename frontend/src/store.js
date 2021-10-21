@@ -17,7 +17,9 @@ import {
 } from './reducers/mediaReducers';
 import {
   feedbackCreateReducer,
+  feedbackDeleteReducer,
   feedbackListReducer,
+  feedbackUpdateReducer,
 } from './reducers/feedbackReducers';
 import { playerDeatilsReducer } from './reducers/playerReducers';
 import { annotationDeatilsReducer } from './reducers/annotationReducers';
@@ -34,6 +36,8 @@ const reducer = combineReducers({
   mediaUpdate: mediaUpdateReducer,
   feedbackList: feedbackListReducer,
   feedbackCreate: feedbackCreateReducer,
+  feedbackUpdate: feedbackUpdateReducer,
+  feedbackDelete: feedbackDeleteReducer,
   playerDetails: playerDeatilsReducer,
   annotationDeatils: annotationDeatilsReducer,
   assetCreate: assetCreateReducer,

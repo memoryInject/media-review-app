@@ -40,6 +40,9 @@ const getFormattedFeedbacks = (data) => {
       let parent = map[`id${f.parent.id}`];
       if (parent.child) {
         parent.child.push(f);
+        parent.child.sort(function (a, b) {
+          return new Date(b.updatedAt) - new Date(a.updatedAt);
+        });
       } else {
         parent.child = [];
         parent.child.push(f);
@@ -49,7 +52,6 @@ const getFormattedFeedbacks = (data) => {
 
   var flattened = [];
   getFlattened(result, flattened, 0);
-
   return flattened;
 };
 

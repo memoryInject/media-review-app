@@ -125,6 +125,14 @@ main {
   min-height: 8rem;
 }
 
+.feed-edit:hover {
+    color: #3498DB !important;
+}
+
+.feed-del:hover {
+    color: #E74C3C !important;
+}
+
 /* loading dots */
 
 .loading:after {
@@ -173,6 +181,10 @@ main {
 	border-radius: 10px;
 	/*background-color: #3A3A3A;*/
   background-color: #606060;
+}
+
+#style-1::-webkit-scrollbar:horizontal {
+  display: none;
 }
 
 .outer-wrapper::-webkit-scrollbar {

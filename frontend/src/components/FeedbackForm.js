@@ -9,6 +9,7 @@ import {
   listFeedbacks,
   createFeedback,
   activeFeedback,
+  updateFeedback,
 } from '../actions/feedbackActions';
 import {
   drawableTypeAnnotation,
@@ -21,7 +22,10 @@ import {
   ANNOTATION_IMAGE_RESET,
 } from '../constants/annotationConstants';
 
-import { FEEDBACK_REPLY_RESET } from '../constants/feedbackConstants';
+import {
+  FEEDBACK_REPLY_RESET,
+  FEEDBACK_TO_UPDATE_RESET,
+} from '../constants/feedbackConstants';
 
 const FeedbackForm = () => {
   const [feedback, setFeedback] = useState('');
@@ -46,9 +50,19 @@ const FeedbackForm = () => {
     reply,
   } = feedbackCreate;
 
+  const feedbackUpdate = useSelector((state) => state.feedbackUpdate);
+  let {
+    loading: feedbackUpdateLoading,
+    error: feedbackUpdateError,
+    feedback: feedbackUpdateSuccess,
+    update,
+  } = feedbackUpdate;
+
+  // Run this if there is an annotaion exists
   useEffect(() => {
     if (image && image.url) {
       if (reply) {
+        // Create a reply with annotaion image
         dispatch(
           createFeedback({
             media: media.id,
@@ -58,7 +72,17 @@ const FeedbackForm = () => {
             parent: reply.id,
           })
         );
+      } else if (update) {
+        // Update an existing feedback with annotaion image
+        dispatch(
+          updateFeedback(update.id, {
+            content: feedback,
+            mediaTime: currentTime,
+            annotationUrl: image.url,
+          })
+        );
       } else {
+        // Create a new feedback with annotation image
         dispatch(
           createFeedback({
             media: media.id,
@@ -70,8 +94,9 @@ const FeedbackForm = () => {
       }
       dispatch({ type: ANNOTATION_IMAGE_RESET });
     }
-  }, [dispatch, image, feedback, media, currentTime, reply]);
+  }, [dispatch, image, feedback, media, currentTime, reply, update]);
 
+  // Run this after a new feedback created successful
   useEffect(() => {
     if (feedbackCreateSuccess && media) {
       dispatch(listFeedbacks(media.id));
@@ -83,11 +108,31 @@ const FeedbackForm = () => {
     }
   }, [feedbackCreateSuccess, media, dispatch]);
 
+  // Run this after feedback updated successful
+  useEffect(() => {
+    if (feedbackUpdateSuccess && media) {
+      dispatch(listFeedbacks(media.id));
+      dispatch(isEmptyAnnotation(true));
+      dispatch(setActiveAnnotation(false));
+      dispatch({ type: FEEDBACK_TO_UPDATE_RESET });
+      setFeedback('');
+      dispatch(activeFeedback(feedbackUpdateSuccess));
+    }
+  }, [feedbackUpdateSuccess, media, dispatch]);
+
+  useEffect(() => {
+    if (update) {
+      setFeedback(update.content);
+    }
+  }, [update]);
+
   const submitHandler = (e) => {
     e.preventDefault();
     if (!isEmpty) {
+      // Check if the annotaion exists
       dispatch({ type: ANNOTATION_IMAGE_EXPORT });
     } else if (reply) {
+      // If the action is reply to a feedback
       dispatch(
         createFeedback({
           media: media.id,
@@ -96,7 +141,16 @@ const FeedbackForm = () => {
           parent: reply.id,
         })
       );
+    } else if (update) {
+      // If the action is update an existing feedback
+      dispatch(
+        updateFeedback(update.id, {
+          content: feedback,
+          mediaTime: currentTime,
+        })
+      );
     } else {
+      // If the action is creating a new feedback
       dispatch(
         createFeedback({
           media: media.id,
@@ -105,6 +159,11 @@ const FeedbackForm = () => {
         })
       );
     }
+  };
+
+  const updateCloseHandler = () => {
+    dispatch({ type: FEEDBACK_TO_UPDATE_RESET });
+    setFeedback('');
   };
 
   const drawableTypeHandler = (type) => {
@@ -124,6 +183,8 @@ const FeedbackForm = () => {
       {image && image.loading ? (
         <Loader />
       ) : feedbackCreateLoading ? (
+        <Loader />
+      ) : feedbackUpdateLoading ? (
         <Loader />
       ) : (
         <Col md={10}>
@@ -159,15 +220,15 @@ const FeedbackForm = () => {
               </Form.Group>
               <Button
                 type='submit'
-                variant='primary'
+                variant={update ? 'success' : 'primary'}
                 className='float-end'
                 style={{
                   marginTop: '0.65rem',
                 }}
               >
-                {reply ? 'REPLY' : 'POST'}
+                {reply ? 'REPLY' : update ? 'UPDATE' : 'POST'}
               </Button>
-              {reply && (
+              {reply ? (
                 <Button
                   type='submit'
                   variant='danger'
@@ -180,6 +241,21 @@ const FeedbackForm = () => {
                 >
                   CLOSE
                 </Button>
+              ) : (
+                update && (
+                  <Button
+                    type='submit'
+                    variant='danger'
+                    className='float-end'
+                    style={{
+                      marginTop: '0.65rem',
+                      marginRight: '0.35rem',
+                    }}
+                    onClick={updateCloseHandler}
+                  >
+                    CLOSE
+                  </Button>
+                )
               )}
             </Form>
 
@@ -357,17 +433,23 @@ const FeedbackForm = () => {
             </div>
             {/*Color Palette end*/}
             {/*Canvas Draw Options End*/}
+            {/*Error Messages start*/}
             {image && image.error ? (
               <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
                 <Message>{image.error}</Message>
               </div>
+            ) : feedbackCreateError ? (
+              <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
+                <Message>Error {feedbackCreateError}</Message>
+              </div>
             ) : (
-              feedbackCreateError && (
+              feedbackUpdateError && (
                 <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
-                  <Message>Error {feedbackCreateError}</Message>
+                  <Message>Error {feedbackUpdateError}</Message>
                 </div>
               )
             )}
+            {/*Error Messages end*/}
           </div>
         </Col>
       )}
