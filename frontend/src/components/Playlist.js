@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Image } from 'react-bootstrap';
-import {listMediaDetails} from '../actions/mediaActions';
-import {listFeedbacks} from '../actions/feedbackActions';
-import {FEEDBACK_CREATE_RESET} from '../constants/feedbackConstants';
+import { listMediaDetails } from '../actions/mediaActions';
+import { listFeedbacks } from '../actions/feedbackActions';
+import { FEEDBACK_CREATE_RESET } from '../constants/feedbackConstants';
+import { listPlaylistDetails } from '../actions/playlistActions';
+import {PLAYLIST_DETAILS_RESET} from '../constants/playlistConstants';
 
 const Playlist = () => {
   const dispatch = useDispatch();
@@ -13,6 +15,9 @@ const Playlist = () => {
   const reviewDetails = useSelector((state) => state.reviewDetails);
   const { review } = reviewDetails;
 
+  const playlistDetails = useSelector((state) => state.playlistDetails);
+  const { playlist: playlistDetail } = playlistDetails;
+
   const playerDetails = useSelector((state) => state.playerDetails);
   const { width } = playerDetails;
   const url =
@@ -20,6 +25,15 @@ const Playlist = () => {
 
   const playlist = useRef(null);
   const [showButton, setShowButton] = useState(false);
+
+  // Refresh playlist if review exists
+  useEffect(() => {
+    if (review) {
+      dispatch(listPlaylistDetails());
+    }
+
+    return () => dispatch({type: PLAYLIST_DETAILS_RESET})
+  }, [review, dispatch]);
 
   useEffect(() => {
     if (
@@ -46,11 +60,42 @@ const Playlist = () => {
     height: '83px',
     opacity: '0.5',
     filter: 'grayscale(60%)',
-  }
+  };
 
-  const styleSelect= {
+  const styleSelect = {
     height: '83px',
-  }
+  };
+
+  const getStyle = (p) => {
+    let style = media && media.id === p.id ? styleSelect : styleDefault;
+    if (p.child && media && style === styleDefault) {
+      const ids = p.child.map((c) => c.id);
+      style = ids.includes(media.id) ? styleSelect : styleDefault;
+    }
+    return style;
+  };
+
+  const getMultiIcon = (p) => {
+    // Check if the current media is same as the p (It's a parent, first version)
+    let bgColor = media && media.id === p.id ? 'bg-warning' : 'bg-dark';
+    if (p.child && media) {
+      const ids = p.child.map((c) => c.id);
+      bgColor = ids.includes(media.id) ? 'bg-info' : bgColor;
+      // This will check the current media is the last version
+      bgColor = media.id === p.child[0].id ? 'bg-success' : bgColor;
+    }
+
+    return (
+      <span
+        style={{ position: 'absolute', top: '0px', left: '0px' }}
+        className={`material-icons-round ${bgColor}`}
+      >
+        {`${
+          p.child.length < 9 ? `filter_${p.child.length + 1}` : 'filter_9_plus'
+        }`}
+      </span>
+    );
+  };
 
   return (
     <>
@@ -70,27 +115,32 @@ const Playlist = () => {
             minHeight: '95px',
           }}
         >
-          {review.media.map((m, idx) => (
-          //{Array.from(Array(4).keys()).map((m, idx) => (
-            <div
-              key={idx}
-              style={{
-                height: '5rem',
-                display: 'inline',
-                borderRadius: '0px',
-                cursor: 'pointer',
-              }}
-              className='noselect'
-              onClick={()=>mediaHandler(m)}
-            >
-              <Image
-                variant='top'
-                src={m.asset.imageUrl}
-                //src={url}
-                style={media && media.id === m.id ? styleSelect : styleDefault}
-              />
-            </div>
-          ))}
+          {playlistDetail &&
+            playlistDetail.map((p, idx) => (
+              //{Array.from(Array(4).keys()).map((p, idx) => (
+              <div
+                key={idx}
+                style={{
+                  height: '5rem',
+                  display: 'inline',
+                  borderRadius: '0px',
+                  cursor: 'pointer',
+                  position: 'relative',
+                }}
+                className='noselect'
+                onClick={() =>
+                  p.child ? mediaHandler(p.child[0]) : mediaHandler(p)
+                }
+              >
+                <Image
+                  variant='top'
+                  src={p.child ? p.child[0].asset.imageUrl : p.asset.imageUrl}
+                  //src={url}
+                  style={getStyle(p)}
+                />
+                {p.child && getMultiIcon(p)}
+              </div>
+            ))}
         </div>
         {showButton && (
           <>

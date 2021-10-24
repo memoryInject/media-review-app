@@ -110,6 +110,7 @@ class UploadDummyView(APIView):
 
         if request.data.get('video'):
             time.sleep(2)
+            print(request.user)
             data = {
                 'asset_name': uploaded_data['original_filename'],
                 'url': uploaded_data['url'],
@@ -120,12 +121,12 @@ class UploadDummyView(APIView):
                 'frame_rate': uploaded_data['frame_rate'],
                 'resource_type': uploaded_data['resource_type'],
                 'image_url': CloudinaryVideo(
-                    uploaded_data['public_id'] + '.jpg').build_url()
+                    uploaded_data['public_id'] + '.jpg').build_url(),
             }
 
             serializer = AssetSerializer(data=data)
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(user=request.user)
 
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED)

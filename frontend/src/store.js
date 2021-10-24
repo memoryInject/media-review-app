@@ -24,6 +24,7 @@ import {
 import { playerDeatilsReducer } from './reducers/playerReducers';
 import { annotationDeatilsReducer } from './reducers/annotationReducers';
 import { assetCreateReducer } from './reducers/assetReducers';
+import {playlistDetailsReducer} from './reducers/playlistReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -31,6 +32,7 @@ const reducer = combineReducers({
   projectList: projectListReducer,
   projectDetails: projectDetailsReducer,
   reviewDetails: reviewDetailsReducer,
+  playlistDetails: playlistDetailsReducer,
   mediaDetails: mediaDetailsReducer,
   mediaCreate: mediaCreateReducer,
   mediaUpdate: mediaUpdateReducer,

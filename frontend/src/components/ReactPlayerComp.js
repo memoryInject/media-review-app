@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Spinner } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
 import screenfull from 'screenfull';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,12 +15,15 @@ import {
   topPlayer,
   currentTimePlayer,
   seekToPlayer,
+  videoSizePlayer,
 } from '../actions/playerActions';
 import AnnotationImages from './AnnotationImages';
 import { activeFeedback } from '../actions/feedbackActions';
 
 const ReactPlayerComp = () => {
   // React Player states
+  const [showPlayer, setShowPlayer] = useState(false);
+  const [adjHeight, setAdjHeight] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.8);
   const [muted, setMuted] = useState(false);
@@ -40,7 +43,7 @@ const ReactPlayerComp = () => {
   const dispatch = useDispatch();
 
   const playerDetails = useSelector((state) => state.playerDetails);
-  const { seekTo, top } = playerDetails;
+  const { seekTo, top, height, width, videoSize } = playerDetails;
 
   const annotationDeatils = useSelector((state) => state.annotationDeatils);
   const { active } = annotationDeatils;
@@ -50,6 +53,23 @@ const ReactPlayerComp = () => {
 
   const mediaDetails = useSelector((state) => state.mediaDetails);
   const { media, loading, error } = mediaDetails;
+
+  // While loading hide the player
+  useEffect(() => {
+    if (loading) {
+      setShowPlayer(false);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    if (!media) {
+      setShowPlayer(false);
+    } else {
+      dispatch(heightPlayer(player.current.wrapper.clientHeight));
+      dispatch(widthPlayer(player.current.wrapper.clientWidth));
+      dispatch(topPlayer(player.current.wrapper.offsetTop));
+    }
+  }, [media, dispatch]);
 
   // For jumpto specific feedback when user click the feeedback
   useEffect(() => {
@@ -66,7 +86,7 @@ const ReactPlayerComp = () => {
 
   useEffect(() => {
     const updateWindowDimensions = () => {
-      if (player) {
+      if (player && player.current) {
         dispatch(heightPlayer(player.current.wrapper.clientHeight));
         dispatch(widthPlayer(player.current.wrapper.clientWidth));
         dispatch(topPlayer(player.current.wrapper.offsetTop));
@@ -78,11 +98,47 @@ const ReactPlayerComp = () => {
     return () => window.removeEventListener('resize', updateWindowDimensions);
   }, [dispatch]);
 
-  const onReadyHandler = () => {
-    if (player) {
+  useEffect(() => {
+    if (player.current) {
       dispatch(heightPlayer(player.current.wrapper.clientHeight));
       dispatch(widthPlayer(player.current.wrapper.clientWidth));
       dispatch(topPlayer(player.current.wrapper.offsetTop));
+      if (
+        player.current.wrapper.childNodes[0] &&
+        progressHolder.current.clientWidth
+      ) {
+        const videoHeight = player.current.wrapper.childNodes[0].videoHeight;
+        const videoWidth = player.current.wrapper.childNodes[0].videoWidth;
+        const factor = progressHolder.current.clientWidth / videoWidth;
+        setAdjHeight(Math.ceil(videoHeight * factor));
+        dispatch(
+          videoSizePlayer({
+            height: videoHeight,
+            width: videoWidth,
+            scaleFactor: factor,
+          })
+        );
+      }
+    }
+  }, [height, player, showPlayer, dispatch]);
+
+  const onReadyHandler = () => {
+    if (player) {
+      const videoHeight = player.current.wrapper.childNodes[0].videoHeight;
+      const videoWidth = player.current.wrapper.childNodes[0].videoWidth;
+      const factor = progressHolder.current.clientWidth / videoWidth;
+      setAdjHeight(Math.ceil(videoHeight * factor));
+      setTimeout(() => setShowPlayer(true), 510);
+      dispatch(heightPlayer(player.current.wrapper.clientHeight));
+      dispatch(widthPlayer(player.current.wrapper.clientWidth));
+      dispatch(topPlayer(player.current.wrapper.offsetTop));
+      dispatch(
+        videoSizePlayer({
+          height: videoHeight,
+          width: videoWidth,
+          scaleFactor: factor,
+        })
+      );
     }
   };
 
@@ -235,23 +291,35 @@ const ReactPlayerComp = () => {
       <Row>
         <Col style={{ position: 'relative' }}>
           {error && <Message>{error}</Message>}
-          {loading && (
+          {true && (
             <>
               <div
                 style={{
                   zIndex: '12',
-                  height: '15vh',
-                  width: '100%',
+                  minHeight: '80px',
+                  height: `${adjHeight + 5.5}px`,
+                  width: `${
+                    progressHolder &&
+                    progressHolder.current &&
+                    progressHolder.current.clientWidth
+                  }px`,
+                  transition: 'all 0.5s ease-in-out',
+                  backgroundColor: 'rgba(255, 0, 0, 0)',
+                  top: `${top}px`,
+                  display: `${showPlayer ? 'none' : 'block'}`,
+                  position: 'relative',
                 }}
-              ></div>
-              <Loader />
-              <div
-                style={{
-                  zIndex: '12',
-                  height: '15vh',
-                  width: '100%',
-                }}
-              ></div>
+                className='text-center'
+              >
+                <Spinner
+                  animation='border'
+                  style={{
+                    marginTop: `${adjHeight / 2}px`,
+                    transition: 'all 0.5s ease-in-out',
+                  }}
+                />
+              </div>
+              {/*<Loader />*/}
             </>
           )}
           {media && media.asset.url && (
@@ -275,7 +343,12 @@ const ReactPlayerComp = () => {
               onProgress={handleProgress}
               onDuration={handleDuration}
               progressInterval={1}
-              style={{ backgroundColor: 'black' }}
+              style={{
+                backgroundColor: 'black',
+                display: `${showPlayer ? 'block' : 'none'}`,
+                //display: 'none',
+                transition: 'all 0.5s ease-in-out',
+              }}
             />
           )}
           <div
@@ -318,6 +391,7 @@ const ReactPlayerComp = () => {
 
             {/*Annotation bar start*/}
             {feedbacks &&
+              showPlayer &&
               feedbacks.map((f, idx) => (
                 <div
                   key={idx}
@@ -353,6 +427,7 @@ const ReactPlayerComp = () => {
         </Col>
       </Row>
 
+      {/*Playback controls start*/}
       <div
         className='playback-controls'
         style={{
@@ -436,52 +511,56 @@ const ReactPlayerComp = () => {
               </span>
             </div>
 
-            {/*Volume Button*/}
             <div
-              onClick={(e) => volMuteHandler(e)}
-              className='noselect'
-              style={{
-                cursor: 'pointer',
-                display: 'inline',
-                padding: '0.25rem',
-              }}
+              className='noselect d-none d-sm-none d-md-inline'
+              style={{ display: 'inline' }}
             >
-              {muted ? (
-                <span className='material-icons-round' style={styleSize}>
-                  volume_off
-                </span>
-              ) : volume > 0.5 ? (
-                <span className='material-icons-round' style={styleSize}>
-                  volume_up
-                </span>
-              ) : volume > 0.1 ? (
-                <span className='material-icons-round' style={styleSize}>
-                  volume_down
-                </span>
-              ) : (
-                <span className='material-icons-round' style={styleSize}>
-                  volume_mute
-                </span>
-              )}
-            </div>
+              {/*Volume Button*/}
+              <div
+                onClick={(e) => volMuteHandler(e)}
+                style={{
+                  cursor: 'pointer',
+                  display: 'inline',
+                  padding: '0.25rem',
+                }}
+              >
+                {muted ? (
+                  <span className='material-icons-round' style={styleSize}>
+                    volume_off
+                  </span>
+                ) : volume > 0.5 ? (
+                  <span className='material-icons-round' style={styleSize}>
+                    volume_up
+                  </span>
+                ) : volume > 0.1 ? (
+                  <span className='material-icons-round' style={styleSize}>
+                    volume_down
+                  </span>
+                ) : (
+                  <span className='material-icons-round' style={styleSize}>
+                    volume_mute
+                  </span>
+                )}
+              </div>
 
-            {/*Volume controller*/}
-            <div
-              className='rp-volume-control noselect'
-              onMouseDown={(e) => volMouseDownSliderHandler(e)}
-              onMouseUp={(e) => volMouseUpSliderHandler(e)}
-              onMouseMove={(e) => volMouseMoveSliderHandler(e)}
-              ref={volProgressHolder}
-            >
-              <div className='rp-volume-holder'>
-                <div
-                  className='rp-volume-range'
-                  style={{ width: `${muted ? 0 : volume * 100}%` }}
-                ></div>
+              {/*Volume controller*/}
+              <div
+                className='rp-volume-control noselect'
+                onMouseDown={(e) => volMouseDownSliderHandler(e)}
+                onMouseUp={(e) => volMouseUpSliderHandler(e)}
+                onMouseMove={(e) => volMouseMoveSliderHandler(e)}
+                ref={volProgressHolder}
+              >
+                <div className='rp-volume-holder'>
+                  <div
+                    className='rp-volume-range'
+                    style={{ width: `${muted ? 0 : volume * 100}%` }}
+                  ></div>
+                </div>
               </div>
             </div>
           </Col>
-          <Col md={3} className='d-none d-sm-block d-sm-none d-md-block'>
+          <Col md={3} xs={3}>
             {/*Time Duration Start*/}
             <div
               style={{
@@ -491,8 +570,8 @@ const ReactPlayerComp = () => {
               }}
             >
               <span>{getTimeFormat(seconds)}</span>
-              <span>&nbsp;/&nbsp;</span>
-              <span>{getTimeFormat(duration)}</span>
+              <span className='d-none d-sm-none d-md-inline'>&nbsp;/&nbsp;</span>
+              <span className='d-none d-sm-none d-md-inline'>{getTimeFormat(duration)}</span>
             </div>
             {/*Time Duration End*/}
           </Col>
@@ -546,6 +625,7 @@ const ReactPlayerComp = () => {
           </Col>
         </Row>
       </div>
+      {/*Playback controls end*/}
     </div>
   );
 };

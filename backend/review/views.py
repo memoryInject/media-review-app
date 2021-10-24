@@ -172,8 +172,19 @@ class MediaList(generics.ListCreateAPIView):
             raise serializers.ValidationError(
                 {"detail": "Asset does not exists"})
 
-        serializer.save(user=self.request.user,
-                        review=review, asset=asset)
+        # Check if the request contains parent for adding new version
+        if self.request.data.get('parent'):
+            try:
+                parent = Media.objects.get(id=self.request.data.get('parent'))
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(
+                    {"detail": "Parent media does not exists"})
+
+            serializer.save(user=self.request.user,
+                            review=review, asset=asset, parent=parent)
+        else:
+            serializer.save(user=self.request.user,
+                            review=review, asset=asset)
 
     def get_queryset(self):
         user = self.request.user

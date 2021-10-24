@@ -25,6 +25,8 @@ class MediaField(serializers.RelatedField):
         fields = {
             'id': value.id,
             'media_name': value.media_name,
+            'version': value.version,
+            'parent': value.parent.id if value.parent else value.parent,
             'asset': {
                 'id': value.asset.id,
                 'name': value.asset.asset_name,

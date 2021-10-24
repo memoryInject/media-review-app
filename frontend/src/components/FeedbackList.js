@@ -53,7 +53,7 @@ const FeedbackList = () => {
   } = feedbackDelete;
 
   const playerDetails = useSelector((state) => state.playerDetails);
-  const { height } = playerDetails;
+  const { height, videoSize } = playerDetails;
 
   const cardFocus = useRef(null);
 
@@ -103,8 +103,13 @@ const FeedbackList = () => {
     return `${secToDate.substr(14, 5)}:${secToDate.substr(20, 2)}`;
   };
 
+  // This will calculate the hight of the feedback list
   const getHeight = () => {
-    return height ? `${height + 176}px` : '70vh';
+    return height
+      ? `${height + 243}px`
+      : videoSize
+      ? `${Math.ceil(videoSize.height * videoSize.scaleFactor) + 243 + 6}px`
+      : `${80 + 243}px`;
   };
 
   const seekToHandler = (feedback) => {
@@ -163,6 +168,7 @@ const FeedbackList = () => {
           minHeight: getHeight(),
           overflow: 'auto',
           position: 'relative',
+          transition: 'all 0.5s ease-in-out',
         }}
       >
         {loading || feedbackDeleteLoading ? (

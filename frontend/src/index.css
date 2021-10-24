@@ -209,15 +209,20 @@ main {
   display: none;
 }
 
-@media (min-width: 1200px) {
-    .container{
-        max-width: 90%;
-    }
+.row [class*='col-'] {
+    transition: all 0.5s ease-in-out;
 }
 
-@media (min-width: 2560px) {
-    .container{
-        max-width: 65%;
-    }
-}
+
+/*@media (min-width: 1200px) {*/
+    /*.container{*/
+        /*max-width: 1140px;*/
+    /*}*/
+/*}*/
+
+/*@media (min-width: 2560px) {*/
+    /*.container{*/
+        /*max-width: 1320px;*/
+    /*}*/
+/*}*/
 

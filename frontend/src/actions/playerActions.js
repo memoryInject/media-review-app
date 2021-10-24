@@ -4,6 +4,7 @@ import {
   PLAYER_WIDTH,
   PLAYER_CURRENT_TIME,
   PLAYER_SEEK_TO,
+  PLAYER_VIDEO_SIZE,
 } from '../constants/playerConstants';
 
 export const heightPlayer = (height) => {
@@ -38,5 +39,12 @@ export const seekToPlayer = (time) => {
   return {
     type: PLAYER_SEEK_TO,
     payload: time,
+  };
+};
+
+export const videoSizePlayer = (size) => {
+  return {
+    type: PLAYER_VIDEO_SIZE,
+    payload: size,
   };
 };

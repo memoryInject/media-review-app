@@ -17,7 +17,10 @@ import Message from './Message';
 
 import { createMedia, updateMedia } from '../actions/mediaActions';
 import {
+  MEDIA_CREATE_HIDE,
+  MEDIA_CREATE_PARENT_RESET,
   MEDIA_CREATE_RESET,
+  MEDIA_CREATE_SHOW,
   MEDIA_UPDATE_RESET,
 } from '../constants/mediaConstants';
 
@@ -26,7 +29,6 @@ const VideoUpload = () => {
 
   const filePick = useRef(null);
 
-  const [showUpload, setShowUpload] = useState(false);
   const [showButton, setShowButton] = useState(true);
   const [showUpdate, setShowUpdate] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -47,7 +49,13 @@ const VideoUpload = () => {
   const { review } = reviewDetails;
 
   const mediaCreate = useSelector((state) => state.mediaCreate);
-  const { loading: mediaLoading, error: mediaError, media } = mediaCreate;
+  const {
+    loading: mediaLoading,
+    error: mediaError,
+    media,
+    parent,
+    show,
+  } = mediaCreate;
 
   const mediaUpdate = useSelector((state) => state.mediaUpdate);
   const {
@@ -58,7 +66,7 @@ const VideoUpload = () => {
 
   // Reset all the state when open upload window
   useEffect(() => {
-    if (showUpload) {
+    if (show) {
       setShowButton(true);
       setUploading(false);
       setShowUpdate(false);
@@ -70,7 +78,7 @@ const VideoUpload = () => {
       dispatch({ type: MEDIA_CREATE_RESET });
       dispatch({ type: MEDIA_UPDATE_RESET });
     }
-  }, [showUpload, dispatch]);
+  }, [show, dispatch]);
 
   useEffect(() => {
     if (media) {
@@ -83,10 +91,16 @@ const VideoUpload = () => {
 
   useEffect(() => {
     if (mediaUpdated) {
-      setShowUpload(false);
+      dispatch({ type: MEDIA_CREATE_HIDE });
+      dispatch({ type: MEDIA_CREATE_PARENT_RESET });
       setShowToast(true);
     }
-  }, [mediaUpdated]);
+  }, [mediaUpdated, dispatch]);
+
+  const closeUIHandler = () => {
+    dispatch({ type: MEDIA_CREATE_HIDE });
+    dispatch({ type: MEDIA_CREATE_PARENT_RESET });
+  };
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
@@ -112,14 +126,29 @@ const VideoUpload = () => {
           config
         );
 
-        dispatch(
-          createMedia({
-            mediaName: data.assetName,
-            asset: data.id,
-            review: review.id,
-            mediaType: data.resourceType,
-          })
-        );
+        if (parent) {
+          dispatch(
+            createMedia({
+              mediaName: data.assetName,
+              asset: data.id,
+              review: review.id,
+              mediaType: data.resourceType,
+              parent: parent.id,
+              version: parent.child
+                ? parent.child[0].version + 1
+                : parent.version + 1,
+            })
+          );
+        } else {
+          dispatch(
+            createMedia({
+              mediaName: data.assetName,
+              asset: data.id,
+              review: review.id,
+              mediaType: data.resourceType,
+            })
+          );
+        }
       }
       setUploading(false);
       setProgress(70);
@@ -144,22 +173,30 @@ const VideoUpload = () => {
       <Button
         variant='outline-success'
         style={{ minHeight: '6rem', width: '49%' }}
-        onClick={() => setShowUpload(true)}
+        onClick={() => dispatch({ type: MEDIA_CREATE_SHOW })}
       >
         <span className='material-icons-round'>cloud_upload</span>
         <h6>Upload</h6>
       </Button>{' '}
-      <Offcanvas
-        show={showUpload}
-        onHide={() => setShowUpload(false)}
-        placement='end'
-      >
+      <Offcanvas show={show} onHide={closeUIHandler} placement='end'>
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Upload Video</Offcanvas.Title>
+          <Offcanvas.Title>
+            {parent ? 'Upload New Version' : 'Upload Video'}
+          </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          Upload video file from computer, after process successful update media
-          details.
+          {parent
+            ? `Upload new version of "${parent.mediaName}" from computer, after process successful update media details.`
+            : 'Upload video file from computer, after process successful update media details.'}
+          {parent && <hr />}
+          {parent && <h6 className='text-secondary'>Parent:</h6>}
+          {parent && <h6 className='text-light'>{parent.mediaName}</h6>}
+          {parent && <h6 className='text-secondary'>Latest version:</h6>}
+          {parent && (
+            <h6 className='text-light'>
+              {parent.child ? parent.child[0].version : parent.version}
+            </h6>
+          )}
           <Row
             className='justify-content-md-center'
             style={{ paddingTop: '10vh' }}
@@ -199,7 +236,7 @@ const VideoUpload = () => {
                       arrow_right_alt
                     </span>
                     <span className='material-icons-round'>cloud_upload</span>
-                    <h6>Upload Video</h6>
+                    <h6>{parent ? 'Upload New Version' : 'Upload Video'}</h6>
                   </Button>
                 )}
                 {showUpdate && (
@@ -232,7 +269,7 @@ const VideoUpload = () => {
                       <Button
                         style={{ width: '49%' }}
                         variant='danger'
-                        onClick={() => setShowUpload(false)}
+                        onClick={closeUIHandler}
                       >
                         Cancel
                       </Button>

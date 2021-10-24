@@ -14,7 +14,7 @@ const App = () => {
     <Router>
       <Header />
       <main className='py-3'>
-        <Container fluid>
+        <Container>
           <Route path='/' component={ProjectListScreen} exact />
           <Route path='/login' component={LoginScreen} exact />
           <Route
