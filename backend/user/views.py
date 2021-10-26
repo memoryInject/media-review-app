@@ -21,12 +21,21 @@ from user.permissions import IsAdmin
 from user.utils import is_admin, key_expired
 
 
-# Route: /users/
+# Route: /users/?<s=username>/
 # Access: Admin only
 class UserList(generics.ListAPIView):
     permission_classes = (IsAuthenticated, IsAdmin)
-    queryset = get_user_model().objects.all()
     serializer_class = UserViewSerializer
+
+    def get_queryset(self):
+        queryset = get_user_model().objects.all()
+
+        # Check the search query_params
+        search = self.request.query_params.get('s')
+        if search:
+            return queryset.filter(username__icontains=search)
+
+        return queryset 
 
 
 # Route: /users/<int:pk>/

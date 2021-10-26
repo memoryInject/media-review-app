@@ -24,7 +24,14 @@ import {
 import { playerDeatilsReducer } from './reducers/playerReducers';
 import { annotationDeatilsReducer } from './reducers/annotationReducers';
 import { assetCreateReducer } from './reducers/assetReducers';
-import {playlistDetailsReducer} from './reducers/playlistReducers';
+import { playlistDetailsReducer } from './reducers/playlistReducers';
+import {
+  collaboratorUIReducer,
+  collaboratorListReducer,
+  collaboratorDetailsReducer,
+  collaboratorUsersReducer,
+  collaboratorInvitationReducer,
+} from './reducers/collaboratorReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -32,6 +39,11 @@ const reducer = combineReducers({
   projectList: projectListReducer,
   projectDetails: projectDetailsReducer,
   reviewDetails: reviewDetailsReducer,
+  collaboratorUI: collaboratorUIReducer,
+  collaboratorList: collaboratorListReducer,
+  collaboratorDetails: collaboratorDetailsReducer,
+  collaboratorUsers: collaboratorUsersReducer,
+  collaboratorInvitation: collaboratorInvitationReducer,
   playlistDetails: playlistDetailsReducer,
   mediaDetails: mediaDetailsReducer,
   mediaCreate: mediaCreateReducer,

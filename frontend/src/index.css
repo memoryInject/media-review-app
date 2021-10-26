@@ -133,6 +133,38 @@ main {
     color: #E74C3C !important;
 }
 
+.review-buttons {
+    transition: 0.3s;
+}
+
+.review-button-upload {
+    transition: 0.3s;
+}
+
+.review-button-collaborator {
+    transition: 0.3s;
+}
+
+.review-button-settings {
+    transition: 0.3s;
+}
+
+.review-buttons:hover {
+    background-color: #505050 !important;
+}
+
+.review-buttons:hover .review-button-upload {
+    color: #00BC8C !important;
+}
+
+.review-buttons:hover .review-button-collaborator {
+    color: #3498DB !important;
+}
+
+.review-buttons:hover .review-button-settings {
+    color: #F39C12 !important;
+}
+
 /* loading dots */
 
 .loading:after {

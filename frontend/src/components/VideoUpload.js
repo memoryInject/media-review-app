@@ -174,6 +174,7 @@ const VideoUpload = () => {
         variant='outline-success'
         style={{ minHeight: '6rem', width: '49%' }}
         onClick={() => dispatch({ type: MEDIA_CREATE_SHOW })}
+        className='d-none'
       >
         <span className='material-icons-round'>cloud_upload</span>
         <h6>Upload</h6>

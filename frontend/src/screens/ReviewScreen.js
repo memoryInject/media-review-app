@@ -8,6 +8,7 @@ import FeedbackList from '../components/FeedbackList';
 import ReactPlayerComp from '../components/ReactPlayerComp';
 import FeedbackForm from '../components/FeedbackForm';
 import MediaInfoBar from '../components/MediaInfoBar';
+import ReviewButtons from '../components/ReviewButtons';
 
 import { listReviewDetails } from '../actions/reviewActions';
 import { listFeedbacks } from '../actions/feedbackActions';
@@ -89,11 +90,12 @@ const ReviewScreen = ({ match }) => {
             <Col>
               <Row>
                 {review && (
-                  <Col md={8}>
+                  <Col md={8} className='py-1'>
                     <Playlist />
                   </Col>
                 )}
-                <Col md={4} className='text-center'>
+                <Col md={4} className='text-center py-1'>
+                  <ReviewButtons />
                   <VideoUpload />
                   <Collaborators />
                 </Col>
