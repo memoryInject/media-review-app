@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ToastMessage from './components/ToastMessage';
 import ProjectListScreen from './screens/ProjectListScreen';
 import ReviewListScreen from './screens/ReviewListScreen';
 import ReviewScreen from './screens/ReviewScreen';
@@ -27,6 +28,7 @@ const App = () => {
             path='/projects/:id/reviews/:reviewId'
             component={ReviewScreen}
           />
+          <ToastMessage />
         </Container>
       </main>
       {/*<Footer />*/}

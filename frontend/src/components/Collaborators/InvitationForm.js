@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Spinner, ToastContainer, Toast } from 'react-bootstrap';
+import { Form, Button, Spinner } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
-import { invitationCollaborator, hideUICollaborator } from '../../actions/collaboratorActions';
+import {
+  invitationCollaborator,
+  hideUICollaborator,
+} from '../../actions/collaboratorActions';
 
 import Message from '../Message';
+import {
+  showToast,
+  messageToast,
+  variantToast,
+} from '../../actions/toastActions';
+import {COLLABORATOR_INVITATION_RESET} from '../../constants/collaboratorConstants';
 
 const InvitationForm = () => {
   const dispatch = useDispatch();
 
   const [email, setEmail] = useState('');
-  const [showToast, setShowToast] = useState(false);
 
   const reviewDetails = useSelector((state) => state.reviewDetails);
   const { review } = reviewDetails;
@@ -21,9 +29,12 @@ const InvitationForm = () => {
 
   useEffect(() => {
     if (success) {
-      setShowToast(true);
-      setEmail('')
-      dispatch(hideUICollaborator())
+      dispatch(messageToast('Successfully send email.'));
+      dispatch(variantToast('success'));
+      dispatch(showToast());
+      setEmail('');
+      dispatch({type: COLLABORATOR_INVITATION_RESET})
+      dispatch(hideUICollaborator());
     }
   }, [success, dispatch]);
 
@@ -68,24 +79,6 @@ const InvitationForm = () => {
           </Button>
         )}
       </Form>
-
-      {/*Success toast after the invitation send*/}
-      <ToastContainer position='top-end' className='p-3'>
-        <Toast
-          onClose={() => setShowToast(false)}
-          show={showToast}
-          delay={3000}
-          autohide
-          bg='success'
-        >
-          <Toast.Header>
-            <span className='material-icons-round'>movie</span>
-            <strong className='me-auto'>&nbsp;Media-Review</strong>
-            <small className='text-muted'>just now</small>
-          </Toast.Header>
-          <Toast.Body>Successfully send email.</Toast.Body>
-        </Toast>
-      </ToastContainer>
     </>
   );
 };

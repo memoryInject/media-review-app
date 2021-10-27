@@ -35,7 +35,7 @@ class UserList(generics.ListAPIView):
         if search:
             return queryset.filter(username__icontains=search)
 
-        return queryset 
+        return queryset
 
 
 # Route: /users/<int:pk>/

@@ -31,7 +31,10 @@ import {
   collaboratorDetailsReducer,
   collaboratorUsersReducer,
   collaboratorInvitationReducer,
+  collaboratorAddReducer,
+  collaboratorRemoveReducer,
 } from './reducers/collaboratorReducers';
+import {toastDetailsReducer} from './reducers/toastReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -44,6 +47,8 @@ const reducer = combineReducers({
   collaboratorDetails: collaboratorDetailsReducer,
   collaboratorUsers: collaboratorUsersReducer,
   collaboratorInvitation: collaboratorInvitationReducer,
+  collaboratorAdd: collaboratorAddReducer,
+  collaboratorRemove: collaboratorRemoveReducer,
   playlistDetails: playlistDetailsReducer,
   mediaDetails: mediaDetailsReducer,
   mediaCreate: mediaCreateReducer,
@@ -55,6 +60,7 @@ const reducer = combineReducers({
   playerDetails: playerDeatilsReducer,
   annotationDeatils: annotationDeatilsReducer,
   assetCreate: assetCreateReducer,
+  toastDetails: toastDetailsReducer,
 });
 
 // Config for local storage

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Col, Row, Container } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Loader from '../components/Loader';
@@ -9,22 +9,20 @@ import ReactPlayerComp from '../components/ReactPlayerComp';
 import FeedbackForm from '../components/FeedbackForm';
 import MediaInfoBar from '../components/MediaInfoBar';
 import ReviewButtons from '../components/ReviewButtons';
+import VideoUpload from '../components/VideoUpload';
+import Playlist from '../components/Playlist';
+import Collaborators from '../components/Collaborators';
 
 import { listReviewDetails } from '../actions/reviewActions';
 import { listFeedbacks } from '../actions/feedbackActions';
 import { listMediaDetails } from '../actions/mediaActions';
+import { PLAYER_RESET } from '../constants/playerConstants';
+import { REVIEW_DETAILS_RESET } from '../constants/reviewConstants';
+import { MEDIA_DETAILS_RESET } from '../constants/mediaConstants';
 import {
   FEEDBACK_CREATE_RESET,
   FEEDBACK_LIST_RESET,
 } from '../constants/feedbackConstants';
-import { REVIEW_DETAILS_RESET } from '../constants/reviewConstants';
-import { MEDIA_DETAILS_RESET } from '../constants/mediaConstants';
-import VideoUpload from '../components/VideoUpload';
-import Playlist from '../components/Playlist';
-import Collaborators from '../components/Collaborators';
-import { PLAYLIST_DETAILS_RESET } from '../constants/playlistConstants';
-import { listPlaylistDetails } from '../actions/playlistActions';
-import { PLAYER_RESET } from '../constants/playerConstants';
 
 const ReviewScreen = ({ match }) => {
   const dispatch = useDispatch();
@@ -67,9 +65,6 @@ const ReviewScreen = ({ match }) => {
         <Message variant='danger'>{error}</Message>
       ) : (
         <>
-          <Row>
-            <Col>{/*<MediaInfoBar />*/}</Col>
-          </Row>
           <Row className='top-row flex-fill'>
             <Col className='d-flex flex-column'>
               <div className='vh-75'>
