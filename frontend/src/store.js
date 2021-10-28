@@ -6,8 +6,10 @@ import storage from 'redux-persist/lib/storage';
 
 import { userDetailsReducer, userLoginReducer } from './reducers/userReducers';
 import {
+  projectCreateReducer,
   projectDetailsReducer,
   projectListReducer,
+  projectUploadImageReducer,
 } from './reducers/projectReducers';
 import { reviewDetailsReducer } from './reducers/reviewReducers';
 import {
@@ -41,6 +43,8 @@ const reducer = combineReducers({
   userDetails: userDetailsReducer,
   projectList: projectListReducer,
   projectDetails: projectDetailsReducer,
+  projectUploadImage: projectUploadImageReducer,
+  projectCreate: projectCreateReducer,
   reviewDetails: reviewDetailsReducer,
   collaboratorUI: collaboratorUIReducer,
   collaboratorList: collaboratorListReducer,

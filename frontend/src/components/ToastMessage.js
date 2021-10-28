@@ -11,7 +11,7 @@ const ToastMessage = () => {
   const { showUI, message, variant } = toastDetails;
 
   return (
-    <ToastContainer position='top-end' className='p-3'>
+    <ToastContainer position='bottom-center' className='p-3' style={{zIndex: '300'}}>
       <Toast
         onClose={() => dispatch(hideToast())}
         show={showUI}

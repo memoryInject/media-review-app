@@ -147,12 +147,13 @@ const FeedbackList = () => {
     >
       <h6
         style={{
-          paddingLeft: '0.4rem',
-          paddingTop: '0.3rem',
+          paddingLeft: '0.7rem',
+          paddingTop: '0.0rem',
           color: '#888888',
         }}
-        className='text-center'
+        className='text-start'
       >
+        <span className='material-icons-round' style={{transform: 'translate(-5px, 8px)'}}>chat</span>
         Feedback
       </h6>
       <div

@@ -1,11 +1,28 @@
-import React, { useEffect } from 'react';
-import { Col, Row } from 'react-bootstrap';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Col,
+  Row,
+  Button,
+  Form,
+  FormControl,
+  Modal,
+  Spinner,
+} from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Project from '../components/Project';
-import { listProjects } from '../actions/projectActions';
+import { showToast, messageToast, variantToast } from '../actions/toastActions';
+import {
+  listProjects,
+  createProject,
+  uploadImageProject,
+} from '../actions/projectActions';
+import {
+  PROJECT_CREATE_RESET,
+  PROJECT_UPLOAD_IMAGE_RESET,
+} from '../constants/projectConstants';
 
 const ProjectListScreen = ({ location, history }) => {
   const dispatch = useDispatch();
@@ -16,6 +33,27 @@ const ProjectListScreen = ({ location, history }) => {
   const projectList = useSelector((state) => state.projectList);
   const { loading, error, projects } = projectList;
 
+  const projectCreate = useSelector((state) => state.projectCreate);
+  const {
+    loading: projectCreateLoading,
+    error: projectCreateError,
+    project: projectCreateProject,
+  } = projectCreate;
+
+  const projectUploadImage = useSelector((state) => state.projectUploadImage);
+  const {
+    loading: projectUploadImageLoading,
+    error: projectUploadImageError,
+    image,
+  } = projectUploadImage;
+
+  const formFile = useRef(null);
+
+  const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
+  const [success, setSuccess] = useState(true);
+
   useEffect(() => {
     if (!userInfo) {
       history.push('/login');
@@ -24,9 +62,94 @@ const ProjectListScreen = ({ location, history }) => {
     }
   }, [history, userInfo, dispatch]);
 
+  // This run when the modal form opens
+  useEffect(() => {
+    if (showModal) {
+      dispatch({ type: PROJECT_CREATE_RESET });
+      dispatch({ type: PROJECT_UPLOAD_IMAGE_RESET });
+      setSuccess(false);
+      setMessage('');
+      setName('');
+    }
+  }, [showModal, dispatch]);
+
+  // This run after successfully uploaded the image
+  useEffect(() => {
+    if (image) {
+      dispatch(createProject({ projectName: name, imageUrl: image.url }));
+      dispatch({ type: PROJECT_UPLOAD_IMAGE_RESET });
+    }
+  }, [image, dispatch, name]);
+
+  // This run after successfully created the project
+  useEffect(() => {
+    if (projectCreateProject) {
+      setShowModal(false);
+      setSuccess(true);
+      setMessage('');
+      setName('');
+      dispatch(messageToast('Project created successfully'));
+      dispatch(variantToast('success'));
+      dispatch(showToast(true));
+      dispatch(listProjects());
+      dispatch({ type: PROJECT_CREATE_RESET });
+    }
+  }, [projectCreateProject, dispatch]);
+
+  const submitHandler = () => {
+    if (formFile.current.files[0] && name) {
+      dispatch(uploadImageProject(formFile.current.files[0]));
+    } else if (name) {
+      dispatch(createProject({ projectName: name }));
+    } else {
+      setMessage('Name must not be blank.');
+    }
+  };
+
   return (
     <>
-      <h4>PROJECTS</h4>
+      <Row>
+        <Col md>
+          <h4>
+            <span
+              className='material-icons-round'
+              style={{ transform: 'translate(0, 2px)' }}
+            >
+              library_books
+            </span>
+            &nbsp; Projects
+          </h4>
+        </Col>
+        <Col md style={{ marginBottom: '12px' }}>
+          <Form className='d-flex'>
+            <FormControl
+              type='search'
+              placeholder='Search'
+              className='me-2 text-white'
+              aria-label='Search'
+              style={{
+                backgroundColor: '#3A3A3A',
+                border: '0px',
+              }}
+            />
+            <Button variant='outline-success'>Search</Button>
+          </Form>
+        </Col>
+        <Col className='text-end' md>
+          <Button
+            style={{ paddingTop: '0.35rem', paddingBottom: '0.35rem' }}
+            onClick={() => setShowModal(true)}
+          >
+            <span
+              className='p-0 material-icons-round'
+              style={{ position: 'relative', top: '3px', fontSize: '20px' }}
+            >
+              add
+            </span>
+            &nbsp; CREATE PROJECT
+          </Button>
+        </Col>
+      </Row>
       {loading ? (
         <Loader />
       ) : error ? (
@@ -40,6 +163,88 @@ const ProjectListScreen = ({ location, history }) => {
           ))}
         </Row>
       )}
+
+      {/*Dialog for create project*/}
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        aria-labelledby='contained-modal-title-vcenter'
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id='contained-modal-title-vcenter'>
+            <span
+              className='material-icons-round'
+              style={{ transform: 'translate(0, 4px)' }}
+            >
+              movie
+            </span>
+            &nbsp; Create project
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className='mb-3' controlId='formBasicEmail'>
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type='text'
+                placeholder='Enter project name'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={
+                  projectCreateLoading || projectUploadImageLoading
+                    ? true
+                    : false
+                }
+              />
+            </Form.Group>
+
+            <Form.Group controlId='formFile' className='mb-3'>
+              <Form.Label>
+                Project image<span className='text-muted'> (optional)</span>
+              </Form.Label>
+              <Form.Control
+                type='file'
+                ref={formFile}
+                disabled={
+                  projectCreateLoading || projectUploadImageLoading
+                    ? true
+                    : false
+                }
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        {projectCreateLoading || projectUploadImageLoading ? (
+          <div className='d-flex justify-content-center'>
+            <Spinner
+              animation='border'
+              style={{
+                transition: 'all 0.5s ease-in-out',
+              }}
+            />
+          </div>
+        ) : success ? (
+          <div style={{minHeight: '30px'}}>
+          </div>
+        ) : (
+          <>
+            {projectCreateError && <Message>{projectCreateError}</Message>}
+            {projectUploadImageError && (
+              <Message>{projectUploadImageError}</Message>
+            )}
+            {message && <Message>{message}</Message>}
+            <Modal.Footer>
+              <Button onClick={() => setShowModal(false)} variant='danger'>
+                Close
+              </Button>
+              <Button variant='primary' onClick={submitHandler}>
+                Submit
+              </Button>
+            </Modal.Footer>
+          </>
+        )}
+      </Modal>
     </>
   );
 };

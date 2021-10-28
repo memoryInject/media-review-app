@@ -54,6 +54,26 @@ class UploadVideoView(APIView):
         return Response(
             uploaded_data, status=status.HTTP_201_CREATED)
 
+# Route: /api/v1/cloud/upload/image/
+# Methods: POST
+class UploadImageView(APIView):
+    parser_classes = (MultiPartParser, JSONParser,)
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def post(request):
+        file = request.data.get('image')
+
+        uploaded_data = cloudinary.uploader.upload(
+            file, folder='media_review_app/images/', resource_type='image')
+
+        if uploaded_data.get('error'):
+            return Response(
+                uploaded_data, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            uploaded_data, status=status.HTTP_201_CREATED)
+
 
 # Route: /api/v1/cloud/upload/dummy/
 # Methods: POST

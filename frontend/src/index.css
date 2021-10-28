@@ -165,8 +165,19 @@ main {
     color: #F39C12 !important;
 }
 
-/* loading dots */
+.nav-user-icon {
+    border: 2px solid #00BC8C;
+}
 
+.nav-user-icon:hover {
+    border: 2px solid #008966;
+}
+
+.nav-link::after {
+    display: none;
+}
+
+/* loading dots */
 .loading:after {
   content: ' .';
   animation: dots 1s steps(5, end) infinite;}
