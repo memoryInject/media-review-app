@@ -146,7 +146,7 @@ const ProjectListScreen = ({ location, history }) => {
             >
               add
             </span>
-            &nbsp; CREATE PROJECT
+           CREATE PROJECT
           </Button>
         </Col>
       </Row>
@@ -183,7 +183,7 @@ const ProjectListScreen = ({ location, history }) => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form onSubmit={(e) => e.preventDefault()}>
             <Form.Group className='mb-3' controlId='formBasicEmail'>
               <Form.Label>Name</Form.Label>
               <Form.Control

@@ -16,7 +16,7 @@ const Project = ({ project }) => {
       </Link>
       <Card.Body>
         <Link to={`/projects/${project.id}`} style={{textDecoration: 'none'}}>
-          <Card.Title>{project.projectName}</Card.Title>
+          <Card.Title className='title-card'>{project.projectName}</Card.Title>
         </Link>
       </Card.Body>
     </Card>

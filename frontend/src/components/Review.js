@@ -9,13 +9,16 @@ const Review = ({ review, projectId }) => {
         <Card.Img src={review.imageUrl} className='review-img' />
       </Link>
       <Card.Body>
-        <Link to={`/projects/${projectId}/reviews/${review.id}`}>
-          <Card.Title>{review.reviewName}</Card.Title>
+        <Link
+          to={`/projects/${projectId}/reviews/${review.id}`}
+          style={{ textDecoration: 'none' }}
+        >
+          <Card.Title className='title-card'>{review.reviewName}</Card.Title>
         </Link>
         <Card.Text as='div'>
-          <p>{review.items} items</p>
-          <p className='py-0 my-0'>{review.active ? 'Active' : 'Closed'}</p>
-          <span>{review.users} members</span>
+          <p className='py-0 text-muted' style={{marginBottom: '10px'}}>{review.items} items</p>
+          <p className='py-0 my-0 text-muted'>{review.active ? 'Active' : 'Closed'}</p>
+          <span className='text-muted'>{review.users} collaborators</span>
         </Card.Text>
       </Card.Body>
     </Card>
