@@ -4,10 +4,16 @@ import {
   USER_DETAILS_REQUEST,
   USER_DETAILS_RESET,
   USER_DETAILS_SUCCESS,
+  USER_UPDATE_FAIL,
+  USER_UPDATE_REQUEST,
+  USER_UPDATE_SUCCESS,
   USER_LOGIN_FAIL,
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
   USER_LOGOUT,
+  USER_UPLOAD_IMAGE_REQUEST,
+  USER_UPLOAD_IMAGE_SUCCESS,
+  USER_UPLOAD_IMAGE_FAIL,
 } from '../constants/userConstants';
 import getError from '../utils/getError';
 
@@ -35,6 +41,71 @@ export const getUserDetails = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: USER_DETAILS_FAIL,
+      payload: getError(error),
+    });
+  }
+};
+
+export const updateUser = (user) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_UPDATE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${userInfo.key}`,
+      },
+    };
+
+    const { data } = await axios.patch('/api/v1/auth/user/', user, config);
+
+    dispatch({
+      type: USER_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_UPDATE_FAIL,
+      payload: getError(error),
+    });
+  }
+};
+
+export const uploadImageUser = (file) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: USER_UPLOAD_IMAGE_REQUEST });
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Token ${userInfo.key}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      '/api/v1/cloud/upload/image/',
+      formData,
+      config
+    );
+
+    dispatch({
+      type: USER_UPLOAD_IMAGE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_UPLOAD_IMAGE_FAIL,
       payload: getError(error),
     });
   }
@@ -71,6 +142,6 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  dispatch({type: USER_LOGOUT})
-  dispatch({type: USER_DETAILS_RESET})
-}
+  dispatch({ type: USER_LOGOUT });
+  dispatch({ type: USER_DETAILS_RESET });
+};

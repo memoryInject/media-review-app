@@ -24,7 +24,7 @@ import {
   FEEDBACK_LIST_RESET,
 } from '../constants/feedbackConstants';
 
-const ReviewScreen = ({ match }) => {
+const ReviewScreen = ({ history, match }) => {
   const dispatch = useDispatch();
 
   const reviewDetails = useSelector((state) => state.reviewDetails);
@@ -90,7 +90,7 @@ const ReviewScreen = ({ match }) => {
                   </Col>
                 )}
                 <Col md={4} className='text-center py-1'>
-                  <ReviewButtons />
+                  <ReviewButtons history={history} />
                   <VideoUpload />
                   <Collaborators />
                 </Col>

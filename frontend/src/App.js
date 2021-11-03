@@ -9,6 +9,9 @@ import ReviewListScreen from './screens/ReviewListScreen';
 import ReviewScreen from './screens/ReviewScreen';
 import LoginScreen from './screens/LoginScreen';
 import ProjectScreen from './screens/ProjectScreen';
+import ProjectSettingsScreen from './screens/ProjectSettingsScreen';
+import ReviewSettingsScreen from './screens/ReviewSettingsScreen';
+import AppSettingsScreen from './screens/AppSettingsScreen';
 
 const App = () => {
   return (
@@ -24,9 +27,21 @@ const App = () => {
             exact
           />
           <Route path='/projects/:id' component={ProjectScreen} exact />
+          <Route path='/projects/:id/settings' component={ProjectSettingsScreen} exact />
           <Route
             path='/projects/:id/reviews/:reviewId'
             component={ReviewScreen}
+            exact
+          />
+          <Route
+            path='/projects/:id/reviews/:reviewId/settings'
+            component={ReviewSettingsScreen}
+            exact
+          />
+          <Route
+            path='/settings'
+            component={AppSettingsScreen}
+            exact
           />
           <ToastMessage />
         </Container>

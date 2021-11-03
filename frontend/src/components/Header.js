@@ -66,8 +66,7 @@ const Header = () => {
                     >
                       notifications
                     </span>
-                    &nbsp;
-                    &nbsp;
+                    &nbsp; &nbsp;
                     <span>Notifications</span>
                   </Nav.Link>
                 </LinkContainer>
@@ -89,14 +88,16 @@ const Header = () => {
                     }}
                     className='nav-user-icon'
                   />
-                  &nbsp;
-                  &nbsp;
+                  &nbsp; &nbsp;
                   {user.username}
-                  <span className='material-icons-round'
-                  style={{
-                    transform: 'translate(0px, 8px)',
-                  }}
-                  >expand_more</span>
+                  <span
+                    className='material-icons-round'
+                    style={{
+                      transform: 'translate(0px, 8px)',
+                    }}
+                  >
+                    expand_more
+                  </span>
                 </div>
                 <NavDropdown
                   className='nav-user-toggle'
@@ -119,15 +120,17 @@ const Header = () => {
                       Profile
                     </NavDropdown.Item>
                   </LinkContainer>
-                  <NavDropdown.Item>
-                    <span
-                      className='material-icons-round'
-                      style={{ transform: 'translate(-3px, 6px)' }}
-                    >
-                      settings
-                    </span>
-                    Settings
-                  </NavDropdown.Item>
+                  <LinkContainer to='/settings'>
+                    <NavDropdown.Item>
+                      <span
+                        className='material-icons-round'
+                        style={{ transform: 'translate(-3px, 6px)' }}
+                      >
+                        settings
+                      </span>
+                      Settings
+                    </NavDropdown.Item>
+                  </LinkContainer>
                   <NavDropdown.Item onClick={logoutHandler}>
                     <span
                       className='material-icons-round'

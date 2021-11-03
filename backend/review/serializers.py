@@ -13,7 +13,8 @@ class ReviewField(serializers.RelatedField):
         fields = {
             'id': value.id,
             'review_name': value.review_name,
-            'image_url': value.image_url
+            'image_url': value.image_url,
+            'user': {'id': value.user.id, 'username': value.user.username}
         }
         return fields
 
@@ -32,7 +33,8 @@ class MediaField(serializers.RelatedField):
                 'name': value.asset.asset_name,
                 'url': value.asset.url,
                 'image_url': value.asset.image_url,
-            }
+            },
+            'user': {'id': value.user.id, 'username': value.user.username}
         }
         return fields
 

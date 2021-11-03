@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { MEDIA_CREATE_SHOW } from '../constants/mediaConstants';
 
 import { showUICollaborator } from '../actions/collaboratorActions';
 
-const ReviewButtons = () => {
+const ReviewButtons = ({ history }) => {
   const dispatch = useDispatch();
 
   const style = {
@@ -61,6 +61,7 @@ const ReviewButtons = () => {
           width: '40%',
           borderRadius: '0 0.25rem 0.25rem 0',
         }}
+        onClick={() => history.push(history.location.pathname + '/settings')}
       >
         <span
           style={{

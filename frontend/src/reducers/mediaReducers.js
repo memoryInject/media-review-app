@@ -15,6 +15,10 @@ import {
   MEDIA_CREATE_PARENT_RESET,
   MEDIA_CREATE_SHOW,
   MEDIA_CREATE_HIDE,
+  MEDIA_DELETE_REQUEST,
+  MEDIA_DELETE_SUCCESS,
+  MEDIA_DELETE_FAIL,
+  MEDIA_DELETE_RESET,
 } from '../constants/mediaConstants';
 
 export const mediaDetailsReducer = (state = { media: null }, action) => {
@@ -103,6 +107,25 @@ export const mediaUpdateReducer = (state = { media: null }, action) => {
 
     case MEDIA_UPDATE_RESET:
       return { loading: false, media: null };
+
+    default:
+      return state;
+  }
+};
+
+export const mediaDeleteReducer = (state = { success: false }, action) => {
+  switch (action.type) {
+    case MEDIA_DELETE_REQUEST:
+      return { loading: true, success: false };
+
+    case MEDIA_DELETE_SUCCESS:
+      return { loading: false, success: true };
+
+    case MEDIA_DELETE_FAIL:
+      return { loading: false, error: action.payload, success: false };
+
+    case MEDIA_DELETE_RESET:
+      return { loading: false, success: false };
 
     default:
       return state;

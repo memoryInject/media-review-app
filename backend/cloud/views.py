@@ -54,6 +54,7 @@ class UploadVideoView(APIView):
         return Response(
             uploaded_data, status=status.HTTP_201_CREATED)
 
+
 # Route: /api/v1/cloud/upload/image/
 # Methods: POST
 class UploadImageView(APIView):
@@ -70,6 +71,10 @@ class UploadImageView(APIView):
         if uploaded_data.get('error'):
             return Response(
                 uploaded_data, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a thumbnail for prfile pic usages
+        uploaded_data['thumbnail'] = 'upload/c_thumb,w_200,h_200,g_face'.join(
+            uploaded_data.get('url').split('upload'))
 
         return Response(
             uploaded_data, status=status.HTTP_201_CREATED)

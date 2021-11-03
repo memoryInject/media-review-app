@@ -9,6 +9,9 @@ import {
   MEDIA_UPDATE_FAIL,
   MEDIA_UPDATE_REQUEST,
   MEDIA_UPDATE_SUCCESS,
+  MEDIA_DELETE_FAIL,
+  MEDIA_DELETE_REQUEST,
+  MEDIA_DELETE_SUCCESS,
 } from '../constants/mediaConstants';
 import getError from '../utils/getError';
 
@@ -56,11 +59,7 @@ export const createMedia = (media) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post(
-      '/api/v1/review/media/',
-      media,
-      config
-    );
+    const { data } = await axios.post('/api/v1/review/media/', media, config);
 
     dispatch({
       type: MEDIA_CREATE_SUCCESS,
@@ -102,6 +101,34 @@ export const updateMedia = (id, media) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: MEDIA_UPDATE_FAIL,
+      payload: getError(error),
+    });
+  }
+};
+
+export const deleteMedia = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: MEDIA_DELETE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${userInfo.key}`,
+      },
+    };
+
+    await axios.delete(`/api/v1/review/media/${id}/`, config);
+
+    dispatch({
+      type: MEDIA_DELETE_SUCCESS,
+    });
+  } catch (error) {
+    dispatch({
+      type: MEDIA_DELETE_FAIL,
       payload: getError(error),
     });
   }

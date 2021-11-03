@@ -4,16 +4,19 @@ import thunk from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import { userDetailsReducer, userLoginReducer } from './reducers/userReducers';
+import { userDetailsReducer, userLoginReducer, userUpdateReducer, userUploadImageReducer } from './reducers/userReducers';
 import {
   projectCreateReducer,
+  projectDeleteReducer,
   projectDetailsReducer,
   projectListReducer,
+  projectUpdateReducer,
   projectUploadImageReducer,
 } from './reducers/projectReducers';
-import { reviewDetailsReducer } from './reducers/reviewReducers';
+import { reviewCreateReducer, reviewDeleteReducer, reviewDetailsReducer, reviewUpdateReducer } from './reducers/reviewReducers';
 import {
   mediaCreateReducer,
+  mediaDeleteReducer,
   mediaDetailsReducer,
   mediaUpdateReducer,
 } from './reducers/mediaReducers';
@@ -41,11 +44,18 @@ import {toastDetailsReducer} from './reducers/toastReducers';
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userDetails: userDetailsReducer,
+  userUpdate: userUpdateReducer,
+  userUploadImage: userUploadImageReducer,
   projectList: projectListReducer,
   projectDetails: projectDetailsReducer,
   projectUploadImage: projectUploadImageReducer,
   projectCreate: projectCreateReducer,
+  projectUpdate: projectUpdateReducer,
+  projectDelete: projectDeleteReducer,
   reviewDetails: reviewDetailsReducer,
+  reviewCreate: reviewCreateReducer,
+  reviewUpdate: reviewUpdateReducer,
+  reviewDelete: reviewDeleteReducer,
   collaboratorUI: collaboratorUIReducer,
   collaboratorList: collaboratorListReducer,
   collaboratorDetails: collaboratorDetailsReducer,
@@ -57,6 +67,7 @@ const reducer = combineReducers({
   mediaDetails: mediaDetailsReducer,
   mediaCreate: mediaCreateReducer,
   mediaUpdate: mediaUpdateReducer,
+  mediaDelete: mediaDeleteReducer,
   feedbackList: feedbackListReducer,
   feedbackCreate: feedbackCreateReducer,
   feedbackUpdate: feedbackUpdateReducer,

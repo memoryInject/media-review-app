@@ -12,6 +12,12 @@ import {
   PROJECT_UPLOAD_IMAGE_REQUEST,
   PROJECT_UPLOAD_IMAGE_SUCCESS,
   PROJECT_UPLOAD_IMAGE_FAIL,
+  PROJECT_UPDATE_REQUEST,
+  PROJECT_UPDATE_SUCCESS,
+  PROJECT_UPDATE_FAIL,
+  PROJECT_DELETE_REQUEST,
+  PROJECT_DELETE_FAIL,
+  PROJECT_DELETE_SUCCESS,
 } from '../constants/projectConstants';
 import getError from '../utils/getError';
 
@@ -129,6 +135,64 @@ export const uploadImageProject = (file) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: PROJECT_UPLOAD_IMAGE_FAIL,
+      payload: getError(error),
+    });
+  }
+};
+
+export const updateProject = (id, project) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PROJECT_UPDATE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${userInfo.key}`,
+      },
+    };
+
+    const { data } = await axios.patch(`/api/v1/review/projects/${id}/`, project, config);
+
+    dispatch({
+      type: PROJECT_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: PROJECT_UPDATE_FAIL,
+      payload: getError(error),
+    });
+  }
+};
+
+export const deleteProject = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PROJECT_DELETE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${userInfo.key}`,
+      },
+    };
+
+    const { data } = await axios.delete(`/api/v1/review/projects/${id}/`, config);
+
+    dispatch({
+      type: PROJECT_DELETE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: PROJECT_DELETE_FAIL,
       payload: getError(error),
     });
   }

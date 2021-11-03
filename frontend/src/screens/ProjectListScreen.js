@@ -48,10 +48,11 @@ const ProjectListScreen = ({ location, history }) => {
   } = projectUploadImage;
 
   const formFile = useRef(null);
+  const formRef = useRef(null);
 
+  const [validated, setValidated] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState('');
-  const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(true);
 
   useEffect(() => {
@@ -68,7 +69,7 @@ const ProjectListScreen = ({ location, history }) => {
       dispatch({ type: PROJECT_CREATE_RESET });
       dispatch({ type: PROJECT_UPLOAD_IMAGE_RESET });
       setSuccess(false);
-      setMessage('');
+      setValidated(false);
       setName('');
     }
   }, [showModal, dispatch]);
@@ -86,7 +87,6 @@ const ProjectListScreen = ({ location, history }) => {
     if (projectCreateProject) {
       setShowModal(false);
       setSuccess(true);
-      setMessage('');
       setName('');
       dispatch(messageToast('Project created successfully'));
       dispatch(variantToast('success'));
@@ -97,13 +97,17 @@ const ProjectListScreen = ({ location, history }) => {
   }, [projectCreateProject, dispatch]);
 
   const submitHandler = () => {
-    if (formFile.current.files[0] && name) {
-      dispatch(uploadImageProject(formFile.current.files[0]));
-    } else if (name) {
-      dispatch(createProject({ projectName: name }));
-    } else {
-      setMessage('Name must not be blank.');
+    const form = formRef.current;
+
+    if (form.checkValidity() === true) {
+      if (formFile.current.files[0]) {
+        dispatch(uploadImageProject(formFile.current.files[0]));
+      } else {
+        dispatch(createProject({ projectName: name }));
+      }
     }
+
+    setValidated(true);
   };
 
   return (
@@ -135,7 +139,7 @@ const ProjectListScreen = ({ location, history }) => {
             <Button variant='outline-success'>Search</Button>
           </Form>
         </Col>
-        <Col className='text-end' md>
+        <Col className='text-end d-none d-md-block' md>
           <Button
             style={{ paddingTop: '0.35rem', paddingBottom: '0.35rem' }}
             onClick={() => setShowModal(true)}
@@ -146,11 +150,30 @@ const ProjectListScreen = ({ location, history }) => {
             >
               add
             </span>
-           CREATE PROJECT
+            CREATE PROJECT
+          </Button>
+        </Col>
+        <Col className='d-block d-sm-block d-md-none' md>
+          <Button
+            style={{
+              paddingTop: '0.35rem',
+              paddingBottom: '0.35rem',
+              width: '100%',
+            }}
+            onClick={() => setShowModal(true)}
+          >
+            <span
+              className='p-0 material-icons-round'
+              style={{ position: 'relative', top: '3px', fontSize: '20px' }}
+            >
+              add
+            </span>
+            CREATE PROJECT
           </Button>
         </Col>
       </Row>
-      {loading ? (
+      {error && <Message>{error}</Message>}
+      {(loading && !projects) || (!loading && !projects) ? (
         <Loader />
       ) : error ? (
         <Message variant='danger'>{error}</Message>
@@ -183,7 +206,12 @@ const ProjectListScreen = ({ location, history }) => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={(e) => e.preventDefault()}>
+          <Form
+            noValidate
+            validated={validated}
+            ref={formRef}
+            onSubmit={(e) => e.preventDefault()}
+          >
             <Form.Group className='mb-3' controlId='formBasicEmail'>
               <Form.Label>Name</Form.Label>
               <Form.Control
@@ -196,7 +224,11 @@ const ProjectListScreen = ({ location, history }) => {
                     ? true
                     : false
                 }
+                required
               />
+              <Form.Control.Feedback type='invalid'>
+                Please provide a valid name.
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group controlId='formFile' className='mb-3'>
@@ -225,15 +257,13 @@ const ProjectListScreen = ({ location, history }) => {
             />
           </div>
         ) : success ? (
-          <div style={{minHeight: '30px'}}>
-          </div>
+          <div style={{ minHeight: '30px' }}></div>
         ) : (
           <>
             {projectCreateError && <Message>{projectCreateError}</Message>}
             {projectUploadImageError && (
               <Message>{projectUploadImageError}</Message>
             )}
-            {message && <Message>{message}</Message>}
             <Modal.Footer>
               <Button onClick={() => setShowModal(false)} variant='danger'>
                 Close
