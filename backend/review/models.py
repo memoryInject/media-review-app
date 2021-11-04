@@ -42,15 +42,15 @@ class Review(models.Model):
 
     @receiver(post_delete, sender='review.Media')
     def change_image_url(sender, instance, **kwargs):
-            review = instance.review
-            media = review.media.order_by('-created_at')
+        review = instance.review
+        media = review.media.order_by('-created_at')
 
-            if len(media):
-                review.image_url = media[0].asset.image_url
-                review.save()
-            else:
-                review.image_url = None
-                review.save()
+        if len(media):
+            review.image_url = media[0].asset.image_url
+            review.save()
+        else:
+            review.image_url = None
+            review.save()
 
     def __str__(self):
         return self.review_name
