@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Container, ListGroup, Button, Image } from 'react-bootstrap';
+import {
+  Row,
+  Col,
+  Container,
+  Button,
+  Image,
+  ButtonGroup,
+  ToggleButton,
+} from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Loader from '../components/Loader';
-import Message from '../components/Message';
-
-import { getUserDetails } from '../actions/userActions';
 import ProfileUpdateModal from '../components/ProfileUpdateModal';
+import PasswordResetEmailModal from '../components/PasswordResetEmailModal';
+import UserProfileListGroup from '../components/UserProfileListGroup';
+import ProjectListTable from '../components/ProjectListTable';
+import UserListTable from '../components/UserListTable';
 
 const AppSettingsScreen = ({ history, match }) => {
   const dispatch = useDispatch();
@@ -17,8 +25,15 @@ const AppSettingsScreen = ({ history, match }) => {
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
 
-  const [navItem, setNavItem] = useState('account');
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showPasswordResetModal, setShowPasswordResetModal] = useState(false);
+  const [radioValue, setRadioValue] = useState('1');
+
+  const radios = [
+    { name: 'Account', value: '1' },
+    { name: 'Project List', value: '2' },
+    { name: 'User List', value: '3' },
+  ];
 
   useEffect(() => {
     if (!userInfo) {
@@ -44,40 +59,31 @@ const AppSettingsScreen = ({ history, match }) => {
       </Row>
       <Row
         xs='auto'
-        style={{ cursor: 'pointer', paddingBottom: '1rem' }}
-        className='dflex justify-content-center text-success'
+        style={{ paddingBottom: '1rem', paddingTop: '1rem' }}
+        className='dflex justify-content-center'
       >
-        <Col className='py-1'>
-          {navItem === 'account' ? (
-            <span>
-              <strong>Account</strong>
-            </span>
-          ) : (
-            <span onClick={() => setNavItem('account')}>Account</span>
-          )}
-        </Col>
-        <Col className='py-1'>
-          {navItem === 'projectList' ? (
-            <span>
-              <strong>Project list</strong>
-            </span>
-          ) : (
-            <span onClick={() => setNavItem('projectList')}>Project list</span>
-          )}
-        </Col>
-        <Col className='py-1'>
-          {navItem === 'userList' ? (
-            <span>
-              <strong>User list</strong>
-            </span>
-          ) : (
-            <span onClick={() => setNavItem('userList')}>User list</span>
-          )}
+        <Col>
+          <ButtonGroup>
+            {radios.map((radio, idx) => (
+              <ToggleButton
+                key={idx}
+                id={`radio-${idx}`}
+                type='radio'
+                variant='outline-success'
+                name='radio'
+                value={radio.value}
+                checked={radioValue === radio.value}
+                onChange={(e) => setRadioValue(e.currentTarget.value)}
+              >
+                {radio.name}
+              </ToggleButton>
+            ))}
+          </ButtonGroup>
         </Col>
       </Row>
       <Container>
         <Row className='dflex justify-content-center'>
-          {navItem === 'account' && (
+          {radioValue === '1' && (
             <Col
               xs={12}
               md={12}
@@ -98,114 +104,58 @@ const AppSettingsScreen = ({ history, match }) => {
                 <span className='text-light'>{user.username}</span>
               </div>
 
-              <ListGroup as='ol'>
-                <ListGroup.Item
-                  as='li'
-                  className='d-flex justify-content-between align-items-start'
-                >
-                  <div className='ms-2 me-auto'>
-                    <div className='text-light'>Username</div>
-                    <h5 className='px-2'>{user.username}</h5>
-                  </div>
-                </ListGroup.Item>
-                <ListGroup.Item
-                  as='li'
-                  className='d-flex justify-content-between align-items-start'
-                >
-                  <div className='ms-2 me-auto'>
-                    <div className='text-light'>Email</div>
-                    <h5 className='px-2'>{user.email}</h5>
-                  </div>
-                </ListGroup.Item>
-                <ListGroup.Item
-                  as='li'
-                  className='d-flex justify-content-between align-items-start'
-                >
-                  <div className='ms-2 me-auto'>
-                    <div className='text-light'>First name</div>
-                    <h5 className='px-2'>{user.firstName}</h5>
-                  </div>
-                </ListGroup.Item>
-                <ListGroup.Item
-                  as='li'
-                  className='d-flex justify-content-between align-items-start'
-                >
-                  <div className='ms-2 me-auto'>
-                    <div className='text-light'>Last name</div>
-                    <h5 className='px-2'>{user.lastName}</h5>
-                  </div>
-                </ListGroup.Item>
-                <ListGroup.Item
-                  as='li'
-                  className='d-flex justify-content-between align-items-start'
-                >
-                  <div className='ms-2 me-auto'>
-                    <div className='text-light'>Company name</div>
-                    <h5 className='px-2'>
-                      {user.profile.companyName ? user.profile.companyName : ''}
-                    </h5>
-                  </div>
-                </ListGroup.Item>
-                <ListGroup.Item
-                  as='li'
-                  className='d-flex justify-content-between align-items-start'
-                >
-                  <div className='ms-2 me-auto'>
-                    <div className='text-light'>Admin access</div>
-                    <h5 className='px-2'>
-                      {user.profile.isAdmin ? (
-                        <span className='material-icons-round text-success'>
-                          check_box
-                        </span>
-                      ) : (
-                        <span className='material-icons-round text-danger'>
-                          disabled_by_default
-                        </span>
-                      )}
-                    </h5>
-                  </div>
-                </ListGroup.Item>
-              </ListGroup>
+              {/*List group for user details*/}
+              <UserProfileListGroup user={user} />
+
               <div className='py-3 text-end'>
-                <Button>Change password</Button>
+                <Button onClick={() => setShowPasswordResetModal(true)}>
+                  Change password
+                </Button>
                 &nbsp; &nbsp;
                 <Button onClick={() => setShowUpdateModal(true)}>
                   Edit profile
                 </Button>
               </div>
-              {/*Form to update user profile */}
-              {/*TODO*/}
-              {/*<ProjectUpdateDeleteForm*/}
-              {/*history={history}*/}
-              {/*match={match}*/}
-              {/*project={project}*/}
-              {/*userDetails={userDetails}*/}
-              {/*/>*/}
             </Col>
           )}
         </Row>
         <Row className='dflex justify-content-center'>
-          {navItem === 'projectList' && (
+          {radioValue === '2' && (
             <Col
               xs='auto'
               className='bg-dark py-2'
               style={{ borderRadius: '0.25rem' }}
             >
-              {/*Table to show project list of this project*/}
-              {/*TODO*/}
-              {/*<ProjectReviewListTable*/}
-              {/*history={history}*/}
-              {/*match={match}*/}
-              {/*project={project}*/}
-              {/*userDetails={userDetails}*/}
-              {/*/>*/}
+              {/*Table to show project */}
+              <ProjectListTable history={history} />
+            </Col>
+          )}
+        </Row>
+        <Row className='dflex justify-content-center'>
+          {radioValue === '3' && (
+            <Col
+              xs='auto'
+              className='bg-dark py-2'
+              style={{ borderRadius: '0.25rem' }}
+            >
+              {/*Table to show users */}
+              <UserListTable />
             </Col>
           )}
         </Row>
       </Container>
+
+      {/*Modal Form to edit user profile*/}
       <ProfileUpdateModal
         onHide={() => setShowUpdateModal(false)}
         show={showUpdateModal}
+        user={user}
+      />
+
+      {/*Modal Form to send reset email link*/}
+      <PasswordResetEmailModal
+        onHide={() => setShowPasswordResetModal(false)}
+        show={showPasswordResetModal}
         user={user}
       />
     </div>

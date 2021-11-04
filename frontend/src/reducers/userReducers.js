@@ -15,6 +15,14 @@ import {
   USER_UPLOAD_IMAGE_SUCCESS,
   USER_UPLOAD_IMAGE_FAIL,
   USER_UPLOAD_IMAGE_RESET,
+  USER_PASSWORD_RESET_EMAIL_REQUEST,
+  USER_PASSWORD_RESET_EMAIL_SUCCESS,
+  USER_PASSWORD_RESET_EMAIL_FAIL,
+  USER_PASSWORD_RESET_EMAIL_RESET,
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
+  USER_LIST_FAIL,
+  USER_LIST_RESET,
 } from '../constants/userConstants';
 
 export const userLoginReducer = (state = {}, action) => {
@@ -30,6 +38,25 @@ export const userLoginReducer = (state = {}, action) => {
 
     case USER_LOGOUT:
       return {};
+
+    default:
+      return state;
+  }
+};
+
+export const userListReducer = (state = { users: null }, action) => {
+  switch (action.type) {
+    case USER_LIST_REQUEST:
+      return { ...state, loading: true };
+
+    case USER_LIST_SUCCESS:
+      return { loading: false, users: action.payload };
+
+    case USER_LIST_FAIL:
+      return { loading: false, error: action.payload };
+
+    case USER_LIST_RESET:
+      return { users: null };
 
     default:
       return state;
@@ -87,6 +114,25 @@ export const userUploadImageReducer = (state = { image: null }, action) => {
 
     case USER_UPLOAD_IMAGE_RESET:
       return { image: null };
+
+    default:
+      return state;
+  }
+};
+
+export const userPasswordResetEmailReducer = (state = { success: false }, action) => {
+  switch (action.type) {
+    case USER_PASSWORD_RESET_EMAIL_REQUEST:
+      return { ...state, loading: true };
+
+    case USER_PASSWORD_RESET_EMAIL_SUCCESS:
+      return { loading: false, success: true};
+
+    case USER_PASSWORD_RESET_EMAIL_FAIL:
+      return { loading: false, error: action.payload };
+
+    case USER_PASSWORD_RESET_EMAIL_RESET:
+      return { success: false };
 
     default:
       return state;

@@ -3,7 +3,6 @@ import { Modal, Form, Spinner, Button } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Message from './Message';
-import Loader from './Loader';
 import { showToast, messageToast, variantToast } from '../actions/toastActions';
 import {
   updateUser,
