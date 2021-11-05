@@ -19,10 +19,22 @@ import {
   USER_PASSWORD_RESET_EMAIL_SUCCESS,
   USER_PASSWORD_RESET_EMAIL_FAIL,
   USER_PASSWORD_RESET_EMAIL_RESET,
+  USER_PASSWORD_RESET_CONFIRM_REQUEST,
+  USER_PASSWORD_RESET_CONFIRM_SUCCESS,
+  USER_PASSWORD_RESET_CONFIRM_FAIL,
+  USER_PASSWORD_RESET_CONFIRM_RESET,
   USER_LIST_REQUEST,
   USER_LIST_SUCCESS,
   USER_LIST_FAIL,
   USER_LIST_RESET,
+  USER_INVITE_GET_EMAIL_REQUEST,
+  USER_INVITE_GET_EMAIL_SUCCESS,
+  USER_INVITE_GET_EMAIL_FAIL,
+  USER_INVITE_GET_EMAIL_RESET,
+  USER_INVITE_ACCEPT_REQUEST,
+  USER_INVITE_ACCEPT_SUCCESS,
+  USER_INVITE_ACCEPT_FAIL,
+  USER_INVITE_ACCEPT_RESET,
 } from '../constants/userConstants';
 
 export const userLoginReducer = (state = {}, action) => {
@@ -120,18 +132,84 @@ export const userUploadImageReducer = (state = { image: null }, action) => {
   }
 };
 
-export const userPasswordResetEmailReducer = (state = { success: false }, action) => {
+export const userPasswordResetEmailReducer = (
+  state = { success: false },
+  action
+) => {
   switch (action.type) {
     case USER_PASSWORD_RESET_EMAIL_REQUEST:
       return { ...state, loading: true };
 
     case USER_PASSWORD_RESET_EMAIL_SUCCESS:
-      return { loading: false, success: true};
+      return { loading: false, success: true };
 
     case USER_PASSWORD_RESET_EMAIL_FAIL:
       return { loading: false, error: action.payload };
 
     case USER_PASSWORD_RESET_EMAIL_RESET:
+      return { success: false };
+
+    default:
+      return state;
+  }
+};
+
+export const userPasswordResetConfirmReducer = (
+  state = { success: false },
+  action
+) => {
+  switch (action.type) {
+    case USER_PASSWORD_RESET_CONFIRM_REQUEST:
+      return { loading: true, success: false };
+
+    case USER_PASSWORD_RESET_CONFIRM_SUCCESS:
+      return { loading: false, success: true };
+
+    case USER_PASSWORD_RESET_CONFIRM_FAIL:
+      return { loading: false, error: action.payload };
+
+    case USER_PASSWORD_RESET_CONFIRM_RESET:
+      return { success: false };
+
+    default:
+      return state;
+  }
+};
+
+export const userInviteGetEmailReducer = (state = { email: null }, action) => {
+  switch (action.type) {
+    case USER_INVITE_GET_EMAIL_REQUEST:
+      return { loading: true, email: null };
+
+    case USER_INVITE_GET_EMAIL_SUCCESS:
+      return { loading: false, email: action.payload };
+
+    case USER_INVITE_GET_EMAIL_FAIL:
+      return { loading: false, error: action.payload, email: null };
+
+    case USER_INVITE_GET_EMAIL_RESET:
+      return { email: null };
+
+    default:
+      return state;
+  }
+};
+
+export const userInviteAcceptReducer = (
+  state = { success: false },
+  action
+) => {
+  switch (action.type) {
+    case USER_INVITE_ACCEPT_REQUEST:
+      return { loading: true, success: false };
+
+    case USER_INVITE_ACCEPT_SUCCESS:
+      return { loading: false, success: true };
+
+    case USER_INVITE_ACCEPT_FAIL:
+      return { loading: false, error: action.payload };
+
+    case USER_INVITE_ACCEPT_RESET:
       return { success: false };
 
     default:

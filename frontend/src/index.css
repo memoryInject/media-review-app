@@ -162,6 +162,14 @@ main {
                                   supported by Chrome and Opera */
 }
 
+.btn-clear {
+  background-color: transparent;
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  text-decoration: none;
+}
+
 .play-list-bottom {
   /* position: fixed;
   bottom: 0%; */
@@ -211,7 +219,7 @@ main {
 }
 
 .review-buttons:hover .review-button-settings {
-  color: #ADB5BD !important;
+  color: #adb5bd !important;
 }
 
 .nav-user-icon {

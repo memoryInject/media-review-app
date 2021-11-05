@@ -12,6 +12,8 @@ import ProjectScreen from './screens/ProjectScreen';
 import ProjectSettingsScreen from './screens/ProjectSettingsScreen';
 import ReviewSettingsScreen from './screens/ReviewSettingsScreen';
 import AppSettingsScreen from './screens/AppSettingsScreen';
+import PasswordResetConfirmScreen from './screens/PasswordResetConfirmScreen';
+import InviteRegisterScreen from './screens/InviteRegisterScreen';
 
 const App = () => {
   return (
@@ -42,6 +44,14 @@ const App = () => {
             path='/settings'
             component={AppSettingsScreen}
             exact
+          />
+          <Route
+            path='/password-reset/confirm/:uid/:token/'
+            component={PasswordResetConfirmScreen}
+          />
+          <Route
+            path='/invitations/accept-invite/:key'
+            component={InviteRegisterScreen}
           />
           <ToastMessage />
         </Container>

@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import { userDetailsReducer, userListReducer, userLoginReducer, userPasswordResetEmailReducer, userUpdateReducer, userUploadImageReducer } from './reducers/userReducers';
+import { userDetailsReducer, userInviteAcceptReducer, userInviteGetEmailReducer, userListReducer, userLoginReducer, userPasswordResetConfirmReducer, userPasswordResetEmailReducer, userUpdateReducer, userUploadImageReducer } from './reducers/userReducers';
 import {
   projectCreateReducer,
   projectDeleteReducer,
@@ -48,6 +48,9 @@ const reducer = combineReducers({
   userUpdate: userUpdateReducer,
   userUploadImage: userUploadImageReducer,
   userPasswordResetEmail: userPasswordResetEmailReducer,
+  userPasswordResetConfirm: userPasswordResetConfirmReducer,
+  userInviteGetEmail: userInviteGetEmailReducer,
+  userInviteAccept: userInviteAcceptReducer,
   projectList: projectListReducer,
   projectDetails: projectDetailsReducer,
   projectUploadImage: projectUploadImageReducer,

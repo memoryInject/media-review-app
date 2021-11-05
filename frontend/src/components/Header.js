@@ -35,22 +35,6 @@ const Header = () => {
           {user && (
             <Navbar.Collapse id='basic-navbar-nav'>
               <Nav className='me-auto'>
-                {/*<LinkContainer to='/'>*/}
-                {/*<Nav.Link>Projects</Nav.Link>*/}
-                {/*</LinkContainer>*/}
-                {/*<NavDropdown title='Dropdown' id='basic-nav-dropdown'>*/}
-                {/*<NavDropdown.Item href='#action/3.1'>Action</NavDropdown.Item>*/}
-                {/*<NavDropdown.Item href='#action/3.2'>*/}
-                {/*Another action*/}
-                {/*</NavDropdown.Item>*/}
-                {/*<NavDropdown.Item href='#action/3.3'>*/}
-                {/*Something*/}
-                {/*</NavDropdown.Item>*/}
-                {/*<NavDropdown.Divider />*/}
-                {/*<NavDropdown.Item href='#action/3.4'>*/}
-                {/*Separated link*/}
-                {/*</NavDropdown.Item>*/}
-                {/*</NavDropdown>*/}
               </Nav>
               <Nav>
                 <LinkContainer to='/' className='d-block d-md-block d-lg-none'>
@@ -109,17 +93,6 @@ const Header = () => {
                     paddingRight: '0.2rem',
                   }}
                 >
-                  <LinkContainer to='/profile'>
-                    <NavDropdown.Item>
-                      <span
-                        className='material-icons-round'
-                        style={{ transform: 'translate(-3px, 6px)' }}
-                      >
-                        account_circle
-                      </span>
-                      Profile
-                    </NavDropdown.Item>
-                  </LinkContainer>
                   <LinkContainer to='/settings'>
                     <NavDropdown.Item>
                       <span

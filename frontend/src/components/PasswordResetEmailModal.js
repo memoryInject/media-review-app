@@ -77,10 +77,10 @@ const PasswordResetEmailModal = (props) => {
             onSubmit={(e) => e.preventDefault()}
           >
             <Form.Group className='mb-3' controlId='validationCustom01'>
-              <Form.Label>Confirm email</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control
                 type='email'
-                placeholder='Confirm email'
+                placeholder='Enter email'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading ? true : false}

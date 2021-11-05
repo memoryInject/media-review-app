@@ -17,13 +17,22 @@ import {
   USER_PASSWORD_RESET_EMAIL_REQUEST,
   USER_PASSWORD_RESET_EMAIL_SUCCESS,
   USER_PASSWORD_RESET_EMAIL_FAIL,
+  USER_PASSWORD_RESET_CONFIRM_REQUEST,
+  USER_PASSWORD_RESET_CONFIRM_SUCCESS,
+  USER_PASSWORD_RESET_CONFIRM_FAIL,
   USER_LIST_REQUEST,
   USER_LIST_SUCCESS,
   USER_LIST_FAIL,
+  USER_INVITE_GET_EMAIL_REQUEST,
+  USER_INVITE_GET_EMAIL_SUCCESS,
+  USER_INVITE_GET_EMAIL_FAIL,
+  USER_INVITE_ACCEPT_REQUEST,
+  USER_INVITE_ACCEPT_SUCCESS,
+  USER_INVITE_ACCEPT_FAIL,
 } from '../constants/userConstants';
 import getError from '../utils/getError';
 
-export const listUser  =
+export const listUser =
   (username = '') =>
   async (dispatch, getState) => {
     try {
@@ -151,26 +160,17 @@ export const uploadImageUser = (file) => async (dispatch, getState) => {
   }
 };
 
-export const passwordResetEmailUser = (email) => async (dispatch, getState) => {
+export const passwordResetEmailUser = (email) => async (dispatch) => {
   try {
     dispatch({ type: USER_PASSWORD_RESET_EMAIL_REQUEST });
-
-    const {
-      userLogin: { userInfo },
-    } = getState();
 
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Token ${userInfo.key}`,
       },
     };
 
-    await axios.post(
-      '/api/v1/auth/password/reset/',
-      { email },
-      config
-    );
+    await axios.post('/api/v1/auth/password/reset/', { email }, config);
 
     dispatch({
       type: USER_PASSWORD_RESET_EMAIL_SUCCESS,
@@ -178,6 +178,80 @@ export const passwordResetEmailUser = (email) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: USER_PASSWORD_RESET_EMAIL_FAIL,
+      payload: getError(error),
+    });
+  }
+};
+
+export const passwordResetConfirmUser = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_PASSWORD_RESET_CONFIRM_REQUEST });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    await axios.post('/api/v1/auth/password/reset/confirm/', data, config);
+
+    dispatch({
+      type: USER_PASSWORD_RESET_CONFIRM_SUCCESS,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_PASSWORD_RESET_CONFIRM_FAIL,
+      payload: getError(error),
+    });
+  }
+};
+
+export const inviteGetEmailUser = (key) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_INVITE_GET_EMAIL_REQUEST });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const { data } = await axios.post(
+      '/api/v1/auth/accept/?email=true',
+      { key },
+      config
+    );
+
+    dispatch({
+      type: USER_INVITE_GET_EMAIL_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_INVITE_GET_EMAIL_FAIL,
+      payload: getError(error),
+    });
+  }
+};
+
+export const inviteAcceptUser = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_INVITE_ACCEPT_REQUEST });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    await axios.post('/api/v1/auth/accept/', data, config);
+
+    dispatch({
+      type: USER_INVITE_ACCEPT_SUCCESS,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_INVITE_ACCEPT_FAIL,
       payload: getError(error),
     });
   }
