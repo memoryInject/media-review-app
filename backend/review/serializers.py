@@ -10,11 +10,16 @@ class ReviewField(serializers.RelatedField):
     """Custom RelatedField Serializer for representation of a review"""
 
     def to_representation(self, value):
+        collaborators = value.collaborators.all()
+        serializer = UserViewSerializer(data=collaborators, many=True)
+        serializer.is_valid()
+
         fields = {
             'id': value.id,
             'review_name': value.review_name,
             'image_url': value.image_url,
-            'user': {'id': value.user.id, 'username': value.user.username}
+            'user': {'id': value.user.id, 'username': value.user.username},
+            'collaborators': serializer.data
         }
         return fields
 

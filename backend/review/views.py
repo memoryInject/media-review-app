@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics, serializers
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from review.models import Feedback, Project, Review, Asset, Media
 from review.serializers import (FeedbackSerializer, ProjectSerializer,
@@ -13,6 +14,7 @@ from review.permissions import (IsAdmin, IsAdminOrReadOnly, IsCollaborator,
                                 IsCreatorOrReadOnly)
 
 from user.utils import is_admin
+from review.utils import filter_project_reviews_by_collaborator
 
 
 # Route: /review/projects/<?user=true>
@@ -21,7 +23,7 @@ from user.utils import is_admin
 # it will return only projects created by the user
 class ProjectList(generics.ListCreateAPIView):
     """Get all the projects"""
-    permission_classes = (IsAuthenticated, IsAdmin,)
+    permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
@@ -29,6 +31,10 @@ class ProjectList(generics.ListCreateAPIView):
 
         if self.request.query_params.get('user'):
             queryset = queryset.filter(user=self.request.user)
+
+        if not self.request.user.userprofile.is_admin:
+            queryset = queryset.filter(
+                reviews__collaborators=self.request.user)
 
         return queryset
 
@@ -39,9 +45,46 @@ class ProjectList(generics.ListCreateAPIView):
 # Route: /review/projects/<int:pk>/
 # Access: Admin only
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated, IsAdmin)
-    queryset = Project.objects.all()
+    permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
     serializer_class = ProjectSerializer
+
+    def get_queryset(self):
+        queryset = Project.objects.all()
+
+        if not self.request.user.userprofile.is_admin:
+            queryset = queryset.filter(
+                reviews__collaborators=self.request.user)
+
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        # Make sure requested project exists
+        try:
+            Project.objects.get(pk=kwargs['pk'])
+        except ObjectDoesNotExist:
+            return Response({'detail': 'Project does not exists'},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        # Make sure requested project also exists for non admin
+        try:
+            self.get_queryset().get(pk=kwargs['pk'])
+        except ObjectDoesNotExist:
+            return Response({
+                'detail': 'You do not have permission to access this project'},
+                status=status.HTTP_403_FORBIDDEN)
+
+        queryset = self.get_queryset().get(pk=kwargs['pk'])
+
+        serializer = ProjectSerializer(queryset)
+
+        # If user is not admin filter reviews from the project
+        if not request.user.userprofile.is_admin:
+            user_id = request.user.id
+            return Response(
+                filter_project_reviews_by_collaborator(
+                    serializer.data, user_id))
+
+        return Response(serializer.data)
 
 
 # Route: /review/reviews/?<user=true>&<all=true>&<project=int:id>
