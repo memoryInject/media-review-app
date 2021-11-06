@@ -28,6 +28,9 @@ const CollaboratorDetails = ({ collaborator }) => {
   const collaboratorRemove = useSelector((state) => state.collaboratorRemove);
   const { collaboratorToRemove, loading, error, success } = collaboratorRemove;
 
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
+
   const [showModal, setShowModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -133,7 +136,7 @@ const CollaboratorDetails = ({ collaborator }) => {
               </ListGroup.Item>
             )}
           </ListGroup>
-          {review.user.id !== collaborator.id && (
+          {review.user.id !== collaborator.id && review.user.id === user.id && (
             <Button
               variant='danger'
               className='my-2'

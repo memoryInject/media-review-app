@@ -27,6 +27,9 @@ const Collaborators = () => {
   const collaboratorUI = useSelector((state) => state.collaboratorUI);
   const { showUI } = collaboratorUI;
 
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
+
   useEffect(() => {
     setCollabInfo(null);
     setShowForm(false);
@@ -103,22 +106,24 @@ const Collaborators = () => {
           </div>
 
           {/*Add collaborator button*/}
-          <div className='py-3'>
-            <Dropdown className='my-2'>
-              <Dropdown.Toggle variant='outline-info' id='dropdown-basic'>
-                Add Collaborator
-              </Dropdown.Toggle>
+          {user && user.profile.isAdmin && (
+            <div className='py-3'>
+              <Dropdown className='my-2'>
+                <Dropdown.Toggle variant='outline-info' id='dropdown-basic'>
+                  Add Collaborator
+                </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={getUsersHandler}>
-                  Add existing user
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => addCollabHandler()}>
-                  Send invitation
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={getUsersHandler}>
+                    Add existing user
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => addCollabHandler()}>
+                    Send invitation
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          )}
 
           {/*Show collaborator info when click the profile*/}
           {collabInfo && <CollaboratorDetails collaborator={collabInfo} />}

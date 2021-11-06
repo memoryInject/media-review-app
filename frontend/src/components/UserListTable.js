@@ -14,10 +14,10 @@ const UserListTable = () => {
   const { loading, users, error } = userList;
 
   useEffect(() => {
-    if (!users && !loading) {
+    if (!users && !loading && !error) {
       dispatch(listUser());
     }
-  }, [users, dispatch, loading]);
+  }, [users, dispatch, loading, error]);
 
   return (
     <>

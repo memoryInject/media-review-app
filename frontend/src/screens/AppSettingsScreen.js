@@ -74,6 +74,9 @@ const AppSettingsScreen = ({ history, match }) => {
                 value={radio.value}
                 checked={radioValue === radio.value}
                 onChange={(e) => setRadioValue(e.currentTarget.value)}
+                disabled={
+                  radio.value === '3' && !user.profile.isAdmin ? true : false
+                }
               >
                 {radio.name}
               </ToggleButton>

@@ -30,6 +30,9 @@ const ProjectListScreen = ({ location, history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
+
   const projectList = useSelector((state) => state.projectList);
   const { loading, error, projects } = projectList;
 
@@ -140,36 +143,40 @@ const ProjectListScreen = ({ location, history }) => {
           </Form>
         </Col>
         <Col className='text-end d-none d-md-block' md>
-          <Button
-            style={{ paddingTop: '0.35rem', paddingBottom: '0.35rem' }}
-            onClick={() => setShowModal(true)}
-          >
-            <span
-              className='p-0 material-icons-round'
-              style={{ position: 'relative', top: '3px', fontSize: '20px' }}
+          {user && user.profile.isAdmin && (
+            <Button
+              style={{ paddingTop: '0.35rem', paddingBottom: '0.35rem' }}
+              onClick={() => setShowModal(true)}
             >
-              add
-            </span>
-            CREATE PROJECT
-          </Button>
+              <span
+                className='p-0 material-icons-round'
+                style={{ position: 'relative', top: '3px', fontSize: '20px' }}
+              >
+                add
+              </span>
+              CREATE PROJECT
+            </Button>
+          )}
         </Col>
         <Col className='d-block d-sm-block d-md-none' md>
-          <Button
-            style={{
-              paddingTop: '0.35rem',
-              paddingBottom: '0.35rem',
-              width: '100%',
-            }}
-            onClick={() => setShowModal(true)}
-          >
-            <span
-              className='p-0 material-icons-round'
-              style={{ position: 'relative', top: '3px', fontSize: '20px' }}
+          {user && user.profile.isAdmin && (
+            <Button
+              style={{
+                paddingTop: '0.35rem',
+                paddingBottom: '0.35rem',
+                width: '100%',
+              }}
+              onClick={() => setShowModal(true)}
             >
-              add
-            </span>
-            CREATE PROJECT
-          </Button>
+              <span
+                className='p-0 material-icons-round'
+                style={{ position: 'relative', top: '3px', fontSize: '20px' }}
+              >
+                add
+              </span>
+              CREATE PROJECT
+            </Button>
+          )}
         </Col>
       </Row>
       {error && <Message>{error}</Message>}

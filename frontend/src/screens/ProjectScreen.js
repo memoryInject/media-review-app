@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Col, Row, Form, FormControl, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 
 import Review from '../components/Review';
 import ProjectSideBar from '../components/ProjectSideBar';
@@ -17,6 +16,9 @@ const ProjectScreen = ({ match, history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
+
   const projectDetails = useSelector((state) => state.projectDetails);
   const { loading, error, project } = projectDetails;
 
@@ -31,8 +33,8 @@ const ProjectScreen = ({ match, history }) => {
   }, [history, match.params.id, userInfo, dispatch]);
 
   const settingsHandler = () => {
-    history.push(history.location.pathname + '/settings')
-  }
+    history.push(history.location.pathname + '/settings');
+  };
 
   return (
     <div
@@ -50,7 +52,10 @@ const ProjectScreen = ({ match, history }) => {
           style={{ width: '17.5rem', transition: 'all 0.5s ease-in-out' }}
           className='d-none d-md-none d-lg-block'
         >
-          <ProjectSideBar id={match.params.id} settingsHandler={settingsHandler} />
+          <ProjectSideBar
+            id={match.params.id}
+            settingsHandler={settingsHandler}
+          />
         </Col>
         <Col>
           <Row>
@@ -83,50 +88,57 @@ const ProjectScreen = ({ match, history }) => {
                   </Form>
                 </Col>
                 <Col className='text-end  d-none d-md-block' md>
-                  <Button
-                    style={{ paddingTop: '0.35rem', paddingBottom: '0.35rem' }}
-                    onClick={() => setShowModal(true)}
-                  >
-                    <span
-                      className='p-0 material-icons-round'
+                  {user && user.profile.isAdmin && (
+                    <Button
                       style={{
-                        position: 'relative',
-                        top: '3px',
-                        fontSize: '20px',
+                        paddingTop: '0.35rem',
+                        paddingBottom: '0.35rem',
                       }}
+                      onClick={() => setShowModal(true)}
                     >
-                      add
-                    </span>
-                    CREATE REVIEW
-                  </Button>
+                      <span
+                        className='p-0 material-icons-round'
+                        style={{
+                          position: 'relative',
+                          top: '3px',
+                          fontSize: '20px',
+                        }}
+                      >
+                        add
+                      </span>
+                      CREATE REVIEW
+                    </Button>
+                  )}
                 </Col>
                 <Col className='d-block d-sm-block d-md-none' md>
-                  <Button
-                    onClick={() => setShowModal(true)}
-                    style={{
-                      paddingTop: '0.35rem',
-                      paddingBottom: '0.35rem',
-                      marginBottom: '0.4rem',
-                      width: '100%',
-                    }}
-                  >
-                    <span
-                      className='p-0 material-icons-round'
+                  {user && user.profile.isAdmin && (
+                    <Button
+                      onClick={() => setShowModal(true)}
                       style={{
-                        position: 'relative',
-                        top: '3px',
-                        fontSize: '20px',
+                        paddingTop: '0.35rem',
+                        paddingBottom: '0.35rem',
+                        marginBottom: '0.4rem',
+                        width: '100%',
                       }}
                     >
-                      add
-                    </span>
-                    CREATE REVIEW
-                  </Button>
+                      <span
+                        className='p-0 material-icons-round'
+                        style={{
+                          position: 'relative',
+                          top: '3px',
+                          fontSize: '20px',
+                        }}
+                      >
+                        add
+                      </span>
+                      CREATE REVIEW
+                    </Button>
+                  )}
                 </Col>
               </Row>
               {project && (
                 <div className='d-md-block d-lg-none py-2'>
-                  <ProjectTopBar settingsHandler={settingsHandler}/>
+                  <ProjectTopBar settingsHandler={settingsHandler} />
                 </div>
               )}
             </Col>
