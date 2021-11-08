@@ -47,11 +47,12 @@ const ProjectTopBar = ({ settingsHandler }) => {
         >
           <h4 style={{ transform: 'translate(0px, 0)' }}>
             <span
-              className='material-icons-round text-primary'
+              className='material-icons-round noselect'
               style={{
                 position: 'relative',
                 top: '4px',
                 fontSize: '25px',
+                color: `${project.color}`,
               }}
             >
               circle

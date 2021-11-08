@@ -42,12 +42,13 @@ const ProjectSideBar = ({ id, settingsHandler }) => {
           </h5>
           <div className='text-end p-0 m-0' style={{ position: 'relative' }}>
             <span
-              className='material-icons-round text-primary'
+              className='material-icons-round noselect'
               style={{
                 position: 'relative',
                 top: '-20px',
                 left: '-6px',
                 fontSize: '34px',
+                color: `${project.color}`,
               }}
             >
               circle

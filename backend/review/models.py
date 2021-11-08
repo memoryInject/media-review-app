@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 
+from review.utils import random_hex_color_code
+
 
 class Project(models.Model):
     """Project table handle user projects"""
@@ -11,8 +13,15 @@ class Project(models.Model):
         get_user_model(), related_name='projects', on_delete=models.CASCADE)
     project_name = models.CharField(max_length=200)
     image_url = models.CharField(max_length=200, null=True, blank=True)
+    color = models.CharField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @receiver(post_save, sender='review.Project')
+    def update_image_url(sender, instance, created, **kwargs):
+        if created:
+            instance.color = random_hex_color_code()
+            instance.save()
 
     def __str__(self):
         return self.project_name
