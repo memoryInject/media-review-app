@@ -57,6 +57,7 @@ const ProjectListScreen = ({ location, history }) => {
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState('');
   const [success, setSuccess] = useState(true);
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     if (!userInfo) {
@@ -113,6 +114,11 @@ const ProjectListScreen = ({ location, history }) => {
     setValidated(true);
   };
 
+  const searchHandler = (e) => {
+    e.preventDefault()
+    dispatch(listProjects(search))
+  }
+
   return (
     <>
       <Row>
@@ -128,10 +134,12 @@ const ProjectListScreen = ({ location, history }) => {
           </h4>
         </Col>
         <Col md style={{ marginBottom: '12px' }}>
-          <Form className='d-flex'>
+          <Form className='d-flex' onSubmit={searchHandler}>
             <FormControl
               type='search'
               placeholder='Search'
+              value={search}
+              onChange={(e)=>setSearch(e.target.value)}
               className='me-2 text-white'
               aria-label='Search'
               style={{
@@ -139,7 +147,7 @@ const ProjectListScreen = ({ location, history }) => {
                 border: '0px',
               }}
             />
-            <Button variant='outline-success'>Search</Button>
+            <Button variant='outline-success' type='submit'>Search</Button>
           </Form>
         </Col>
         <Col className='text-end d-none d-md-block' md>
@@ -158,7 +166,7 @@ const ProjectListScreen = ({ location, history }) => {
             </Button>
           )}
         </Col>
-        <Col className='d-block d-sm-block d-md-none' md>
+        <Col className='d-block d-sm-block d-md-none' md style={{paddingBottom: '1rem'}}>
           {user && user.profile.isAdmin && (
             <Button
               style={{
@@ -179,6 +187,15 @@ const ProjectListScreen = ({ location, history }) => {
           )}
         </Col>
       </Row>
+          <div
+            id='style-2'
+            style={{
+              maxHeight: '85.75vh',
+              overflow: 'auto',
+              position: 'relative',
+              transition: 'all 0.5s ease-in-out',
+            }}
+          >
       {error && <Message>{error}</Message>}
       {(loading && !projects) || (!loading && !projects) ? (
         <Loader />
@@ -193,6 +210,7 @@ const ProjectListScreen = ({ location, history }) => {
           ))}
         </Row>
       )}
+          </div>
 
       {/*Dialog for create project*/}
       <Modal

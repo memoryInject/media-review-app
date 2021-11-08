@@ -1,21 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import {
-  Button,
-  Form,
-  Row,
-  Col,
-  ProgressBar,
-  ToastContainer,
-  Toast,
-} from 'react-bootstrap';
+import { Button, Form, Row, Col, ProgressBar } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 
 import Loader from './Loader';
 import Message from './Message';
 
+import { showToast, messageToast, variantToast } from '../actions/toastActions';
 import { createMedia, updateMedia } from '../actions/mediaActions';
+import { listReviewDetails } from '../actions/reviewActions';
 import {
   MEDIA_CREATE_HIDE,
   MEDIA_CREATE_PARENT_RESET,
@@ -24,14 +18,13 @@ import {
   MEDIA_UPDATE_RESET,
 } from '../constants/mediaConstants';
 
-const VideoUpload = () => {
+const VideoUpload = ({ match }) => {
   const dispatch = useDispatch();
 
   const filePick = useRef(null);
 
   const [showButton, setShowButton] = useState(true);
   const [showUpdate, setShowUpdate] = useState(false);
-  const [showToast, setShowToast] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(35);
   const [progressMessage, setProgressMessage] = useState(
@@ -44,6 +37,9 @@ const VideoUpload = () => {
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
 
   const reviewDetails = useSelector((state) => state.reviewDetails);
   const { review } = reviewDetails;
@@ -66,7 +62,18 @@ const VideoUpload = () => {
 
   // Reset all the state when open upload window
   useEffect(() => {
+    const userCheck = () => {
+      const filterdUser = review.collaborators.filter(coll => coll.id === user.id)
+      if (!filterdUser.length) {
+        dispatch({ type: MEDIA_CREATE_HIDE });
+        dispatch(messageToast('User is not a collaborator'));
+        dispatch(variantToast('danger'));
+        dispatch(showToast(true));
+      }
+    }
+
     if (show) {
+      userCheck()
       setShowButton(true);
       setUploading(false);
       setShowUpdate(false);
@@ -78,28 +85,38 @@ const VideoUpload = () => {
       dispatch({ type: MEDIA_CREATE_RESET });
       dispatch({ type: MEDIA_UPDATE_RESET });
     }
-  }, [show, dispatch]);
+  }, [show, dispatch, review, user]);
 
+  // This will run after the media created successfully
   useEffect(() => {
     if (media) {
       setMediaName(media.mediaName);
       setMediaVersion(media.version);
       setShowUpdate(true);
       setSuccessMessage(true);
+      //dispatch(listReviewDetails(match.params.reviewId));
     }
-  }, [media]);
+  }, [media, dispatch, match]);
 
+  // This will run after the media updated successfully
   useEffect(() => {
     if (mediaUpdated) {
       dispatch({ type: MEDIA_CREATE_HIDE });
       dispatch({ type: MEDIA_CREATE_PARENT_RESET });
-      setShowToast(true);
+      dispatch({ type: MEDIA_UPDATE_RESET });
+      dispatch(messageToast('Media updated successfully'));
+      dispatch(variantToast('success'));
+      dispatch(showToast(true));
+      dispatch(listReviewDetails(match.params.reviewId));
     }
-  }, [mediaUpdated, dispatch]);
+  }, [mediaUpdated, dispatch, match]);
 
   const closeUIHandler = () => {
     dispatch({ type: MEDIA_CREATE_HIDE });
     dispatch({ type: MEDIA_CREATE_PARENT_RESET });
+    if (showUpdate) {
+      dispatch(listReviewDetails(match.params.reviewId));
+    }
   };
 
   const uploadFileHandler = async (e) => {
@@ -282,22 +299,6 @@ const VideoUpload = () => {
           </Row>
         </Offcanvas.Body>
       </Offcanvas>
-      <ToastContainer position='top-end' className='p-3'>
-        <Toast
-          onClose={() => setShowToast(false)}
-          show={showToast}
-          delay={3000}
-          autohide
-          bg='success'
-        >
-          <Toast.Header>
-            <span className='material-icons-round'>movie</span>
-            <strong className='me-auto'>&nbsp;Media-Review</strong>
-            <small className='text-muted'>just now</small>
-          </Toast.Header>
-          <Toast.Body>Media successfully updated.</Toast.Body>
-        </Toast>
-      </ToastContainer>
     </>
   );
 };

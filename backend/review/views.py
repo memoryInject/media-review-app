@@ -14,10 +14,11 @@ from review.permissions import (IsAdmin, IsAdminOrReadOnly, IsCollaborator,
                                 IsCreatorOrReadOnly)
 
 from user.utils import is_admin
-from review.utils import filter_project_reviews_by_collaborator
+from review.utils import filter_project_reviews_by_collaborator,\
+    filter_project_reviews_by_review_name
 
 
-# Route: /review/projects/<?user=true>
+# Route: /review/projects/?<user=true>&<s=search_item>
 # Access: Admin only
 # Description: If user query passed in the url,
 # it will return only projects created by the user
@@ -28,6 +29,10 @@ class ProjectList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Project.objects.all()
+
+        search = self.request.query_params.get('s')
+        if search:
+            queryset = queryset.filter(project_name__icontains=search)
 
         if self.request.query_params.get('user'):
             queryset = queryset.filter(user=self.request.user)
@@ -42,7 +47,7 @@ class ProjectList(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-# Route: /review/projects/<int:pk>/
+# Route: /review/projects/<int:pk>/?<s_review=review_name>
 # Access: Admin only
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
@@ -77,17 +82,28 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 
         serializer = ProjectSerializer(queryset)
 
+        search = self.request.query_params.get('s')
+
         # If user is not admin filter reviews from the project
         if not request.user.userprofile.is_admin:
             user_id = request.user.id
+            filter_data = filter_project_reviews_by_collaborator(
+                serializer.data, user_id)
+
+            if search:
+                return Response(
+                    filter_project_reviews_by_review_name(filter_data, search))
+            else:
+                return Response(filter_data)
+
+        if search:
             return Response(
-                filter_project_reviews_by_collaborator(
-                    serializer.data, user_id))
+                filter_project_reviews_by_review_name(serializer.data, search))
+        else:
+            return Response(serializer.data)
 
-        return Response(serializer.data)
 
-
-# Route: /review/reviews/?<user=true>&<all=true>&<project=int:id>
+# Route: /review/reviews/?<user=true>&<all=true>&<project=int:id>&<s=item>
 # description: GET all the reviews if the user is in collaborators
 # only admin can POST and GET all reviews
 class ReviewList(generics.ListCreateAPIView):
@@ -112,6 +128,10 @@ class ReviewList(generics.ListCreateAPIView):
     def get_queryset(self):
         user = self.request.user
         queryset = Review.objects.filter(collaborators=user)
+
+        search = self.request.query_params.get('s')
+        if search:
+            queryset = queryset.filter(review_name__icontains=search)
 
         # Check the user query_params, and return
         # reviews created by the user
@@ -214,6 +234,14 @@ class MediaList(generics.ListCreateAPIView):
         except ObjectDoesNotExist:
             raise serializers.ValidationError(
                 {"detail": "Asset does not exists"})
+
+        # Check if the current user is in the review collaborator list
+        # TODO
+        try:
+            review.collaborators.get(id=self.request.user.id)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(
+                {"detail": "User does not exists in collaborator list"})
 
         # Check if the request contains parent for adding new version
         if self.request.data.get('parent'):

@@ -44,7 +44,11 @@ const ReviewButtons = ({ history }) => {
       )}
       <div
         className='d-inline text-center noselect mx-1 review-buttons'
-        style={{ ...style }}
+        style={
+          user && user.profile.isAdmin
+            ? { ...style }
+            : { ...style, borderRadius: '0.25rem 0 0 0.25rem' }
+        }
         onClick={() => dispatch(showUICollaborator())}
       >
         <span className='material-icons-round text-info review-button-collaborator'>

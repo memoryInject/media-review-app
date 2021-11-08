@@ -153,7 +153,12 @@ const FeedbackList = () => {
         }}
         className='text-start'
       >
-        <span className='material-icons-round' style={{transform: 'translate(-5px, 8px)'}}>chat</span>
+        <span
+          className='material-icons-round'
+          style={{ transform: 'translate(-5px, 8px)' }}
+        >
+          chat
+        </span>
         Feedback
       </h6>
       <div

@@ -5,7 +5,7 @@ import { listMediaDetails } from '../actions/mediaActions';
 import { listFeedbacks } from '../actions/feedbackActions';
 import { FEEDBACK_CREATE_RESET } from '../constants/feedbackConstants';
 import { listPlaylistDetails } from '../actions/playlistActions';
-import {PLAYLIST_DETAILS_RESET} from '../constants/playlistConstants';
+import { PLAYLIST_DETAILS_RESET } from '../constants/playlistConstants';
 
 const Playlist = () => {
   const dispatch = useDispatch();
@@ -18,10 +18,8 @@ const Playlist = () => {
   const playlistDetails = useSelector((state) => state.playlistDetails);
   const { playlist: playlistDetail } = playlistDetails;
 
-  const playerDetails = useSelector((state) => state.playerDetails);
-  const { width } = playerDetails;
-  const url =
-    'https://images.unsplash.com/photo-1470217957101-da7150b9b681?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2148&q=80';
+  //const url =
+  //'https://images.unsplash.com/photo-1470217957101-da7150b9b681?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2148&q=80';
 
   const playlist = useRef(null);
   const [showButton, setShowButton] = useState(false);
@@ -32,19 +30,23 @@ const Playlist = () => {
       dispatch(listPlaylistDetails());
     }
 
-    return () => dispatch({type: PLAYLIST_DETAILS_RESET})
+    return () => dispatch({ type: PLAYLIST_DETAILS_RESET });
   }, [review, dispatch]);
 
+  // This will set the scroll button for playlist if there is a scrollbar
   useEffect(() => {
-    if (
-      playlist.current &&
-      playlist.current.scrollWidth > playlist.current.clientWidth
-    ) {
-      setShowButton(true);
-    } else {
-      setShowButton(false);
-    }
-  }, [playlist]);
+    const timerId = setTimeout(() => {
+      if (
+        playlist.current &&
+        playlist.current.scrollWidth > playlist.current.clientWidth
+      ) {
+        setShowButton(true);
+      } else {
+        setShowButton(false);
+      }
+    }, 500);
+    return () => clearTimeout(timerId);
+  }, [playlist, playlistDetail]);
 
   const scroll = (scrollOffset) => {
     playlist.current.scrollLeft += scrollOffset;
@@ -169,8 +171,8 @@ const Playlist = () => {
                 backgroundColor: 'rgba(0,0,0,0.4)',
                 height: '5.3rem',
                 top: '5px',
-                left: `${width - 23}px`,
                 cursor: 'pointer',
+                right: '0px',
               }}
               onClick={() => scroll(60)}
             >

@@ -21,63 +21,73 @@ import {
 } from '../constants/projectConstants';
 import getError from '../utils/getError';
 
-export const listProjects = () => async (dispatch, getState) => {
-  try {
-    dispatch({ type: PROJECT_LIST_REQUEST });
+export const listProjects =
+  (search = '') =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({ type: PROJECT_LIST_REQUEST });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
+      const {
+        userLogin: { userInfo },
+      } = getState();
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${userInfo.key}`,
-      },
-    };
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${userInfo.key}`,
+        },
+      };
 
-    const { data } = await axios.get('/api/v1/review/projects/', config);
+      const { data } = await axios.get(
+        `/api/v1/review/projects/?s=${search}`,
+        config
+      );
 
-    dispatch({
-      type: PROJECT_LIST_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: PROJECT_LIST_FAIL,
-      payload: getError(error),
-    });
-  }
-};
+      dispatch({
+        type: PROJECT_LIST_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: PROJECT_LIST_FAIL,
+        payload: getError(error),
+      });
+    }
+  };
 
-export const listProjectDetails = (id) => async (dispatch, getState) => {
-  try {
-    dispatch({ type: PROJECT_DETAILS_REQUEST });
+export const listProjectDetails =
+  (id, search = '') =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({ type: PROJECT_DETAILS_REQUEST });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
+      const {
+        userLogin: { userInfo },
+      } = getState();
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${userInfo.key}`,
-      },
-    };
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${userInfo.key}`,
+        },
+      };
 
-    const { data } = await axios.get(`/api/v1/review/projects/${id}`, config);
+      const { data } = await axios.get(
+        `/api/v1/review/projects/${id}/?s=${search}`,
+        config
+      );
 
-    dispatch({
-      type: PROJECT_DETAILS_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: PROJECT_DETAILS_FAIL,
-      payload: getError(error),
-    });
-  }
-};
+      dispatch({
+        type: PROJECT_DETAILS_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: PROJECT_DETAILS_FAIL,
+        payload: getError(error),
+      });
+    }
+  };
 
 export const createProject = (project) => async (dispatch, getState) => {
   try {
@@ -94,7 +104,11 @@ export const createProject = (project) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post('/api/v1/review/projects/', project, config);
+    const { data } = await axios.post(
+      '/api/v1/review/projects/',
+      project,
+      config
+    );
 
     dispatch({
       type: PROJECT_CREATE_SUCCESS,
@@ -126,7 +140,11 @@ export const uploadImageProject = (file) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post('/api/v1/cloud/upload/image/', formData, config);
+    const { data } = await axios.post(
+      '/api/v1/cloud/upload/image/',
+      formData,
+      config
+    );
 
     dispatch({
       type: PROJECT_UPLOAD_IMAGE_SUCCESS,
@@ -155,7 +173,11 @@ export const updateProject = (id, project) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.patch(`/api/v1/review/projects/${id}/`, project, config);
+    const { data } = await axios.patch(
+      `/api/v1/review/projects/${id}/`,
+      project,
+      config
+    );
 
     dispatch({
       type: PROJECT_UPDATE_SUCCESS,
@@ -184,7 +206,10 @@ export const deleteProject = (id) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.delete(`/api/v1/review/projects/${id}/`, config);
+    const { data } = await axios.delete(
+      `/api/v1/review/projects/${id}/`,
+      config
+    );
 
     dispatch({
       type: PROJECT_DELETE_SUCCESS,

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Row, Col, Dropdown } from 'react-bootstrap';
+
 import { listMediaDetails } from '../actions/mediaActions';
 import { listFeedbacks } from '../actions/feedbackActions';
 import { FEEDBACK_CREATE_RESET } from '../constants/feedbackConstants';
@@ -19,6 +21,9 @@ const MediaInfoBar = () => {
 
   const playlistDetails = useSelector((state) => state.playlistDetails);
   const { playlist: playlistDetail } = playlistDetails;
+
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
 
   const [versions, setVersions] = useState([]);
 
@@ -93,9 +98,31 @@ const MediaInfoBar = () => {
                         paddingLeft: '0px',
                         paddingRight: '0px',
                         transform: 'translate(-10px, 0px)',
+                        position: 'relative',
                       }}
                     >
-                      {review.reviewName}
+                      <Link
+                        to={`/projects/${review.project.id}`}
+                        style={{ textDecoration: 'none' }}
+                        className='fw-bold'
+                      >
+                        {review.project.projectName}
+                      </Link>
+                      <span
+                        className='material-icons-round text-secondary'
+                        style={{
+                          position: 'absolute',
+                          top: '-5px',
+                        }}
+                      >
+                        arrow_right
+                      </span>
+                      <span
+                        style={{ position: 'relative', left: '18px' }}
+                        className='text-light'
+                      >
+                        &nbsp;&nbsp;{review.reviewName}
+                      </span>
                     </h6>
                   </Row>
                   <Row>
@@ -114,9 +141,7 @@ const MediaInfoBar = () => {
                   </Row>
                 </Col>
                 <Col>
-                  <Dropdown
-                    className='my-2'
-                  >
+                  <Dropdown className='my-2'>
                     <Dropdown.Toggle
                       variant='outline-success'
                       id='dropdown-basic'
@@ -136,17 +161,19 @@ const MediaInfoBar = () => {
                           </Dropdown.Item>
                         ))}
                       <Dropdown.Divider />
-                      <Dropdown.Item
-                        eventKey='4'
-                        onClick={() => addVersionHandler()}
-                      >
-                        <span
-                          //style={{ transform: 'translate(0, 6px)' }}
-                          className='material-icons-round'
+                      {user && user.profile.isAdmin && (
+                        <Dropdown.Item
+                          eventKey='4'
+                          onClick={() => addVersionHandler()}
                         >
-                          library_add
-                        </span>
-                      </Dropdown.Item>
+                          <span
+                            //style={{ transform: 'translate(0, 6px)' }}
+                            className='material-icons-round'
+                          >
+                            library_add
+                          </span>
+                        </Dropdown.Item>
+                      )}
                     </Dropdown.Menu>
                   </Dropdown>
                 </Col>

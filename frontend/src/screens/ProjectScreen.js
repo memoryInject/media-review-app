@@ -23,6 +23,7 @@ const ProjectScreen = ({ match, history }) => {
   const { loading, error, project } = projectDetails;
 
   const [showModal, setShowModal] = useState(false);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     if (!userInfo) {
@@ -34,6 +35,11 @@ const ProjectScreen = ({ match, history }) => {
 
   const settingsHandler = () => {
     history.push(history.location.pathname + '/settings');
+  };
+
+  const searchHandler = (e) => {
+    e.preventDefault();
+    dispatch(listProjectDetails(match.params.id, search));
   };
 
   return (
@@ -57,7 +63,7 @@ const ProjectScreen = ({ match, history }) => {
             settingsHandler={settingsHandler}
           />
         </Col>
-        <Col>
+        <Col style={{ position: 'relative' }}>
           <Row>
             <Col>
               <Row>
@@ -73,10 +79,12 @@ const ProjectScreen = ({ match, history }) => {
                   </h4>
                 </Col>
                 <Col md style={{ marginBottom: '12px' }}>
-                  <Form className='d-flex'>
+                  <Form className='d-flex' onSubmit={searchHandler}>
                     <FormControl
                       type='search'
                       placeholder='Search'
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
                       className='me-2 text-white'
                       aria-label='Search'
                       style={{
@@ -84,7 +92,9 @@ const ProjectScreen = ({ match, history }) => {
                         border: '0px',
                       }}
                     />
-                    <Button variant='outline-success'>Search</Button>
+                    <Button variant='outline-success' type='submit'>
+                      Search
+                    </Button>
                   </Form>
                 </Col>
                 <Col className='text-end  d-none d-md-block' md>
@@ -143,23 +153,34 @@ const ProjectScreen = ({ match, history }) => {
               )}
             </Col>
           </Row>
-          <Row xs='auto'>
-            {error && <Message>{error}</Message>}
-            {(loading && !project) ||
-            (!loading && !project) ||
-            project.id.toString() !== match.params.id.toString() ? (
-              <Loader />
-            ) : error ? (
-              <Message variant='danger'>{error}</Message>
-            ) : (
-              project.reviews &&
-              project.reviews.map((review) => (
-                <Col key={review.id.toString()}>
-                  <Review projectId={match.params.id} review={review} />
-                </Col>
-              ))
-            )}
-          </Row>
+
+          <div
+            id='style-2'
+            style={{
+              maxHeight: '85.75vh',
+              overflow: 'auto',
+              position: 'relative',
+              transition: 'all 0.5s ease-in-out',
+            }}
+          >
+            <Row xs='auto'>
+              {error && <Message>{error}</Message>}
+              {(loading && !project) ||
+              (!loading && !project) ||
+              project.id.toString() !== match.params.id.toString() ? (
+                <Loader />
+              ) : error ? (
+                <Message variant='danger'>{error}</Message>
+              ) : (
+                project.reviews &&
+                project.reviews.map((review) => (
+                  <Col key={review.id.toString()}>
+                    <Review projectId={match.params.id} review={review} />
+                  </Col>
+                ))
+              )}
+            </Row>
+          </div>
         </Col>
       </Row>
 

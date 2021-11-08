@@ -91,7 +91,7 @@ const ReviewScreen = ({ history, match }) => {
                 )}
                 <Col md={4} className='text-center py-1'>
                   <ReviewButtons history={history} />
-                  <VideoUpload />
+                  <VideoUpload match={match} />
                   <Collaborators />
                 </Col>
               </Row>
