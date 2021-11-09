@@ -27,6 +27,9 @@ import {
 const ReviewScreen = ({ history, match }) => {
   const dispatch = useDispatch();
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   const reviewDetails = useSelector((state) => state.reviewDetails);
   let { loading, error, review } = reviewDetails;
 
@@ -34,9 +37,13 @@ const ReviewScreen = ({ history, match }) => {
   const { playlist: playlistDetail } = playlistDetails;
 
   useEffect(() => {
-    dispatch(listReviewDetails(match.params.reviewId));
+    if (!userInfo) {
+      history.push('/login');
+    } else {
+      dispatch(listReviewDetails(match.params.reviewId));
+    }
     return () => dispatch({ type: REVIEW_DETAILS_RESET });
-  }, [match.params.reviewId, dispatch]);
+  }, [match.params.reviewId, dispatch, history, userInfo]);
 
   useEffect(() => {
     if (review && playlistDetail && playlistDetail.length > 0) {
@@ -53,7 +60,7 @@ const ReviewScreen = ({ history, match }) => {
       dispatch({ type: FEEDBACK_LIST_RESET });
       dispatch({ type: MEDIA_DETAILS_RESET });
       dispatch({ type: FEEDBACK_CREATE_RESET });
-      dispatch({ type: PLAYER_RESET });
+      //dispatch({ type: PLAYER_RESET });
     };
   }, [review, dispatch, playlistDetail]);
 

@@ -11,7 +11,7 @@ const Review = ({ review, projectId }) => {
         <Card.Img
           src={review.imageUrl ? review.imageUrl : placeholderUrl}
           className='review-img'
-          style={{opacity: `${review.imageUrl ? '1' : '0.4'}`}}
+          style={{ opacity: `${review.imageUrl ? '1' : '0.4'}` }}
         />
       </Link>
       <Card.Body>
@@ -22,13 +22,19 @@ const Review = ({ review, projectId }) => {
           <Card.Title className='title-card'>{review.reviewName}</Card.Title>
         </Link>
         <Card.Text as='div'>
-          <p className='py-0 text-muted' style={{ marginBottom: '10px' }}>
-            {review.items} items
+          <p className='py-0 text-info' style={{ marginBottom: '10px' }}>
+            {review.numberOfMedia} items
           </p>
-          <p className='py-0 my-0 text-muted'>
-            {review.active ? 'Active' : 'Closed'}
+          <p
+            className={`py-0 my-0 ${
+              review.isOpen ? 'text-muted' : 'text-danger'
+            }`}
+          >
+            {review.isOpen ? 'Open' : 'Closed'}
           </p>
-          <span className='text-muted'>{review.users} collaborators</span>
+          <span className='text-muted'>{`${review.numberOfCollaborator} ${
+            review.numberOfCollaborator === 1 ? 'Collaborator' : 'Collaborators'
+          }`}</span>
         </Card.Text>
       </Card.Body>
     </Card>

@@ -18,6 +18,9 @@ class ReviewField(serializers.RelatedField):
             'id': value.id,
             'review_name': value.review_name,
             'image_url': value.image_url,
+            'is_open': value.is_open,
+            'number_of_media': value.number_of_media,
+            'number_of_collaborator': value.number_of_collaborator,
             'user': {'id': value.user.id, 'username': value.user.username},
             'collaborators': serializer.data
         }
@@ -66,12 +69,13 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('id', 'review_name', 'description', 'project',
-                  'user',
+        fields = ('id', 'review_name', 'description', 'project', 'is_open',
+                  'number_of_media', 'number_of_collaborator', 'user',
                   'collaborators', 'media',
                   'created_at', 'updated_at')
         read_only_fields = ('id', 'updated_at', 'created_at',
-                            'user', 'media')
+                            'user', 'media', 
+                            'number_of_media', 'number_of_collaborator')
 
     # Need to override create and update because of collaborators and project
     # fiedls are customized above also check the view.py part of this for
@@ -100,6 +104,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         instance.collaborators.set(collaborators)
         instance.project = validated_data.get('project', instance.project)
         instance.user = validated_data.get('user', instance.user)
+        instance.is_open = validated_data.get('is_open', instance.is_open)
 
         instance.save()
 

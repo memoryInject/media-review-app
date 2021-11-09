@@ -2,7 +2,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_save
 
 from review.utils import random_hex_color_code
 
@@ -35,6 +35,9 @@ class Review(models.Model):
     project = models.ForeignKey(Project, related_name='reviews',
                                 on_delete=models.CASCADE,
                                 null=True, blank=True)
+    is_open = models.BooleanField(null=True, blank=True, default=True)
+    number_of_media = models.IntegerField(null=True, blank=True, default=0)
+    number_of_collaborator = models.IntegerField(null=True, blank=True, default=1)
     user = models.ForeignKey(get_user_model(), related_name='reviews_created',
                              on_delete=models.CASCADE)
     collaborators = models.ManyToManyField(
@@ -60,6 +63,18 @@ class Review(models.Model):
         else:
             review.image_url = None
             review.save()
+
+    @receiver(pre_save, sender='review.Review')
+    def update_number_of_collaborator(sender, instance, **kwargs):
+        review = instance
+        number_of_collaborator = len(instance.collaborators.all())
+        review.number_of_collaborator = number_of_collaborator
+
+    @receiver(post_save, sender='review.Media')
+    def update_number_of_media(sender, instance, created, **kwargs):
+        review = instance.review
+        review.number_of_media = len(review.media.all())
+        review.save()
 
     def __str__(self):
         return self.review_name

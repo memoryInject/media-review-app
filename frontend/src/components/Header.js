@@ -2,10 +2,13 @@ import React, { useRef } from 'react';
 import { Container, Nav, Navbar, NavDropdown, Image } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+
 import { logout } from '../actions/userActions';
 
 const Header = () => {
   const dispatch = useDispatch();
+  let history = useHistory();
 
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
@@ -14,6 +17,7 @@ const Header = () => {
 
   const logoutHandler = () => {
     dispatch(logout());
+    history.push('/login');
   };
 
   return (

@@ -154,33 +154,34 @@ const ProjectScreen = ({ match, history }) => {
             </Col>
           </Row>
 
-          <div
-            id='style-2'
-            style={{
-              maxHeight: '85.75vh',
-              overflow: 'auto',
-              position: 'relative',
-              transition: 'all 0.5s ease-in-out',
-            }}
-          >
-            <Row xs='auto'>
-              {error && <Message>{error}</Message>}
-              {(loading && !project) ||
-              (!loading && !project) ||
-              project.id.toString() !== match.params.id.toString() ? (
-                <Loader />
-              ) : error ? (
-                <Message variant='danger'>{error}</Message>
-              ) : (
-                project.reviews &&
-                project.reviews.map((review) => (
-                  <Col key={review.id.toString()}>
-                    <Review projectId={match.params.id} review={review} />
-                  </Col>
-                ))
-              )}
-            </Row>
-          </div>
+          {error && <Message>{error}</Message>}
+          {(loading && !project) ||
+          (!loading && !project) ||
+          project.id.toString() !== match.params.id.toString() ? (
+            <Loader />
+          ) : error ? (
+            <Message variant='danger'>{error}</Message>
+          ) : (
+            project.reviews && (
+              <div
+                id='style-2'
+                style={{
+                  maxHeight: '85.75vh',
+                  overflow: 'auto',
+                  position: 'relative',
+                  transition: 'all 0.5s ease-in-out',
+                }}
+              >
+                <Row xs='auto'>
+                  {project.reviews.map((review) => (
+                    <Col key={review.id.toString()}>
+                      <Review projectId={match.params.id} review={review} />
+                    </Col>
+                  ))}
+                </Row>
+              </div>
+            )
+          )}
         </Col>
       </Row>
 

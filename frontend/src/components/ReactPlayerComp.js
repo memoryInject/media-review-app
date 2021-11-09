@@ -5,7 +5,6 @@ import ReactPlayer from 'react-player';
 import screenfull from 'screenfull';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Loader from '../components/Loader';
 import Message from '../components/Message';
 import AnnotationCanvas from '../components/AnnotationCanvas';
 
@@ -98,29 +97,29 @@ const ReactPlayerComp = () => {
     return () => window.removeEventListener('resize', updateWindowDimensions);
   }, [dispatch]);
 
-  useEffect(() => {
-    if (player.current) {
-      dispatch(heightPlayer(player.current.wrapper.clientHeight));
-      dispatch(widthPlayer(player.current.wrapper.clientWidth));
-      dispatch(topPlayer(player.current.wrapper.offsetTop));
-      if (
-        player.current.wrapper.childNodes[0] &&
-        progressHolder.current.clientWidth
-      ) {
-        const videoHeight = player.current.wrapper.childNodes[0].videoHeight;
-        const videoWidth = player.current.wrapper.childNodes[0].videoWidth;
-        const factor = progressHolder.current.clientWidth / videoWidth;
-        setAdjHeight(Math.ceil(videoHeight * factor));
-        dispatch(
-          videoSizePlayer({
-            height: videoHeight,
-            width: videoWidth,
-            scaleFactor: factor,
-          })
-        );
-      }
-    }
-  }, [height, player, showPlayer, dispatch]);
+  //useEffect(() => {
+    //if (player.current) {
+      //dispatch(heightPlayer(player.current.wrapper.clientHeight));
+      //dispatch(widthPlayer(player.current.wrapper.clientWidth));
+      //dispatch(topPlayer(player.current.wrapper.offsetTop));
+      //if (
+        //player.current.wrapper.childNodes[0] &&
+        //progressHolder.current.clientWidth
+      //) {
+        //const videoHeight = player.current.wrapper.childNodes[0].videoHeight;
+        //const videoWidth = player.current.wrapper.childNodes[0].videoWidth;
+        //const factor = progressHolder.current.clientWidth / videoWidth;
+        //setAdjHeight(Math.ceil(videoHeight * factor));
+        //dispatch(
+          //videoSizePlayer({
+            //height: videoHeight,
+            //width: videoWidth,
+            //scaleFactor: factor,
+          //})
+        //);
+      //}
+    //}
+  //}, [height, player, showPlayer, dispatch]);
 
   const onReadyHandler = () => {
     if (player) {
@@ -184,7 +183,8 @@ const ReactPlayerComp = () => {
 
   const handleNextFrame = () => {
     setSeeking(true);
-    const nextFrame = seconds + 1.0 / 24.0;
+    let fps = media.asset.frameRate ? media.asset.frameRate : 24
+    const nextFrame = seconds + 1.0 / fps;
     player.current.seekTo(
       nextFrame > duration ? duration : nextFrame,
       'seconds'
@@ -194,7 +194,8 @@ const ReactPlayerComp = () => {
 
   const handlePrevFrame = () => {
     setSeeking(true);
-    const prevFrame = seconds - 1.0 / 24.0;
+    let fps = media.asset.frameRate ? media.asset.frameRate : 24
+    const prevFrame = seconds - 1.0 / fps;
     player.current.seekTo(prevFrame < 0 ? 0 : prevFrame, 'seconds');
     setSeeking(false);
   };
@@ -291,12 +292,17 @@ const ReactPlayerComp = () => {
       <Row>
         <Col style={{ position: 'relative' }}>
           {error && <Message>{error}</Message>}
+
+          {/*Custom Loader*/}
           {true && (
             <>
               <div
                 style={{
                   zIndex: '12',
-                  minHeight: '80px',
+                  minHeight: `${
+                    progressHolder.current &&
+                    (720 * (progressHolder.current.clientWidth/1280)) + 5.5
+                    }px`,
                   height: `${adjHeight + 5.5}px`,
                   width: `${
                     progressHolder &&
@@ -313,13 +319,9 @@ const ReactPlayerComp = () => {
               >
                 <Spinner
                   animation='border'
-                  style={{
-                    marginTop: `${adjHeight / 2}px`,
-                    transition: 'all 0.5s ease-in-out',
-                  }}
+                  style={{position: 'absolute', top: '50%'}}
                 />
               </div>
-              {/*<Loader />*/}
             </>
           )}
           {media && media.asset.url && (
@@ -570,8 +572,12 @@ const ReactPlayerComp = () => {
               }}
             >
               <span>{getTimeFormat(seconds)}</span>
-              <span className='d-none d-sm-none d-md-inline'>&nbsp;/&nbsp;</span>
-              <span className='d-none d-sm-none d-md-inline'>{getTimeFormat(duration)}</span>
+              <span className='d-none d-sm-none d-md-inline'>
+                &nbsp;/&nbsp;
+              </span>
+              <span className='d-none d-sm-none d-md-inline'>
+                {getTimeFormat(duration)}
+              </span>
             </div>
             {/*Time Duration End*/}
           </Col>

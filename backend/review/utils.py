@@ -25,7 +25,6 @@ def filter_project_reviews_by_review_name(serializer_data, review_name):
     """ This will filter project reviews by given review name """
 
     clean_copy = copy.deepcopy(serializer_data)
-    print(clean_copy.get('reviews'))
     result = filter(lambda x: True if review_name.lower() in x.get(
         'review_name').lower() else False, clean_copy.get('reviews'))
 

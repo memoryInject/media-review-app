@@ -174,6 +174,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
             collaborators = get_user_model().objects.filter(
                 id__in=self.request.data.get('collaborators'))
             serializer.save(collaborators=collaborators)
+
         return super().perform_update(serializer)
 
 

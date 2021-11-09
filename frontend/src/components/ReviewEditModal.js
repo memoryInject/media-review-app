@@ -21,12 +21,14 @@ const ReviewEditModal = ({ match, show, onHide, userDetails, review }) => {
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [open, setOpen] = useState(true);
   const [validated, setValidated] = useState(false);
 
   useEffect(() => {
     if (review) {
       setName(review.reviewName);
       setDescription(review.description);
+      setOpen(review.isOpen);
     }
   }, [review]);
 
@@ -47,7 +49,11 @@ const ReviewEditModal = ({ match, show, onHide, userDetails, review }) => {
 
     if (form.checkValidity() === true) {
       dispatch(
-        updateReview(match.params.reviewId, { reviewName: name, description })
+        updateReview(match.params.reviewId, {
+          reviewName: name,
+          description,
+          isOpen: open,
+        })
       );
     }
 
@@ -70,7 +76,7 @@ const ReviewEditModal = ({ match, show, onHide, userDetails, review }) => {
             >
               movie
             </span>
-            &nbsp; Edit project
+            &nbsp; Edit review
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -117,6 +123,18 @@ const ReviewEditModal = ({ match, show, onHide, userDetails, review }) => {
               </Form.Control.Feedback>
             </Form.Group>
           </Form>
+
+          {/*Put this checkbox outside the form to avoid color change during validation*/}
+          <Form.Group>
+            <Form.Check
+              checked={open}
+              onChange={(e) => setOpen(e.target.checked)}
+              type='switch'
+              id='custom-switch'
+              label={open ? 'Open' : 'Closed'}
+              className={open ? 'text-success fw-bold' : 'text-danger fw-bold'}
+            />
+          </Form.Group>
         </Modal.Body>
         {reviewUpdateLoading ? (
           <div className='d-flex justify-content-center'>

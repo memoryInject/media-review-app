@@ -22,7 +22,7 @@ export const reviewDetailsReducer = (state = { review: null }, action) => {
     case REVIEW_DETAILS_REQUEST:
       return {
         loading: true,
-        review: null,
+        review: state.review,
       };
 
     case REVIEW_DETAILS_SUCCESS:
