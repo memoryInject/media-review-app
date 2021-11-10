@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Col, Row, Form, FormControl, Button } from 'react-bootstrap';
+import {
+  Col,
+  Row,
+  Form,
+  FormControl,
+  Button,
+  ButtonGroup,
+  ToggleButton,
+} from 'react-bootstrap';
 
 import Review from '../components/Review';
 import ProjectSideBar from '../components/ProjectSideBar';
@@ -9,6 +17,15 @@ import ProjectCreateReviewModal from '../components/ProjectCreateReviewModal';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { listProjectDetails } from '../actions/projectActions';
+import { listReview } from '../actions/reviewActions';
+import { PROJECT_DETAILS_RESET } from '../constants/projectConstants';
+import { REVIEW_LIST_RESET } from '../constants/reviewConstants';
+import {
+  reviewSearch,
+  reviewSearchFilterCollaborated,
+  reviewSearchFilterCreated,
+  reviewSearchFilterShow,
+} from '../actions/searchActions';
 
 const ProjectScreen = ({ match, history }) => {
   const dispatch = useDispatch();
@@ -22,16 +39,41 @@ const ProjectScreen = ({ match, history }) => {
   const projectDetails = useSelector((state) => state.projectDetails);
   const { loading, error, project } = projectDetails;
 
+  const reviewList = useSelector((state) => state.reviewList);
+  const { loading: loadingReviews, error: errorReviews, reviews } = reviewList;
+
+  const searchReview = useSelector((state) => state.searchReview);
+  const { keyword } = searchReview;
+
+  const searchFilterReview = useSelector((state) => state.searchFilterReview);
+  const { show, created, collaborated } = searchFilterReview;
+
   const [showModal, setShowModal] = useState(false);
-  const [search, setSearch] = useState('');
 
   useEffect(() => {
     if (!userInfo) {
       history.push('/login');
     } else {
       dispatch(listProjectDetails(match.params.id));
+      dispatch(listReview(match.params.id, keyword));
     }
-  }, [history, match.params.id, userInfo, dispatch]);
+  }, [
+    history,
+    match.params.id,
+    userInfo,
+    dispatch,
+    keyword,
+    created,
+    collaborated,
+  ]);
+
+  // This help to cleanup and better UX
+  useEffect(() => {
+    if (project && project.id.toString() !== match.params.id.toString()) {
+      dispatch({ type: PROJECT_DETAILS_RESET });
+      dispatch({ type: REVIEW_LIST_RESET });
+    }
+  }, [match, project, dispatch]);
 
   const settingsHandler = () => {
     history.push(history.location.pathname + '/settings');
@@ -39,7 +81,7 @@ const ProjectScreen = ({ match, history }) => {
 
   const searchHandler = (e) => {
     e.preventDefault();
-    dispatch(listProjectDetails(match.params.id, search));
+    dispatch(listReview(match.params.id, keyword));
   };
 
   return (
@@ -83,8 +125,8 @@ const ProjectScreen = ({ match, history }) => {
                     <FormControl
                       type='search'
                       placeholder='Search'
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
+                      value={keyword}
+                      onChange={(e) => dispatch(reviewSearch(e.target.value))}
                       className='me-2 text-white'
                       aria-label='Search'
                       style={{
@@ -92,9 +134,38 @@ const ProjectScreen = ({ match, history }) => {
                         border: '0px',
                       }}
                     />
-                    <Button variant='outline-success' type='submit'>
-                      Search
-                    </Button>
+                    {user && !user.profile.isAdmin && (
+                      <Button variant='outline-success' type='submit'>
+                        Search
+                      </Button>
+                    )}
+
+                    {user && user.profile.isAdmin && (
+                      <ButtonGroup aria-label='Basic example'>
+                        <Button variant='outline-success' type='submit'>Search</Button>
+                        <ToggleButton
+                          id='toggle-check'
+                          type='checkbox'
+                          variant='outline-success'
+                          checked={show}
+                          onChange={(e) =>
+                            dispatch(reviewSearchFilterShow(e.target.checked))
+                          }
+                        >
+                          <span
+                            className='material-icons-round'
+                            style={{
+                              fontSize: '21px',
+                              position: 'absolute',
+                              top: '20%',
+                              left: '8%',
+                            }}
+                          >
+                            tune
+                          </span>
+                        </ToggleButton>
+                      </ButtonGroup>
+                    )}
                   </Form>
                 </Col>
                 <Col className='text-end  d-none d-md-block' md>
@@ -153,27 +224,75 @@ const ProjectScreen = ({ match, history }) => {
               )}
             </Col>
           </Row>
+          {user && user.profile.isAdmin && (
+            <Row
+              className={`${show ? 'py-1' : ''}`}
+              style={{
+                borderRadius: '0.25rem',
+                opacity: `${show ? '1' : '0'}`,
+                transition: 'all 0.3s ease-in-out',
+              }}
+            >
+              {show && (
+                <Col>
+                  <Form>
+                    <Row xs='auto'>
+                      <Col>
+                        <Form.Check
+                          type='switch'
+                          id='custom-switch'
+                          label='Created by me'
+                          checked={created}
+                          onChange={(e) =>
+                            dispatch(
+                              reviewSearchFilterCreated(e.target.checked)
+                            )
+                          }
+                        />
+                      </Col>
+                      <Col>
+                        <Form.Check
+                          type='switch'
+                          label='Collaborated in'
+                          id='disabled-custom-switch'
+                          checked={collaborated}
+                          onChange={(e) =>
+                            dispatch(
+                              reviewSearchFilterCollaborated(e.target.checked)
+                            )
+                          }
+                        />
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+              )}
+            </Row>
+          )}
 
           {error && <Message>{error}</Message>}
+          {errorReviews && <Message>{errorReviews}</Message>}
           {(loading && !project) ||
           (!loading && !project) ||
+          (loadingReviews && !reviews) ||
+          (!loadingReviews && !reviews) ||
           project.id.toString() !== match.params.id.toString() ? (
             <Loader />
           ) : error ? (
             <Message variant='danger'>{error}</Message>
           ) : (
-            project.reviews && (
+            reviews && (
               <div
                 id='style-2'
                 style={{
-                  maxHeight: '85.75vh',
+                  maxHeight: `${show ? '82vh' : '85.75vh'}`,
                   overflow: 'auto',
                   position: 'relative',
                   transition: 'all 0.5s ease-in-out',
                 }}
               >
                 <Row xs='auto'>
-                  {project.reviews.map((review) => (
+                  {reviews.map((review) => (
                     <Col key={review.id.toString()}>
                       <Review projectId={match.params.id} review={review} />
                     </Col>

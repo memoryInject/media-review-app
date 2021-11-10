@@ -2,6 +2,7 @@ import {
   PROJECT_DETAILS_FAIL,
   PROJECT_DETAILS_REQUEST,
   PROJECT_DETAILS_SUCCESS,
+  PROJECT_DETAILS_RESET,
   PROJECT_LIST_FAIL,
   PROJECT_LIST_REQUEST,
   PROJECT_LIST_SUCCESS,
@@ -49,6 +50,9 @@ export const projectDetailsReducer = (state = { project: null }, action) => {
 
     case PROJECT_DETAILS_FAIL:
       return { loading: false, error: action.payload, project: null };
+
+    case PROJECT_DETAILS_RESET:
+      return { project: null };
 
     default:
       return state;

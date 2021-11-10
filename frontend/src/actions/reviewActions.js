@@ -1,5 +1,8 @@
 import axios from 'axios';
 import {
+  REVIEW_LIST_FAIL,
+  REVIEW_LIST_REQUEST,
+  REVIEW_LIST_SUCCESS,
   REVIEW_DETAILS_FAIL,
   REVIEW_DETAILS_REQUEST,
   REVIEW_DETAILS_SUCCESS,
@@ -14,6 +17,51 @@ import {
   REVIEW_DELETE_SUCCESS,
 } from '../constants/reviewConstants';
 import getError from '../utils/getError';
+
+export const listReview =
+  (projectId, reviewName = '') =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({ type: REVIEW_LIST_REQUEST });
+
+      const {
+        userLogin: { userInfo },
+        searchFilterReview: {created, collaborated}
+      } = getState();
+
+      let url = `/api/v1/review/reviews/?project=${projectId}&s=${reviewName}`;
+
+      if (created) {
+        url += '&user=true'
+      }
+
+      if (collaborated) {
+        url += '&collaborator=true'
+      }
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${userInfo.key}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        url,
+        config
+      );
+
+      dispatch({
+        type: REVIEW_LIST_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: REVIEW_LIST_FAIL,
+        payload: getError(error),
+      });
+    }
+  };
 
 export const listReviewDetails = (id) => async (dispatch, getState) => {
   try {

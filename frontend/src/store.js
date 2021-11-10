@@ -4,7 +4,17 @@ import thunk from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import { userDetailsReducer, userInviteAcceptReducer, userInviteGetEmailReducer, userListReducer, userLoginReducer, userPasswordResetConfirmReducer, userPasswordResetEmailReducer, userUpdateReducer, userUploadImageReducer } from './reducers/userReducers';
+import {
+  userDetailsReducer,
+  userInviteAcceptReducer,
+  userInviteGetEmailReducer,
+  userListReducer,
+  userLoginReducer,
+  userPasswordResetConfirmReducer,
+  userPasswordResetEmailReducer,
+  userUpdateReducer,
+  userUploadImageReducer,
+} from './reducers/userReducers';
 import {
   projectCreateReducer,
   projectDeleteReducer,
@@ -13,7 +23,13 @@ import {
   projectUpdateReducer,
   projectUploadImageReducer,
 } from './reducers/projectReducers';
-import { reviewCreateReducer, reviewDeleteReducer, reviewDetailsReducer, reviewUpdateReducer } from './reducers/reviewReducers';
+import {
+  reviewCreateReducer,
+  reviewDeleteReducer,
+  reviewDetailsReducer,
+  reviewListReducer,
+  reviewUpdateReducer,
+} from './reducers/reviewReducers';
 import {
   mediaCreateReducer,
   mediaDeleteReducer,
@@ -39,7 +55,13 @@ import {
   collaboratorAddReducer,
   collaboratorRemoveReducer,
 } from './reducers/collaboratorReducers';
-import {toastDetailsReducer} from './reducers/toastReducers';
+import { toastDetailsReducer } from './reducers/toastReducers';
+import {
+  searchFilterProjectReducer,
+  searchFilterReviewReducer,
+  searchProjectReducer,
+  searchReviewReducer,
+} from './reducers/searchReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -57,6 +79,7 @@ const reducer = combineReducers({
   projectCreate: projectCreateReducer,
   projectUpdate: projectUpdateReducer,
   projectDelete: projectDeleteReducer,
+  reviewList: reviewListReducer,
   reviewDetails: reviewDetailsReducer,
   reviewCreate: reviewCreateReducer,
   reviewUpdate: reviewUpdateReducer,
@@ -81,6 +104,10 @@ const reducer = combineReducers({
   annotationDeatils: annotationDeatilsReducer,
   assetCreate: assetCreateReducer,
   toastDetails: toastDetailsReducer,
+  searchProject: searchProjectReducer,
+  searchFilterProject: searchFilterProjectReducer,
+  searchReview: searchReviewReducer,
+  searchFilterReview: searchFilterReviewReducer,
 });
 
 // Config for local storage

@@ -15,13 +15,17 @@ from review.permissions import (IsAdmin, IsAdminOrReadOnly, IsCollaborator,
 
 from user.utils import is_admin
 from review.utils import filter_project_reviews_by_collaborator,\
-    filter_project_reviews_by_review_name
+    filter_project_reviews_by_created_user,\
+    filter_project_reviews_by_review_name, pop_reviews_from_project_list
 
 
-# Route: /review/projects/?<user=true>&<s=search_item>
-# Access: Admin only
+# Route: /review/projects/?<user=true>&<s=search_item>&<collaborator=true>
+# Access: Admin and restricted user
 # Description: If user query passed in the url,
 # it will return only projects created by the user
+# Search project by query s=search_item
+# Get only collaborated projects by query collaborator=true for admin
+# For non admin it always return collaborated projects only
 class ProjectList(generics.ListCreateAPIView):
     """Get all the projects"""
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
@@ -31,24 +35,46 @@ class ProjectList(generics.ListCreateAPIView):
         queryset = Project.objects.all()
 
         search = self.request.query_params.get('s')
+        collaborator = self.request.query_params.get('collaborator')
+
         if search:
             queryset = queryset.filter(project_name__icontains=search)
+
+        if collaborator:
+            queryset = queryset.filter(
+                reviews__collaborators=self.request.user).distinct()
 
         if self.request.query_params.get('user'):
             queryset = queryset.filter(user=self.request.user)
 
         if not self.request.user.userprofile.is_admin:
             queryset = queryset.filter(
-                reviews__collaborators=self.request.user)
+                reviews__collaborators=self.request.user).distinct()
 
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = ProjectSerializer(queryset, many=True)
+
+        return Response(
+            pop_reviews_from_project_list(serializer.data))
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
-# Route: /review/projects/<int:pk>/?<s_review=review_name>
-# Access: Admin only
+# Route: /review/projects/<int:pk>/?<s_review=review_name>&<user_review=true>&
+# <collaborator=true>
+# Access: Admin and restricted user
+# Description: If user_review query passed in the url,
+    # it will filter reviews assosiated with the project by review created by
+    #   the user - Admin only
+    # Filter reviews assosiated with the  project by review name by passing
+    #   query s_review=review_name
+    # Filter reviews assosiated with the project by collaborated by query
+    #   collaborator=true - Admin only
+    # For non admin it always return collaborated reviews with the project
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
     serializer_class = ProjectSerializer
@@ -83,12 +109,16 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer = ProjectSerializer(queryset)
 
         search = self.request.query_params.get('s')
+        collaborator = self.request.query_params.get('collaborator')
+        user_review = self.request.query_params.get('user_review')
+
+        data = serializer.data
+        user_id = request.user.id
 
         # If user is not admin filter reviews from the project
         if not request.user.userprofile.is_admin:
-            user_id = request.user.id
             filter_data = filter_project_reviews_by_collaborator(
-                serializer.data, user_id)
+                data, user_id)
 
             if search:
                 return Response(
@@ -97,15 +127,29 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
                 return Response(filter_data)
 
         if search:
-            return Response(
-                filter_project_reviews_by_review_name(serializer.data, search))
-        else:
-            return Response(serializer.data)
+            data = filter_project_reviews_by_review_name(data, search)
+
+        if collaborator:
+            data = filter_project_reviews_by_collaborator(
+                data, user_id)
+
+        if user_review:
+            data = filter_project_reviews_by_created_user(
+                data, user_id)
+
+        return Response(data)
 
 
-# Route: /review/reviews/?<user=true>&<all=true>&<project=int:id>&<s=item>
+# Route:
+# /review/reviews/?<user=true>&<collaborator=true>&<project=int:id>&<s=item>
 # description: GET all the reviews if the user is in collaborators
-# only admin can POST and GET all reviews
+    # only admin can POST and GET all reviews
+# If user query passed into the url it will return user created reviews (Admin)
+# If collaborator=true query passed it will return only reviwes which admin is
+    # involved, for non admin this is a default behaviour no need to pass this
+    # query
+# If project=4 query passed it will filter reviews assosiated with the project,
+    # for non admin in this case it will filter with collaborator in.
 class ReviewList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly)
     serializer_class = ReviewSerializer
@@ -127,37 +171,41 @@ class ReviewList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Review.objects.filter(collaborators=user)
+        queryset = Review.objects.all()
 
-        search = self.request.query_params.get('s')
-        if search:
-            queryset = queryset.filter(review_name__icontains=search)
+        # url query_params
+        search_param = self.request.query_params.get('s')
+        user_param = self.request.query_params.get('user')
+        collaborator_param = self.request.query_params.get('collaborator')
+        project_param = self.request.query_params.get('project')
+
+        # If user is not admin filter only collaborated reviews
+        if not is_admin(user):
+            queryset = queryset.filter(collaborators=user)
+
+        if search_param:
+            queryset = queryset.filter(review_name__icontains=search_param)
 
         # Check the user query_params, and return
         # reviews created by the user
-        user_param = self.request.query_params.get('user')
         if user_param:
-            queryset = Review.objects.filter(user=user)
+            queryset = queryset.filter(user=user)
 
         # Check the query_params for project=2, and return
         # all the reviews for that project, admin access only
         try:
-            project_id = int(self.request.query_params.get('project'))
+            project_id = int(project_param)
         except (ValueError, TypeError,):
             # If the project_id is str
             project_id = 0
 
-        if project_id and is_admin(user):
-            queryset = Review.objects.filter(project__id=project_id)
+        if project_id:
+            queryset = queryset.filter(project__id=project_id)
 
-            # Check if the user_param supplied with project,
-            # eg: /?project=2&user=true
-            queryset = queryset.filter(user=user) if user_param else queryset
-
-        # Check the query_params for all, and return
-        # all the reviews for admin user
-        if self.request.query_params.get('all') and is_admin(user):
-            queryset = Review.objects.all()
+        # Check the query_params for collaborator, and return
+        # all the reviews which admin involved
+        if collaborator_param:
+            queryset = queryset.filter(collaborators=user)
 
         return queryset
 

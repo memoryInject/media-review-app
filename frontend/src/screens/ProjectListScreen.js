@@ -7,6 +7,8 @@ import {
   FormControl,
   Modal,
   Spinner,
+  ButtonGroup,
+  ToggleButton,
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -23,8 +25,14 @@ import {
   PROJECT_CREATE_RESET,
   PROJECT_UPLOAD_IMAGE_RESET,
 } from '../constants/projectConstants';
+import {
+  projectSearch,
+  projectSearchFilterCollaborated,
+  projectSearchFilterCreated,
+  projectSearchFilterShow,
+} from '../actions/searchActions';
 
-const ProjectListScreen = ({ location, history }) => {
+const ProjectListScreen = ({ history }) => {
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -50,6 +58,12 @@ const ProjectListScreen = ({ location, history }) => {
     image,
   } = projectUploadImage;
 
+  const searchProject = useSelector((state) => state.searchProject);
+  const { keyword } = searchProject;
+
+  const searchFilterProject = useSelector((state) => state.searchFilterProject);
+  const { show, created, collaborated } = searchFilterProject;
+
   const formFile = useRef(null);
   const formRef = useRef(null);
 
@@ -57,15 +71,14 @@ const ProjectListScreen = ({ location, history }) => {
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState('');
   const [success, setSuccess] = useState(true);
-  const [search, setSearch] = useState('');
 
   useEffect(() => {
     if (!userInfo) {
       history.push('/login');
     } else {
-      dispatch(listProjects());
+      dispatch(listProjects(keyword));
     }
-  }, [history, userInfo, dispatch]);
+  }, [history, userInfo, dispatch, keyword, created, collaborated]);
 
   // This run when the modal form opens
   useEffect(() => {
@@ -116,7 +129,7 @@ const ProjectListScreen = ({ location, history }) => {
 
   const searchHandler = (e) => {
     e.preventDefault();
-    dispatch(listProjects(search));
+    dispatch(listProjects(keyword));
   };
 
   return (
@@ -138,8 +151,8 @@ const ProjectListScreen = ({ location, history }) => {
             <FormControl
               type='search'
               placeholder='Search'
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={keyword}
+              onChange={(e) => dispatch(projectSearch(e.target.value))}
               className='me-2 text-white'
               aria-label='Search'
               style={{
@@ -147,9 +160,39 @@ const ProjectListScreen = ({ location, history }) => {
                 border: '0px',
               }}
             />
-            <Button variant='outline-success' type='submit'>
-              Search
-            </Button>
+            {user && !user.profile.isAdmin && (
+              <Button variant='outline-success' type='submit'>
+                Search
+              </Button>
+            )}
+            {user && user.profile.isAdmin && (
+              <ButtonGroup aria-label='Basic example'>
+                <Button variant='outline-success' type='submit'>
+                  Search
+                </Button>
+                <ToggleButton
+                  id='toggle-check'
+                  type='checkbox'
+                  variant='outline-success'
+                  checked={show}
+                  onChange={(e) =>
+                    dispatch(projectSearchFilterShow(e.target.checked))
+                  }
+                >
+                  <span
+                    className='material-icons-round'
+                    style={{
+                      fontSize: '21px',
+                      position: 'absolute',
+                      top: '20%',
+                      left: '8%',
+                    }}
+                  >
+                    tune
+                  </span>
+                </ToggleButton>
+              </ButtonGroup>
+            )}
           </Form>
         </Col>
         <Col className='text-end d-none d-md-block' md>
@@ -193,6 +236,50 @@ const ProjectListScreen = ({ location, history }) => {
           )}
         </Col>
       </Row>
+      {user && user.profile.isAdmin && (
+        <Row
+          className={`${show ? 'py-1' : ''}`}
+          style={{
+            borderRadius: '0.25rem',
+            opacity: `${show ? '1' : '0'}`,
+            transition: 'all 0.3s ease-in-out',
+          }}
+        >
+          {show && (
+            <Col>
+              <Form>
+                <Row xs='auto'>
+                  <Col>
+                    <Form.Check
+                      type='switch'
+                      id='custom-switch'
+                      label='Created by me'
+                      checked={created}
+                      onChange={(e) =>
+                        dispatch(projectSearchFilterCreated(e.target.checked))
+                      }
+                    />
+                  </Col>
+                  <Col>
+                    <Form.Check
+                      type='switch'
+                      label='Collaborated in'
+                      id='disabled-custom-switch'
+                      checked={collaborated}
+                      onChange={(e) =>
+                        dispatch(
+                          projectSearchFilterCollaborated(e.target.checked)
+                        )
+                      }
+                    />
+                  </Col>
+                </Row>
+              </Form>
+            </Col>
+          )}
+        </Row>
+      )}
+
       {error && <Message>{error}</Message>}
       {(loading && !projects) || (!loading && !projects) ? (
         <Loader style={{ position: 'absolute' }} />
@@ -202,7 +289,7 @@ const ProjectListScreen = ({ location, history }) => {
         <div
           id='style-2'
           style={{
-            maxHeight: '85.75vh',
+            maxHeight: `${show ? '82vh' : '85.75vh'}`,
             overflow: 'auto',
             position: 'relative',
             transition: 'all 0.5s ease-in-out',

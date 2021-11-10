@@ -71,10 +71,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ('id', 'review_name', 'description', 'project', 'is_open',
                   'number_of_media', 'number_of_collaborator', 'user',
-                  'collaborators', 'media',
+                  'collaborators', 'media','image_url',
                   'created_at', 'updated_at')
         read_only_fields = ('id', 'updated_at', 'created_at',
-                            'user', 'media', 
+                            'user', 'media', 'image_url',
                             'number_of_media', 'number_of_collaborator')
 
     # Need to override create and update because of collaborators and project

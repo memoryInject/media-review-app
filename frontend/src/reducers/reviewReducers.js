@@ -1,4 +1,8 @@
 import {
+  REVIEW_LIST_FAIL,
+  REVIEW_LIST_REQUEST,
+  REVIEW_LIST_RESET,
+  REVIEW_LIST_SUCCESS,
   REVIEW_DETAILS_FAIL,
   REVIEW_DETAILS_REQUEST,
   REVIEW_DETAILS_RESET,
@@ -16,6 +20,37 @@ import {
   REVIEW_DELETE_RESET,
   REVIEW_DELETE_SUCCESS,
 } from '../constants/reviewConstants';
+
+export const reviewListReducer = (state = { reviews: null }, action) => {
+  switch (action.type) {
+    case REVIEW_LIST_REQUEST:
+      return {
+        loading: true,
+        reviews: state.reviews,
+      };
+
+    case REVIEW_LIST_SUCCESS:
+      return {
+        loading: false,
+        reviews: action.payload,
+      };
+
+    case REVIEW_LIST_FAIL:
+      return {
+        loading: false,
+        error: action.payload,
+      };
+
+    case REVIEW_LIST_RESET:
+      return {
+        loading: false,
+        reviews: null,
+      };
+
+    default:
+      return state;
+  }
+};
 
 export const reviewDetailsReducer = (state = { review: null }, action) => {
   switch (action.type) {

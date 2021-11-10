@@ -3,6 +3,19 @@ import random
 import copy
 
 
+def pop_reviews_from_project_list(serializer_data):
+    clean_copy = copy.deepcopy(serializer_data)
+    for i in clean_copy:
+        i['reviews'] = []
+
+    return clean_copy
+
+def pop_reviews_from_project(serializer_data):
+    clean_copy = copy.deepcopy(serializer_data)
+    clean_copy['reviews'] = []
+    return clean_copy
+
+
 def filter_by_user(review, user_id):
     for i in review.get('collaborators'):
         if i.get('id') == user_id:
@@ -16,6 +29,16 @@ def filter_project_reviews_by_collaborator(serializer_data, user_id):
     clean_copy = copy.deepcopy(serializer_data)
     result = filter(lambda x: filter_by_user(
         x, user_id), clean_copy.get('reviews'))
+
+    clean_copy['reviews'] = list(result)
+    return clean_copy
+
+
+def filter_project_reviews_by_created_user(serializer_data, user_id):
+    """ This will filter project reviews by created user with given id """
+
+    clean_copy = copy.deepcopy(serializer_data)
+    result = filter(lambda x: x.user.id == user_id, clean_copy.get('reviews'))
 
     clean_copy['reviews'] = list(result)
     return clean_copy

@@ -10,7 +10,7 @@ const ProjectTopBar = ({ settingsHandler }) => {
 
   return (
     <Row
-      className='py-2 my-2 bg-dark'
+      className='py-1 m-0 bg-dark'
       style={{
         //border: '1px solid #3A3A3A',
         borderRadius: '0.25rem',

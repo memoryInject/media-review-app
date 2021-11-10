@@ -29,7 +29,18 @@ export const listProjects =
 
       const {
         userLogin: { userInfo },
+        searchFilterProject: {created, collaborated}
       } = getState();
+
+      let url = `/api/v1/review/projects/?s=${search}`;
+
+      if (created) {
+        url += '&user=true'
+      }
+
+      if (collaborated) {
+        url += '&collaborator=true'
+      }
 
       const config = {
         headers: {
@@ -39,7 +50,7 @@ export const listProjects =
       };
 
       const { data } = await axios.get(
-        `/api/v1/review/projects/?s=${search}`,
+        url,
         config
       );
 
@@ -72,8 +83,10 @@ export const listProjectDetails =
         },
       };
 
+      let url = `/api/v1/review/projects/${id}/?s=${search}`;
+
       const { data } = await axios.get(
-        `/api/v1/review/projects/${id}/?s=${search}`,
+        url,
         config
       );
 
