@@ -4,8 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import Message from './Message';
 import { showToast, messageToast, variantToast } from '../actions/toastActions';
-import { listProjectDetails } from '../actions/projectActions';
-import { createReview } from '../actions/reviewActions';
+import { createReview, listReview } from '../actions/reviewActions';
 import { REVIEW_CREATE_RESET } from '../constants/reviewConstants';
 
 const ProjectCreateReviewModal = (props) => {
@@ -47,7 +46,7 @@ const ProjectCreateReviewModal = (props) => {
       dispatch(messageToast('Review created successfully'));
       dispatch(variantToast('success'));
       dispatch(showToast(true));
-      dispatch(listProjectDetails(props.id));
+      dispatch(listReview(props.id));
       dispatch({ type: REVIEW_CREATE_RESET });
     }
   }, [review, dispatch, props]);

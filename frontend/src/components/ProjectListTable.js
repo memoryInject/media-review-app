@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Row, Col } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Message from './Message';
 import Loader from './Loader';
+import Paginate from './Paginate';
 
-import { listProjects } from '../actions/projectActions';
+import {
+  listProjects,
+  listProjectsPagination,
+} from '../actions/projectActions';
 
 const ProjectListTable = ({ history }) => {
   const dispatch = useDispatch();
@@ -51,18 +55,16 @@ const ProjectListTable = ({ history }) => {
               <th>Id</th>
               <th>Project Name</th>
               <th>Creator</th>
-              <th>Reviews</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {projects &&
-              projects.map((project, idx) => (
+              projects.results.map((project, idx) => (
                 <tr key={idx}>
                   <td>{project.id}</td>
                   <td>{project.projectName}</td>
                   <td>{project.user.username}</td>
-                  <td>{project.reviews.length}</td>
                   <td>
                     <span
                       onClick={() => openProjectHandler(project.id)}
@@ -84,6 +86,13 @@ const ProjectListTable = ({ history }) => {
           </tbody>
         </Table>
       </div>
+      <Row>
+        <Col className='d-flex justify-content-center'>
+          {projects && (
+            <Paginate data={projects} action={listProjectsPagination} />
+          )}
+        </Col>
+      </Row>
     </>
   );
 };

@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Row, Col } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Message from './Message';
 import Loader from './Loader';
-import { showToast, messageToast, variantToast } from '../actions/toastActions';
 import ModalDialog from './ModalDialog';
+import Paginate from './Paginate';
 
+import { showToast, messageToast, variantToast } from '../actions/toastActions';
 import { listProjectDetails } from '../actions/projectActions';
-import { deleteReview, listReview } from '../actions/reviewActions';
+import {
+  deleteReview,
+  listReview,
+  listReviewPagination,
+} from '../actions/reviewActions';
 import { REVIEW_DELETE_RESET } from '../constants/reviewConstants';
 
 const ProjectReviewListTable = ({ history, match, project, userDetails }) => {
@@ -97,7 +102,7 @@ const ProjectReviewListTable = ({ history, match, project, userDetails }) => {
               </thead>
               <tbody>
                 {reviews &&
-                  reviews.map((review, idx) => (
+                  reviews.results.map((review, idx) => (
                     <tr key={idx}>
                       <td>{review.id}</td>
                       <td>{review.reviewName}</td>
@@ -134,6 +139,13 @@ const ProjectReviewListTable = ({ history, match, project, userDetails }) => {
               </tbody>
             </Table>
           </div>
+          <Row>
+            <Col className='d-flex justify-content-center'>
+              {reviews && (
+                <Paginate data={reviews} action={listReviewPagination} />
+              )}
+            </Col>
+          </Row>
         </>
       )}
 

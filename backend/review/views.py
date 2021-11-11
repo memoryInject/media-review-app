@@ -4,11 +4,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from review.models import Feedback, Project, Review, Asset, Media
 from review.serializers import (FeedbackSerializer, ProjectSerializer,
-                                ReviewSerializer, AssetSerializer,
-                                MediaSerializer)
+                                ProjectListSerializer, ReviewSerializer,
+                                AssetSerializer, MediaSerializer)
 from review.permissions import (IsAdmin, IsAdminOrReadOnly, IsCollaborator,
                                 IsCollaboratorFeedback, IsCollaboratorMedia,
                                 IsCreatorOrReadOnly)
@@ -16,7 +17,7 @@ from review.permissions import (IsAdmin, IsAdminOrReadOnly, IsCollaborator,
 from user.utils import is_admin
 from review.utils import filter_project_reviews_by_collaborator,\
     filter_project_reviews_by_created_user,\
-    filter_project_reviews_by_review_name, pop_reviews_from_project_list
+    filter_project_reviews_by_review_name
 
 
 # Route: /review/projects/?<user=true>&<s=search_item>&<collaborator=true>
@@ -29,36 +30,34 @@ from review.utils import filter_project_reviews_by_collaborator,\
 class ProjectList(generics.ListCreateAPIView):
     """Get all the projects"""
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectListSerializer
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
-        queryset = Project.objects.all()
+        queryset = Project.objects.all().order_by('-updated_at')
 
         search = self.request.query_params.get('s')
         collaborator = self.request.query_params.get('collaborator')
 
         if search:
-            queryset = queryset.filter(project_name__icontains=search)
+            queryset = queryset.filter(
+                project_name__icontains=search).order_by('-updated_at')
 
         if collaborator:
             queryset = queryset.filter(
-                reviews__collaborators=self.request.user).distinct()
+                reviews__collaborators=self.request.user).distinct().order_by(
+                '-updated_at')
 
         if self.request.query_params.get('user'):
-            queryset = queryset.filter(user=self.request.user)
+            queryset = queryset.filter(
+                user=self.request.user).order_by('-updated_at')
 
         if not self.request.user.userprofile.is_admin:
             queryset = queryset.filter(
-                reviews__collaborators=self.request.user).distinct()
+                reviews__collaborators=self.request.user).distinct().order_by(
+                '-updated_at')
 
         return queryset
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = ProjectSerializer(queryset, many=True)
-
-        return Response(
-            pop_reviews_from_project_list(serializer.data))
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -153,6 +152,7 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 class ReviewList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly)
     serializer_class = ReviewSerializer
+    pagination_class = PageNumberPagination
 
     def perform_create(self, serializer):
         # Make sure requested project exists
@@ -171,7 +171,7 @@ class ReviewList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Review.objects.all()
+        queryset = Review.objects.all().order_by('-updated_at')
 
         # url query_params
         search_param = self.request.query_params.get('s')
@@ -181,15 +181,17 @@ class ReviewList(generics.ListCreateAPIView):
 
         # If user is not admin filter only collaborated reviews
         if not is_admin(user):
-            queryset = queryset.filter(collaborators=user)
+            queryset = queryset.filter(collaborators=user).order_by(
+                '-updated_at')
 
         if search_param:
-            queryset = queryset.filter(review_name__icontains=search_param)
+            queryset = queryset.filter(
+                review_name__icontains=search_param).order_by('-updated_at')
 
         # Check the user query_params, and return
         # reviews created by the user
         if user_param:
-            queryset = queryset.filter(user=user)
+            queryset = queryset.filter(user=user).order_by('-updated_at')
 
         # Check the query_params for project=2, and return
         # all the reviews for that project, admin access only
@@ -200,12 +202,14 @@ class ReviewList(generics.ListCreateAPIView):
             project_id = 0
 
         if project_id:
-            queryset = queryset.filter(project__id=project_id)
+            queryset = queryset.filter(
+                project__id=project_id).order_by('-updated_at')
 
         # Check the query_params for collaborator, and return
         # all the reviews which admin involved
         if collaborator_param:
-            queryset = queryset.filter(collaborators=user)
+            queryset = queryset.filter(
+                collaborators=user).order_by('-updated_at')
 
         return queryset
 
@@ -285,7 +289,6 @@ class MediaList(generics.ListCreateAPIView):
                 {"detail": "Asset does not exists"})
 
         # Check if the current user is in the review collaborator list
-        # TODO
         try:
             review.collaborators.get(id=self.request.user.id)
         except ObjectDoesNotExist:

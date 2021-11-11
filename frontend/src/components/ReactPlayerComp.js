@@ -97,29 +97,29 @@ const ReactPlayerComp = () => {
     return () => window.removeEventListener('resize', updateWindowDimensions);
   }, [dispatch]);
 
-  //useEffect(() => {
-    //if (player.current) {
-      //dispatch(heightPlayer(player.current.wrapper.clientHeight));
-      //dispatch(widthPlayer(player.current.wrapper.clientWidth));
-      //dispatch(topPlayer(player.current.wrapper.offsetTop));
-      //if (
-        //player.current.wrapper.childNodes[0] &&
-        //progressHolder.current.clientWidth
-      //) {
-        //const videoHeight = player.current.wrapper.childNodes[0].videoHeight;
-        //const videoWidth = player.current.wrapper.childNodes[0].videoWidth;
-        //const factor = progressHolder.current.clientWidth / videoWidth;
-        //setAdjHeight(Math.ceil(videoHeight * factor));
-        //dispatch(
-          //videoSizePlayer({
-            //height: videoHeight,
-            //width: videoWidth,
-            //scaleFactor: factor,
-          //})
-        //);
-      //}
-    //}
-  //}, [height, player, showPlayer, dispatch]);
+  useEffect(() => {
+    if (player.current) {
+      dispatch(heightPlayer(player.current.wrapper.clientHeight));
+      dispatch(widthPlayer(player.current.wrapper.clientWidth));
+      dispatch(topPlayer(player.current.wrapper.offsetTop));
+      if (
+        player.current.wrapper.childNodes[0] &&
+        progressHolder.current.clientWidth
+      ) {
+        const videoHeight = player.current.wrapper.childNodes[0].videoHeight;
+        const videoWidth = player.current.wrapper.childNodes[0].videoWidth;
+        const factor = progressHolder.current.clientWidth / videoWidth;
+        setAdjHeight(Math.ceil(videoHeight * factor));
+        dispatch(
+          videoSizePlayer({
+            height: videoHeight,
+            width: videoWidth,
+            scaleFactor: factor,
+          })
+        );
+      }
+    }
+  }, [height, player, showPlayer, dispatch]);
 
   const onReadyHandler = () => {
     if (player) {

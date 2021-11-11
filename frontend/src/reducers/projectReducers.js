@@ -22,6 +22,7 @@ import {
   PROJECT_DELETE_SUCCESS,
   PROJECT_DELETE_FAIL,
   PROJECT_DELETE_RESET,
+  PROJECT_LIST_RESET,
 } from '../constants/projectConstants';
 
 export const projectListReducer = (state = { projects: null }, action) => {
@@ -34,6 +35,9 @@ export const projectListReducer = (state = { projects: null }, action) => {
 
     case PROJECT_LIST_FAIL:
       return { loading: false, error: action.payload, projects: null };
+
+    case PROJECT_LIST_RESET:
+      return { loading: false, projects: null };
 
     default:
       return state;

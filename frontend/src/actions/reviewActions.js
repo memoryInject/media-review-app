@@ -26,17 +26,17 @@ export const listReview =
 
       const {
         userLogin: { userInfo },
-        searchFilterReview: {created, collaborated}
+        searchFilterReview: { created, collaborated },
       } = getState();
 
       let url = `/api/v1/review/reviews/?project=${projectId}&s=${reviewName}`;
 
       if (created) {
-        url += '&user=true'
+        url += '&user=true';
       }
 
       if (collaborated) {
-        url += '&collaborator=true'
+        url += '&collaborator=true';
       }
 
       const config = {
@@ -46,10 +46,7 @@ export const listReview =
         },
       };
 
-      const { data } = await axios.get(
-        url,
-        config
-      );
+      const { data } = await axios.get(url, config);
 
       dispatch({
         type: REVIEW_LIST_SUCCESS,
@@ -62,6 +59,35 @@ export const listReview =
       });
     }
   };
+
+export const listReviewPagination = (url) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: REVIEW_LIST_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${userInfo.key}`,
+      },
+    };
+
+    const { data } = await axios.get(url, config);
+
+    dispatch({
+      type: REVIEW_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: REVIEW_LIST_FAIL,
+      payload: getError(error),
+    });
+  }
+};
 
 export const listReviewDetails = (id) => async (dispatch, getState) => {
   try {

@@ -1,3 +1,9 @@
+/*html {*/
+  /*[>overflow-y: scroll;<]*/
+    /*[>margin-left: calc(100vw - 100%);<]*/
+    /*[>margin-right: 0;<]*/
+/*}*/
+
 main {
   min-height: 80vh;
 }
@@ -53,7 +59,7 @@ main {
 
 .review-card {
   width: 18.1rem;
-  height: 20rem;
+  height: 17rem;
 }
 
 .review-img {
@@ -283,7 +289,7 @@ main {
 }
 
 /*#style-2::-webkit-scrollbar-track {*/
-  /*background-color: none;*/
+/*background-color: none;*/
 /*}*/
 
 #style-2::-webkit-scrollbar {

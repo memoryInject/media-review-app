@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     'invitations',
     'cloudinary',
+    'corsheaders',
 
     # local
     'user.apps.UserConfig',
@@ -72,6 +73,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -174,6 +176,8 @@ AUTHENTICATION_BACKENDS = (
         'allauth.account.auth_backends.AuthenticationBackend',
     )
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 REST_FRAMEWORK = {
         'DEFAULT_PERMISSION_CLASSES': [
             # 'rest_framework.permissions.IsAuthenticated',
@@ -183,7 +187,10 @@ REST_FRAMEWORK = {
             # 'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
         ],
-		
+
+        # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+        'PAGE_SIZE': 12, 
+
 		# 3rd-party snake_case to camelCase renderer and parser
         'DEFAULT_RENDERER_CLASSES': [
             'djangorestframework_camel_case.render.CamelCaseJSONRenderer',

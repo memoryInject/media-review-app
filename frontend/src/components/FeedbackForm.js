@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Loader from './Loader';
 import Message from './Message';
+import isCollaborator from '../utils/isCollaborator';
 
 import {
   listFeedbacks,
@@ -32,6 +33,12 @@ const FeedbackForm = () => {
   const [showColorPalette, setShowColorPalette] = useState(false);
 
   const dispatch = useDispatch();
+
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
+
+  const reviewDetails = useSelector((state) => state.reviewDetails);
+  let { review } = reviewDetails;
 
   const annotationDeatils = useSelector((state) => state.annotationDeatils);
   let { drawableType, color, active, image, isEmpty } = annotationDeatils;
@@ -204,8 +211,15 @@ const FeedbackForm = () => {
                 <Form.Control
                   as='textarea'
                   rows={2}
+                  disabled={
+                    user && review && !isCollaborator(user, review)
+                      ? true
+                      : false
+                  }
                   placeholder={
-                    reply
+                    user && review && !isCollaborator(user, review)
+                      ? 'User is not a collaborator!'
+                      : reply
                       ? `@${reply.user.username}: ${reply.content}`
                       : 'Write feedback...'
                   }
@@ -218,44 +232,48 @@ const FeedbackForm = () => {
                   }}
                 ></Form.Control>
               </Form.Group>
-              <Button
-                type='submit'
-                variant={update ? 'success' : 'primary'}
-                className='float-end'
-                style={{
-                  marginTop: '0.65rem',
-                }}
-              >
-                {reply ? 'REPLY' : update ? 'UPDATE' : 'POST'}
-              </Button>
-              {reply ? (
-                <Button
-                  type='submit'
-                  variant='danger'
-                  className='float-end'
-                  style={{
-                    marginTop: '0.65rem',
-                    marginRight: '0.35rem',
-                  }}
-                  onClick={() => dispatch({ type: FEEDBACK_REPLY_RESET })}
-                >
-                  CLOSE
-                </Button>
-              ) : (
-                update && (
+              {user && review && isCollaborator(user, review) && (
+                <>
                   <Button
                     type='submit'
-                    variant='danger'
+                    variant={update ? 'success' : 'primary'}
                     className='float-end'
                     style={{
                       marginTop: '0.65rem',
-                      marginRight: '0.35rem',
                     }}
-                    onClick={updateCloseHandler}
                   >
-                    CLOSE
+                    {reply ? 'REPLY' : update ? 'UPDATE' : 'POST'}
                   </Button>
-                )
+                  {reply ? (
+                    <Button
+                      type='submit'
+                      variant='danger'
+                      className='float-end'
+                      style={{
+                        marginTop: '0.65rem',
+                        marginRight: '0.35rem',
+                      }}
+                      onClick={() => dispatch({ type: FEEDBACK_REPLY_RESET })}
+                    >
+                      CLOSE
+                    </Button>
+                  ) : (
+                    update && (
+                      <Button
+                        type='submit'
+                        variant='danger'
+                        className='float-end'
+                        style={{
+                          marginTop: '0.65rem',
+                          marginRight: '0.35rem',
+                        }}
+                        onClick={updateCloseHandler}
+                      >
+                        CLOSE
+                      </Button>
+                    )
+                  )}
+                </>
               )}
             </Form>
 

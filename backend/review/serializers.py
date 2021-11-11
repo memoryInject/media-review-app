@@ -54,10 +54,22 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('id', 'project_name', 'image_url','color', 'user',
+        fields = ('id', 'project_name', 'image_url', 'color', 'user',
                   'reviews', 'created_at', 'updated_at', )
         read_only_fields = ('id', 'user',
                             'updated_at', 'created_at', 'reviews', 'color')
+
+
+class ProjectListSerializer(serializers.ModelSerializer):
+    """Serializer for Project Model"""
+    user = UserViewSerializer(read_only=True)
+
+    class Meta:
+        model = Project
+        fields = ('id', 'project_name', 'image_url', 'color', 'user',
+                  'created_at', 'updated_at', )
+        read_only_fields = ('id', 'user',
+                            'updated_at', 'created_at', 'color')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -71,7 +83,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ('id', 'review_name', 'description', 'project', 'is_open',
                   'number_of_media', 'number_of_collaborator', 'user',
-                  'collaborators', 'media','image_url',
+                  'collaborators', 'media', 'image_url',
                   'created_at', 'updated_at')
         read_only_fields = ('id', 'updated_at', 'created_at',
                             'user', 'media', 'image_url',
@@ -90,6 +102,7 @@ class ReviewSerializer(serializers.ModelSerializer):
                                        description=description,
                                        project=project)
         review.collaborators.set(collaborators)
+        review.number_of_collaborator = len(review.collaborators.all())
         review.save()
 
         return review
@@ -105,6 +118,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         instance.project = validated_data.get('project', instance.project)
         instance.user = validated_data.get('user', instance.user)
         instance.is_open = validated_data.get('is_open', instance.is_open)
+
+        instance.number_of_collaborator = len(instance.collaborators.all())
 
         instance.save()
 

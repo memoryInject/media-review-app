@@ -3,6 +3,18 @@ import { Card, Row, Col, ToastContainer, Toast } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import getFormattedFeedbacks from '../utils/getFormattedFeedbacks';
+import isCollaborator from '../utils/isCollaborator';
+import Loader from './Loader';
+import Message from './Message';
+import ModalDialog from './ModalDialog';
+
+import { seekToPlayer } from '../actions/playerActions';
+import {
+  activeFeedback,
+  deleteFeedback,
+  listFeedbacks,
+  replyFeedback,
+} from '../actions/feedbackActions';
 import {
   FEEDBACK_LIST_RESET,
   FEEDBACK_CREATE_RESET,
@@ -14,16 +26,6 @@ import {
   FEEDBACK_DELETE_RESET,
   FEEDBACK_TO_DELETE_RESET,
 } from '../constants/feedbackConstants';
-import Loader from './Loader';
-import Message from './Message';
-import ModalDialog from './ModalDialog';
-import { seekToPlayer } from '../actions/playerActions';
-import {
-  activeFeedback,
-  deleteFeedback,
-  listFeedbacks,
-  replyFeedback,
-} from '../actions/feedbackActions';
 
 const FeedbackList = () => {
   const dispatch = useDispatch();
@@ -36,6 +38,9 @@ const FeedbackList = () => {
 
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
+
+  const reviewDetails = useSelector((state) => state.reviewDetails);
+  let { review } = reviewDetails;
 
   const feedbackCreate = useSelector((state) => state.feedbackCreate);
   let {
@@ -249,18 +254,20 @@ const FeedbackList = () => {
                   </Col>
                 )}
                 <Col className='text-end'>
-                  <Card.Link
-                    href='#'
-                    style={{
-                      paddingRight: '0.6rem',
-                      paddingLeft: '0.6rem',
-                      textDecoration: 'none',
-                      fontSize: '14px',
-                    }}
-                    onClick={() => replyHandler(f)}
-                  >
-                    REPLY
-                  </Card.Link>
+                  {user && review && isCollaborator(user, review) && (
+                    <Card.Link
+                      href='#'
+                      style={{
+                        paddingRight: '0.6rem',
+                        paddingLeft: '0.6rem',
+                        textDecoration: 'none',
+                        fontSize: '14px',
+                      }}
+                      onClick={() => replyHandler(f)}
+                    >
+                      REPLY
+                    </Card.Link>
+                  )}
                 </Col>
               </Row>
             </Card>

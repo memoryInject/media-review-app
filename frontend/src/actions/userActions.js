@@ -1,5 +1,20 @@
 import axios from 'axios';
 import {
+  PROJECT_DETAILS_RESET,
+  PROJECT_LIST_RESET,
+} from '../constants/projectConstants';
+import { REVIEW_LIST_RESET } from '../constants/reviewConstants';
+import {
+  SEARCH_FILTER_PROJECT_COLLABORATED_RESET,
+  SEARCH_FILTER_PROJECT_CREATED_RESET,
+  SEARCH_FILTER_PROJECT_HIDE,
+  SEARCH_FILTER_REVIEW_COLLABORATED_RESET,
+  SEARCH_FILTER_REVIEW_CREATED_RESET,
+  SEARCH_FILTER_REVIEW_HIDE,
+  SEARCH_PROJECT_RESET,
+  SEARCH_REVIEW_RESET,
+} from '../constants/searchConstants';
+import {
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
   USER_DETAILS_RESET,
@@ -290,4 +305,15 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => (dispatch) => {
   dispatch({ type: USER_LOGOUT });
   dispatch({ type: USER_DETAILS_RESET });
+  dispatch({ type: PROJECT_LIST_RESET });
+  dispatch({ type: PROJECT_DETAILS_RESET });
+  dispatch({ type: REVIEW_LIST_RESET });
+  dispatch({ type: SEARCH_FILTER_PROJECT_HIDE });
+  dispatch({ type: SEARCH_FILTER_REVIEW_HIDE });
+  dispatch({ type: SEARCH_PROJECT_RESET });
+  dispatch({ type: SEARCH_REVIEW_RESET });
+  dispatch({ type: SEARCH_FILTER_PROJECT_CREATED_RESET });
+  dispatch({ type: SEARCH_FILTER_REVIEW_CREATED_RESET });
+  dispatch({ type: SEARCH_FILTER_PROJECT_COLLABORATED_RESET });
+  dispatch({ type: SEARCH_FILTER_REVIEW_COLLABORATED_RESET });
 };

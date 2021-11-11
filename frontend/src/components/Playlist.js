@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Image } from 'react-bootstrap';
+import { Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { listMediaDetails } from '../actions/mediaActions';
 import { listFeedbacks } from '../actions/feedbackActions';
 import { FEEDBACK_CREATE_RESET } from '../constants/feedbackConstants';
@@ -120,6 +120,7 @@ const Playlist = () => {
           {playlistDetail &&
             playlistDetail.map((p, idx) => (
               //{Array.from(Array(4).keys()).map((p, idx) => (
+              //TODO: Tooltip to show media name
               <div
                 key={idx}
                 style={{
@@ -134,12 +135,17 @@ const Playlist = () => {
                   p.child ? mediaHandler(p.child[0]) : mediaHandler(p)
                 }
               >
-                <Image
-                  variant='top'
-                  src={p.child ? p.child[0].asset.imageUrl : p.asset.imageUrl}
-                  //src={url}
-                  style={getStyle(p)}
-                />
+                <OverlayTrigger
+                  placement='top'
+                  overlay={<Tooltip id='button-tooltip'>{p.mediaName}</Tooltip>}
+                >
+                  <Image
+                    variant='top'
+                    src={p.child ? p.child[0].asset.imageUrl : p.asset.imageUrl}
+                    //src={url}
+                    style={getStyle(p)}
+                  />
+                </OverlayTrigger>
                 {p.child && getMultiIcon(p)}
               </div>
             ))}

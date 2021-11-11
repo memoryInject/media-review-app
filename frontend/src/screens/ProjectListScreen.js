@@ -15,9 +15,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Project from '../components/Project';
+import Paginate, { pageSize } from '../components/Paginate';
+
 import { showToast, messageToast, variantToast } from '../actions/toastActions';
 import {
   listProjects,
+  listProjectsPagination,
   createProject,
   uploadImageProject,
 } from '../actions/projectActions';
@@ -130,6 +133,19 @@ const ProjectListScreen = ({ history }) => {
   const searchHandler = (e) => {
     e.preventDefault();
     dispatch(listProjects(keyword));
+  };
+
+  const getMaxHeight = () => {
+    let maxHeight = '85.75vh';
+    if (pageSize < projects.count) {
+      maxHeight = '80vh';
+    }
+
+    if (show) {
+      maxHeight = maxHeight === '80vh' ? '76vh' : '82vh';
+    }
+
+    return maxHeight;
   };
 
   return (
@@ -289,14 +305,14 @@ const ProjectListScreen = ({ history }) => {
         <div
           id='style-2'
           style={{
-            maxHeight: `${show ? '82vh' : '85.75vh'}`,
+            maxHeight: getMaxHeight(),
             overflow: 'auto',
             position: 'relative',
             transition: 'all 0.5s ease-in-out',
           }}
         >
           <Row xs='auto'>
-            {projects.map((project) => (
+            {projects.results.map((project) => (
               <Col key={project.id.toString()}>
                 <Project project={project} />
               </Col>
@@ -304,6 +320,16 @@ const ProjectListScreen = ({ history }) => {
           </Row>
         </div>
       )}
+      <Row>
+        <Col
+          className='d-flex justify-content-center'
+          style={{ position: 'relative', top: '10px' }}
+        >
+          {projects && (
+            <Paginate data={projects} action={listProjectsPagination} />
+          )}
+        </Col>
+      </Row>
 
       {/*Dialog for create project*/}
       <Modal

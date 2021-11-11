@@ -64,12 +64,6 @@ class Review(models.Model):
             review.image_url = None
             review.save()
 
-    @receiver(pre_save, sender='review.Review')
-    def update_number_of_collaborator(sender, instance, **kwargs):
-        review = instance
-        number_of_collaborator = len(instance.collaborators.all())
-        review.number_of_collaborator = number_of_collaborator
-
     @receiver(post_save, sender='review.Media')
     def update_number_of_media(sender, instance, created, **kwargs):
         review = instance.review

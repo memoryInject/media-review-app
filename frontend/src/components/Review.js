@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from 'react-bootstrap';
+import { Card, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const Review = ({ review, projectId }) => {
@@ -22,19 +22,64 @@ const Review = ({ review, projectId }) => {
           <Card.Title className='title-card'>{review.reviewName}</Card.Title>
         </Link>
         <Card.Text as='div'>
-          <p className='py-0 text-info' style={{ marginBottom: '10px' }}>
-            {review.numberOfMedia} items
-          </p>
-          <p
-            className={`py-0 my-0 ${
-              review.isOpen ? 'text-muted' : 'text-danger'
-            }`}
-          >
-            {review.isOpen ? 'Open' : 'Closed'}
-          </p>
-          <span className='text-muted'>{`${review.numberOfCollaborator} ${
-            review.numberOfCollaborator === 1 ? 'Collaborator' : 'Collaborators'
-          }`}</span>
+          <Row xs='auto'>
+            <Col>
+              <span
+                className='material-icons-round text-light'
+                style={{
+                  position: 'relative',
+                  top: '5px',
+                }}
+              >
+                people
+              </span>
+              &nbsp;
+              <span className='text-light'>{review.numberOfCollaborator}</span>
+            </Col>
+            <Col>
+              <span
+                className='material-icons-round text-light'
+                style={{
+                  position: 'relative',
+                  top: '5.5px',
+                }}
+              >
+                videocam
+              </span>
+              &nbsp;
+              <span className='text-light'>{review.numberOfMedia}</span>
+            </Col>
+            <Col>
+              <span
+                className={`px-0 my-0 ${
+                  review.isOpen ? 'text-muted' : 'text-danger'
+                }`}
+              >
+                {review.isOpen ? (
+                  <span
+                    className='material-icons-round'
+                    style={{
+                      position: 'relative',
+                      top: '3px',
+                    }}
+                  >
+                    lock_open
+                  </span>
+                ) : (
+                  <span
+                    className='material-icons-round'
+                    style={{
+                      position: 'relative',
+                      top: '3px',
+                    }}
+                  >
+                    lock
+                  </span>
+                )}
+                &nbsp;
+              </span>
+            </Col>
+          </Row>
         </Card.Text>
       </Card.Body>
     </Card>

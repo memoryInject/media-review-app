@@ -16,8 +16,10 @@ import ProjectTopBar from '../components/ProjectTopBar';
 import ProjectCreateReviewModal from '../components/ProjectCreateReviewModal';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
+import Paginate, { pageSize } from '../components/Paginate';
+
 import { listProjectDetails } from '../actions/projectActions';
-import { listReview } from '../actions/reviewActions';
+import { listReview, listReviewPagination } from '../actions/reviewActions';
 import { PROJECT_DETAILS_RESET } from '../constants/projectConstants';
 import { REVIEW_LIST_RESET } from '../constants/reviewConstants';
 import {
@@ -84,6 +86,19 @@ const ProjectScreen = ({ match, history }) => {
     dispatch(listReview(match.params.id, keyword));
   };
 
+  const getMaxHeight = () => {
+    let maxHeight = '85.75vh';
+    if (pageSize < reviews.count) {
+      maxHeight = '80vh';
+    }
+
+    if (show) {
+      maxHeight = maxHeight === '80vh' ? '76vh' : '82vh';
+    }
+
+    return maxHeight;
+  };
+
   return (
     <div
       style={{
@@ -142,7 +157,9 @@ const ProjectScreen = ({ match, history }) => {
 
                     {user && user.profile.isAdmin && (
                       <ButtonGroup aria-label='Basic example'>
-                        <Button variant='outline-success' type='submit'>Search</Button>
+                        <Button variant='outline-success' type='submit'>
+                          Search
+                        </Button>
                         <ToggleButton
                           id='toggle-check'
                           type='checkbox'
@@ -285,14 +302,14 @@ const ProjectScreen = ({ match, history }) => {
               <div
                 id='style-2'
                 style={{
-                  maxHeight: `${show ? '82vh' : '85.75vh'}`,
+                  maxHeight: getMaxHeight(),
                   overflow: 'auto',
                   position: 'relative',
                   transition: 'all 0.5s ease-in-out',
                 }}
               >
                 <Row xs='auto'>
-                  {reviews.map((review) => (
+                  {reviews.results.map((review) => (
                     <Col key={review.id.toString()}>
                       <Review projectId={match.params.id} review={review} />
                     </Col>
@@ -301,6 +318,16 @@ const ProjectScreen = ({ match, history }) => {
               </div>
             )
           )}
+          <Row>
+            <Col
+              className='d-flex justify-content-center'
+              style={{ position: 'relative', top: '10px' }}
+            >
+              {reviews && (
+                <Paginate data={reviews} action={listReviewPagination} />
+              )}
+            </Col>
+          </Row>
         </Col>
       </Row>
 
