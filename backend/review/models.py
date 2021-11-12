@@ -2,7 +2,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete, pre_save
+from django.db.models.signals import post_save, post_delete
 
 from review.utils import random_hex_color_code
 
@@ -37,7 +37,8 @@ class Review(models.Model):
                                 null=True, blank=True)
     is_open = models.BooleanField(null=True, blank=True, default=True)
     number_of_media = models.IntegerField(null=True, blank=True, default=0)
-    number_of_collaborator = models.IntegerField(null=True, blank=True, default=1)
+    number_of_collaborator = models.IntegerField(
+        null=True, blank=True, default=1)
     user = models.ForeignKey(get_user_model(), related_name='reviews_created',
                              on_delete=models.CASCADE)
     collaborators = models.ManyToManyField(

@@ -27,6 +27,18 @@ class ReviewField(serializers.RelatedField):
         return fields
 
 
+class ProjectField(serializers.RelatedField):
+    """Custom ProjectField Serializer for representation of a project"""
+
+    def to_representation(self, value):
+        fields = {
+            'id': value.id,
+            'project_name': value.project_name,
+            'user': {'id': value.user.id, 'username': value.user.username}
+        }
+        return fields
+
+
 class MediaField(serializers.RelatedField):
     """Media field representation"""
 
@@ -76,7 +88,11 @@ class ReviewSerializer(serializers.ModelSerializer):
     """Serializer for Review Model"""
     user = UserViewSerializer(read_only=True)
     collaborators = UserViewSerializer(many=True, read_only=True)
-    project = ProjectSerializer(read_only=True)
+
+    # Using a project serializer seems slow down the retrieve
+    # review list process
+    # project = ProjectSerializer(read_only=True)
+    project = ProjectField(read_only=True)
     media = MediaField(read_only=True, many=True)
 
     class Meta:

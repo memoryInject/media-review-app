@@ -1,8 +1,18 @@
-/*html {*/
-  /*[>overflow-y: scroll;<]*/
-    /*[>margin-left: calc(100vw - 100%);<]*/
-    /*[>margin-right: 0;<]*/
-/*}*/
+html {
+  overflow-y: scroll;
+}
+
+html::-webkit-scrollbar-track {
+    background: linear-gradient(rgba(48,48,48,1) 0%,rgba(48,48,48,1) 5.89%, rgba(34,34,34,1) 5.8%, rgba(34,34,34) 100%);
+}
+html::-webkit-scrollbar {
+  width: 10px;
+}
+html::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  /*background-color: #3A3A3A;*/
+  background-color: #404040;
+}
 
 main {
   min-height: 80vh;
@@ -264,6 +274,22 @@ main {
     text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
   }
 }
+
+/*Blink animation*/
+.blink {
+        animation: blink-animation 1s steps(5, start) infinite;
+        -webkit-animation: blink-animation 1s steps(5, start) infinite;
+      }
+      @keyframes blink-animation {
+        to {
+          visibility: hidden;
+        }
+      }
+      @-webkit-keyframes blink-animation {
+        to {
+          visibility: hidden;
+        }
+      }
 
 .scrollbar {
   background: #303030;

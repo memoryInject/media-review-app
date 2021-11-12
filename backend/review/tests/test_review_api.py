@@ -13,8 +13,12 @@ from review.serializers import ReviewSerializer
 # Get reviews by the user in collaborators
 REVIEW_LIST_URL = reverse('review_list')
 REVIEW_LIST_BY_CREATED_USER_URL = reverse('review_list') + '?user=true'
-REVIEW_LIST_ALL_URL = reverse('review_list') + '?all=true'
-REVIEW_LIST_BY_PROJECT_URL = reverse('review_list')
+REVIEW_LIST_BY_COLLABORATION_URL = reverse('review_list') +\
+    '?collaborator=true'
+
+
+def review_list_by_search_url(name=''):
+    return reverse('review_list') + f'?s={name}'
 
 
 def review_list_by_project_url(project_id=1, user=False):
@@ -86,6 +90,78 @@ class PrivateReviewApiTest(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(self.user)
 
+    def test_retrieve_all_reviews_as_admin(self):
+        """Retrive all the reviews"""
+        review = {
+            'user': self.admin,
+            'project': self.project,
+            'review_name': 'Test Review'
+        }
+        create_review(**review)
+        create_review(**review)
+        create_review(**review)
+
+        queryset = Review.objects.all()
+        serializer = ReviewSerializer(queryset, many=True)
+
+        self.client.force_authenticate(self.admin)
+
+        res = self.client.get(REVIEW_LIST_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data.get('count'), len(serializer.data))
+
+    def test_retrieve_collaborated_reviews_as_admin(self):
+        """Retrive all the reviews by collaborated"""
+        review = {
+            'user': self.admin,
+            'project': self.project,
+            'review_name': 'Test Review'
+        }
+        review1 = create_review(**review)
+        review2 = create_review(**review)
+        review3 = create_review(**review)
+
+        review1.collaborators.add(self.user, self.admin)
+        review2.collaborators.add(self.user)
+        review3.collaborators.add(self.admin)
+
+        queryset = Review.objects.filter(collaborators=self.admin)
+        serializer = ReviewSerializer(queryset, many=True)
+
+        self.client.force_authenticate(self.admin)
+
+        res = self.client.get(REVIEW_LIST_BY_COLLABORATION_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data.get('count'), len(serializer.data))
+
+    def test_retrieve_reviews_by_search(self):
+        """Retrive reviews by search"""
+        review = {
+            'user': self.admin,
+            'project': self.project,
+        }
+        review1 = create_review(**review, review_name='alpha')
+        review2 = create_review(**review, review_name='Beta')
+        review3 = create_review(**review, review_name='Gamma')
+
+        review1.collaborators.add(self.user, self.admin)
+        review2.collaborators.add(self.user)
+        review3.collaborators.add(self.admin)
+
+        search = 'gamma'
+
+        queryset = Review.objects.filter(review_name__icontains=search)
+        serializer = ReviewSerializer(queryset, many=True)
+
+        self.client.force_authenticate(self.admin)
+
+        res = self.client.get(review_list_by_search_url(search))
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data.get('count'), len(serializer.data))
+
     def test_retrieve_review_list(self):
         """Retrive all the reviews that user collaborated"""
         review = {
@@ -107,7 +183,7 @@ class PrivateReviewApiTest(TestCase):
         res = self.client.get(REVIEW_LIST_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data.get('count'), len(serializer.data))
 
     def test_retrieve_review_list_created_by_user(self):
         """Retrive reviews created by the user"""
@@ -134,7 +210,7 @@ class PrivateReviewApiTest(TestCase):
         res = self.client.get(REVIEW_LIST_BY_CREATED_USER_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data.get('count'), len(serializer.data))
 
     def test_retrieve_review_list_based_on_project(self):
         """Retrive all the reviews associated with a project"""
@@ -164,7 +240,7 @@ class PrivateReviewApiTest(TestCase):
             review_list_by_project_url(project_id=self.project.id))
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data.get('count'), len(serializer.data))
 
     def test_retrieve_review_list_based_on_project_and_user(self):
         """Retrive all the reviews associated with a project and user"""
@@ -205,7 +281,7 @@ class PrivateReviewApiTest(TestCase):
             review_list_by_project_url(project_id=self.project.id, user=True))
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data.get('count'), len(serializer.data))
 
     def test_create_review_normal_user_fails(self):
         """Create review as a normal user fails"""

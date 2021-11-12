@@ -2,7 +2,7 @@ import React from 'react';
 import { Pagination } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 
-export const pageSize = 12;
+export const pageSize = 20;
 
 const Paginate = ({ data, action }) => {
   const dispatch = useDispatch();

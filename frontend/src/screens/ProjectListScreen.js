@@ -196,16 +196,29 @@ const ProjectListScreen = ({ history }) => {
                   }
                 >
                   <span
-                    className='material-icons-round'
+                    className='material-icons-round '
                     style={{
-                      fontSize: '21px',
+                      fontSize: '18px',
                       position: 'absolute',
-                      top: '20%',
-                      left: '8%',
+                      top: '27%',
+                      left: '13%',
                     }}
                   >
                     tune
                   </span>
+                  {!show && (created || collaborated) && (
+                    <span
+                      className='material-icons-round text-warning blink'
+                      style={{
+                        fontSize: '12px',
+                        position: 'absolute',
+                        top: '0%',
+                        right: '0%',
+                      }}
+                    >
+                      error_outline
+                    </span>
+                  )}
                 </ToggleButton>
               </ButtonGroup>
             )}
@@ -258,7 +271,7 @@ const ProjectListScreen = ({ history }) => {
           style={{
             borderRadius: '0.25rem',
             opacity: `${show ? '1' : '0'}`,
-            transition: 'all 0.3s ease-in-out',
+            //transition: 'all 0.2s ease-in-out',
           }}
         >
           {show && (
@@ -308,7 +321,7 @@ const ProjectListScreen = ({ history }) => {
             maxHeight: getMaxHeight(),
             overflow: 'auto',
             position: 'relative',
-            transition: 'all 0.5s ease-in-out',
+            //transition: 'all 0.1s ease-in-out',
           }}
         >
           <Row xs='auto'>

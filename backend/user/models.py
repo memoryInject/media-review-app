@@ -6,6 +6,7 @@ from django.db.models.signals import post_save
 
 from user.utils import generate_user_image_url
 
+
 class UserProfile(models.Model):
     """User profile model for users"""
     user = models.OneToOneField(

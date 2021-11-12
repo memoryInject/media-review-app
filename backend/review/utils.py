@@ -10,6 +10,7 @@ def pop_reviews_from_project_list(serializer_data):
 
     return clean_copy
 
+
 def pop_reviews_from_project(serializer_data):
     clean_copy = copy.deepcopy(serializer_data)
     clean_copy['reviews'] = []

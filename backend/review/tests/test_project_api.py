@@ -6,12 +6,18 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from review.models import Project
-from review.serializers import ProjectSerializer
+from review.models import Project, Review
 
 
 PROJECT_LIST_URL = reverse('project_list')
 PROJECT_LIST_CREATED_BY_USER_URL = reverse('project_list') + '?user=true'
+PROJECT_LIST_BY_COLLABORATION_URL = reverse('project_list') +\
+    '?collaborator=true'
+
+
+def project_list_by_name_url(name=''):
+    """ Retuen project search url """
+    return reverse('project_list') + f'?s={name}'
 
 
 def project_detail_url(project_id=1):
@@ -54,11 +60,8 @@ class PrivateProjectApiTests(TestCase):
 
         res = self.client.get(PROJECT_LIST_URL)
 
-        projects = Project.objects.all()
-        serializer = ProjectSerializer(projects, many=True)
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data.get('count'), 2)
 
     def test_retrieve_project_list_created_by_user(self):
         """Test for retreving projects created by the logged in user"""
@@ -70,16 +73,74 @@ class PrivateProjectApiTests(TestCase):
 
         res = self.client.get(PROJECT_LIST_CREATED_BY_USER_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), 2)
+        self.assertEqual(res.data.get('count'), 2)
 
-    def test_retrieve_project_list_fail(self):
+    def test_retrieve_project_list_by_collaboration(self):
+        """
+            Test for retreving projects if the user is in the
+            assosiated review collaborator list
+        """
+        project = Project.objects.create(user=self.admin, project_name='Delta')
+        review = Review.objects.create(
+            user=self.admin, project=project,
+            review_name='test review', description='test')
+        review.collaborators.add(self.admin)
+        review.save()
+
+        Project.objects.create(user=self.admin, project_name='Alpha')
+        Project.objects.create(user=self.user, project_name='Beta')
+
+        self.client.force_authenticate(self.admin)
+
+        res = self.client.get(PROJECT_LIST_BY_COLLABORATION_URL)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data.get('count'), 1)
+
+    def test_retrieve_project_list_by_search(self):
+        """
+            Test for retreving projects by search project name
+        """
+        Project.objects.create(user=self.admin, project_name='Delta')
+        Project.objects.create(user=self.admin, project_name='Alpha')
+        Project.objects.create(user=self.user, project_name='Beta')
+
+        self.client.force_authenticate(self.admin)
+
+        res = self.client.get(project_list_by_name_url('delta'))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data.get('count'), 1)
+        self.assertEqual(
+            res.data.get('results')[0].get('project_name'), 'Delta')
+
+    def test_retrieve_project_list_empty(self):
         """Test for retrieveing project list as normal user (not admin)"""
         Project.objects.create(user=self.admin, project_name='Delta')
         Project.objects.create(user=self.admin, project_name='Alpha')
 
         res = self.client.get(PROJECT_LIST_URL)
 
-        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data.get('count'), 0)
+
+    def test_retrieve_project_list_non_admin(self):
+        """
+            Test for retreving projects if the user is not admin then only
+            return projects if the user is in the
+            assosiated review collaborator list
+        """
+        project = Project.objects.create(user=self.admin, project_name='Delta')
+        review = Review.objects.create(
+            user=self.admin, project=project,
+            review_name='test review', description='test')
+        review.collaborators.add(self.user)
+        review.save()
+
+        Project.objects.create(user=self.admin, project_name='Alpha')
+        Project.objects.create(user=self.user, project_name='Beta')
+
+        res = self.client.get(PROJECT_LIST_URL)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data.get('count'), 1)
 
     def test_create_project_normal_user_fails(self):
         """Test for POST project will fail for normal user"""

@@ -37,6 +37,14 @@ const ProjectReviewListTable = ({ history, match, project, userDetails }) => {
       dispatch(listProjectDetails(match.params.id));
       dispatch(listReview(match.params.id));
     }
+
+    if (
+      reviews &&
+      reviews.results.length &&
+      reviews.results[0].project.id.toString() !== project.id.toString()
+    ) {
+      dispatch(listReview(match.params.id));
+    }
   }, [match, project, dispatch, reviews]);
 
   // This will run after successfully delete the review
