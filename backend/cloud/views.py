@@ -10,6 +10,7 @@ from cloudinary import CloudinaryVideo
 import time
 
 from review.serializers import AssetSerializer
+from cloud.permissions import IsAdmin
 
 
 # Route: /api/v1/cloud/upload/annotaion/
@@ -36,13 +37,19 @@ class UploadAnnotationView(APIView):
 
 # Route: /api/v1/cloud/upload/video/
 # Methods: POST
+# Description: This route will upload video to cloudinary and create an asset
+# response will be the serialized asset
+# Access: Admin only
 class UploadVideoView(APIView):
     parser_classes = (MultiPartParser, JSONParser,)
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdmin]
 
     @staticmethod
     def post(request):
         file = request.data.get('video')
+        if not file:
+            return Response({'details': 'No video uploads'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         uploaded_data = cloudinary.uploader.upload(
             file, folder='media_review_app/videos/', resource_type='video')
@@ -51,8 +58,28 @@ class UploadVideoView(APIView):
             return Response(
                 uploaded_data, status=status.HTTP_400_BAD_REQUEST)
 
+        data = {
+            'asset_name': uploaded_data['original_filename'],
+            'url': uploaded_data['url'],
+            'height': uploaded_data['height'],
+            'width': uploaded_data['width'],
+            'asset_format': uploaded_data['format'],
+            'duration': uploaded_data['duration'],
+            'frame_rate': uploaded_data['frame_rate'],
+            'resource_type': uploaded_data['resource_type'],
+            'image_url': CloudinaryVideo(
+                uploaded_data['public_id'] + '.jpg').build_url(),
+        }
+
+        serializer = AssetSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(
-            uploaded_data, status=status.HTTP_201_CREATED)
+            serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Route: /api/v1/cloud/upload/image/
