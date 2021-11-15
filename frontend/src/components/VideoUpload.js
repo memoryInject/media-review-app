@@ -8,8 +8,7 @@ import Loader from './Loader';
 import Message from './Message';
 
 import { showToast, messageToast, variantToast } from '../actions/toastActions';
-import { createMedia, updateMedia } from '../actions/mediaActions';
-import { listReviewDetails } from '../actions/reviewActions';
+import { createMedia, updateMedia, listMedia } from '../actions/mediaActions';
 import {
   MEDIA_CREATE_HIDE,
   MEDIA_CREATE_PARENT_RESET,
@@ -94,7 +93,6 @@ const VideoUpload = ({ match }) => {
       setMediaVersion(media.version);
       setShowUpdate(true);
       setSuccessMessage(true);
-      //dispatch(listReviewDetails(match.params.reviewId));
     }
   }, [media, dispatch, match]);
 
@@ -107,7 +105,7 @@ const VideoUpload = ({ match }) => {
       dispatch(messageToast('Media updated successfully'));
       dispatch(variantToast('success'));
       dispatch(showToast(true));
-      dispatch(listReviewDetails(match.params.reviewId));
+      dispatch(listMedia(match.params.reviewId))
     }
   }, [mediaUpdated, dispatch, match]);
 
@@ -115,7 +113,7 @@ const VideoUpload = ({ match }) => {
     dispatch({ type: MEDIA_CREATE_HIDE });
     dispatch({ type: MEDIA_CREATE_PARENT_RESET });
     if (showUpdate) {
-      dispatch(listReviewDetails(match.params.reviewId));
+      dispatch(listMedia(match.params.reviewId))
     }
   };
 

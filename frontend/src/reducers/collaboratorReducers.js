@@ -1,8 +1,11 @@
 import {
   COLLABORATOR_UI_SHOW,
   COLLABORATOR_UI_HIDE,
-  COLLABORATOR_LIST_GET,
+  COLLABORATOR_LIST_REQUEST,
+  COLLABORATOR_LIST_SUCCESS,
+  COLLABORATOR_LIST_FAIL,
   COLLABORATOR_LIST_RESET,
+  COLLABORATOR_DETAILS_GET,
   COLLABORATOR_USERS_REQUEST,
   COLLABORATOR_USERS_SUCCESS,
   COLLABORATOR_USERS_FAIL,
@@ -17,7 +20,6 @@ import {
   COLLABORATOR_REMOVE_SUCCESS,
   COLLABORATOR_REMOVE_FAIL,
   COLLABORATOR_REMOVE_RESET,
-  COLLABORATOR_DETAILS_GET,
   COLLABORATOR_DETAILS_RESET,
   COLLABORATOR_INVITATION_RESET,
   COLLABORATOR_REMOVE_USER,
@@ -37,15 +39,34 @@ export const collaboratorUIReducer = (state = { showUI: false }, action) => {
 };
 
 export const collaboratorListReducer = (
-  state = { collaborators: null },
+  state = { collaborators: null, reviewId: null },
   action
 ) => {
   switch (action.type) {
-    case COLLABORATOR_LIST_GET:
-      return { collaborators: action.payload };
+    case COLLABORATOR_LIST_REQUEST:
+      return {
+        loading: true,
+        collaborators: state.collaborators,
+        reviewId: state.reviewId,
+      };
+
+    case COLLABORATOR_LIST_SUCCESS:
+      return {
+        loading: false,
+        collaborators: action.payload.collaborators,
+        reviewId: action.payload.id,
+      };
+
+    case COLLABORATOR_LIST_FAIL:
+      return {
+        loading: false,
+        collaborators: null,
+        error: action.payload,
+        reviewId: null,
+      };
 
     case COLLABORATOR_LIST_RESET:
-      return { collaborators: null };
+      return { collaborators: null, reviewId: null };
 
     default:
       return state;
@@ -132,7 +153,12 @@ export const collaboratorAddReducer = (
 };
 
 export const collaboratorRemoveReducer = (
-  state = { loading: false, success: false, error: null, collaboratorToRemove: null },
+  state = {
+    loading: false,
+    success: false,
+    error: null,
+    collaboratorToRemove: null,
+  },
   action
 ) => {
   switch (action.type) {
@@ -143,13 +169,23 @@ export const collaboratorRemoveReducer = (
       return { ...state, loading: false, success: true };
 
     case COLLABORATOR_REMOVE_FAIL:
-      return { ...state, loading: false, error: action.payload, success: false };
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+        success: false,
+      };
 
     case COLLABORATOR_REMOVE_RESET:
-      return { loading: false, error: null, success: false, collaboratorToRemove: null };
+      return {
+        loading: false,
+        error: null,
+        success: false,
+        collaboratorToRemove: null,
+      };
 
     case COLLABORATOR_REMOVE_USER:
-      return { ...state, collaboratorToRemove: action.payload}
+      return { ...state, collaboratorToRemove: action.payload };
 
     default:
       return state;

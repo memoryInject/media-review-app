@@ -1,14 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { listMediaDetails } from '../actions/mediaActions';
+
+import Message from './Message';
+
+import { listMedia, listMediaDetails } from '../actions/mediaActions';
 import { listFeedbacks } from '../actions/feedbackActions';
-import { FEEDBACK_CREATE_RESET } from '../constants/feedbackConstants';
-import { listPlaylistDetails } from '../actions/playlistActions';
-import { PLAYLIST_DETAILS_RESET } from '../constants/playlistConstants';
+import {
+  FEEDBACK_CREATE_RESET,
+  FEEDBACK_LIST_RESET,
+} from '../constants/feedbackConstants';
+import { MEDIA_DETAILS_RESET } from '../constants/mediaConstants';
 
 const Playlist = () => {
   const dispatch = useDispatch();
+
+  const mediaList = useSelector((state) => state.mediaList);
+  const {
+    media: mediaListMedia,
+    loading: mediaListLoading,
+    error: mediaListError,
+  } = mediaList;
+
   const mediaDetails = useSelector((state) => state.mediaDetails);
   const { media } = mediaDetails;
 
@@ -24,14 +37,29 @@ const Playlist = () => {
   const playlist = useRef(null);
   const [showButton, setShowButton] = useState(false);
 
-  // Refresh playlist if review exists
+  // Fetch media list if review exists
   useEffect(() => {
-    if (review) {
-      dispatch(listPlaylistDetails());
+    if (review && !mediaListMedia && !mediaListLoading) {
+      dispatch(listMedia(review.id));
     }
+  }, [review, dispatch, mediaListMedia, mediaListLoading]);
 
-    return () => dispatch({ type: PLAYLIST_DETAILS_RESET });
-  }, [review, dispatch]);
+  // Update media detail if the playlistDetail changes
+  useEffect(() => {
+    if (playlistDetail && playlistDetail.length > 0) {
+      if (playlistDetail[0].child) {
+        dispatch({ type: FEEDBACK_LIST_RESET });
+        dispatch({ type: MEDIA_DETAILS_RESET });
+        dispatch(listMediaDetails(playlistDetail[0].child[0].id));
+        dispatch(listFeedbacks(playlistDetail[0].child[0].id));
+      } else {
+        dispatch({ type: FEEDBACK_LIST_RESET });
+        dispatch({ type: MEDIA_DETAILS_RESET });
+        dispatch(listMediaDetails(playlistDetail[0].id));
+        dispatch(listFeedbacks(playlistDetail[0].id));
+      }
+    }
+  }, [playlistDetail, dispatch]);
 
   // This will set the scroll button for playlist if there is a scrollbar
   useEffect(() => {
@@ -53,9 +81,10 @@ const Playlist = () => {
   };
 
   const mediaHandler = (media) => {
+    dispatch({ type: FEEDBACK_CREATE_RESET });
+    dispatch({ type: MEDIA_DETAILS_RESET });
     dispatch(listMediaDetails(media.id));
     dispatch(listFeedbacks(media.id));
-    dispatch({ type: FEEDBACK_CREATE_RESET });
   };
 
   const styleDefault = {
@@ -191,6 +220,7 @@ const Playlist = () => {
             </div>
           </>
         )}
+        {mediaListError && <Message>{mediaListError}</Message>}
       </div>
     </>
   );

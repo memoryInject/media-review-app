@@ -3,6 +3,9 @@ import {
   MEDIA_CREATE_FAIL,
   MEDIA_CREATE_REQUEST,
   MEDIA_CREATE_SUCCESS,
+  MEDIA_LIST_FAIL,
+  MEDIA_LIST_REQUEST,
+  MEDIA_LIST_SUCCESS,
   MEDIA_DETAILS_FAIL,
   MEDIA_DETAILS_REQUEST,
   MEDIA_DETAILS_SUCCESS,
@@ -14,6 +17,41 @@ import {
   MEDIA_DELETE_SUCCESS,
 } from '../constants/mediaConstants';
 import getError from '../utils/getError';
+import { listPlaylistDetails } from './playlistActions';
+
+export const listMedia = (reviewId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: MEDIA_LIST_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${userInfo.key}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `/api/v1/review/media/?review=${reviewId}`,
+      config
+    );
+
+    dispatch({
+      type: MEDIA_LIST_SUCCESS,
+      payload: { media: data, review: { id: reviewId } },
+    });
+
+    dispatch(listPlaylistDetails());
+  } catch (error) {
+    dispatch({
+      type: MEDIA_LIST_FAIL,
+      payload: getError(error),
+    });
+  }
+};
 
 export const listMediaDetails = (id) => async (dispatch, getState) => {
   try {

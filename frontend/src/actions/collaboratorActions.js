@@ -2,7 +2,9 @@ import axios from 'axios';
 
 import getError from '../utils/getError';
 import {
-  COLLABORATOR_LIST_GET,
+  COLLABORATOR_LIST_REQUEST,
+  COLLABORATOR_LIST_SUCCESS,
+  COLLABORATOR_LIST_FAIL,
   COLLABORATOR_UI_SHOW,
   COLLABORATOR_UI_HIDE,
   COLLABORATOR_USERS_FAIL,
@@ -28,17 +30,37 @@ export const hideUICollaborator = () => {
   return { type: COLLABORATOR_UI_HIDE };
 };
 
-export const listCollaborator = () => (dispatch, getState) => {
-  const {
-    reviewDetails: {
-      review: { collaborators },
-    },
-  } = getState();
+export const listCollaborator = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: COLLABORATOR_LIST_REQUEST });
 
-  dispatch({
-    type: COLLABORATOR_LIST_GET,
-    payload: collaborators,
-  });
+    const {
+      userLogin: { userInfo },
+      reviewDetails: { review },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${userInfo.key}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `/api/v1/review/reviews/${review.id}/`,
+      config
+    );
+
+    dispatch({
+      type: COLLABORATOR_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: COLLABORATOR_LIST_FAIL,
+      payload: getError(error),
+    });
+  }
 };
 
 export const detailsCollaborator = (collaborator) => {
@@ -120,8 +142,11 @@ export const addCollaborator = (users) => async (dispatch, getState) => {
 
     const {
       reviewDetails: {
-        review: { id, collaborators },
+        review: { id },
       },
+      collaboratorList: {
+        collaborators
+      }
     } = getState();
 
     const existingCollaboratorIds = collaborators.map((collab) => collab.id);
@@ -160,11 +185,14 @@ export const removeCollaborator = () => async (dispatch, getState) => {
 
     const {
       reviewDetails: {
-        review: { id, collaborators },
+        review: { id },
       },
     } = getState();
 
     const {
+      collaboratorList: {
+        collaborators
+      },
       collaboratorRemove: { collaboratorToRemove },
     } = getState();
 

@@ -15,8 +15,8 @@ import {
   usersCollaborator,
   addCollaborator,
   hideUICollaborator,
+  listCollaborator,
 } from '../../actions/collaboratorActions';
-import { listReviewDetails } from '../../actions/reviewActions';
 import {
   showToast,
   messageToast,
@@ -74,7 +74,7 @@ const UsersList = () => {
       dispatch(variantToast('success'));
       dispatch(showToast());
       dispatch({ type: COLLABORATOR_ADD_RESET });
-      dispatch(listReviewDetails(review.id));
+      dispatch(listCollaborator());
       dispatch(hideUICollaborator());
     }
   }, [successCollaboratorAdd, review, dispatch]);

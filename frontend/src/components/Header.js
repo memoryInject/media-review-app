@@ -1,8 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Container, Nav, Navbar, NavDropdown, Image } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+
+import About from './About';
 
 import { logout } from '../actions/userActions';
 
@@ -14,6 +16,7 @@ const Header = () => {
   const { user } = userDetails;
 
   const navdrop = useRef(null);
+  const [modalShow, setModalShow] = useState(false);
 
   const logoutHandler = () => {
     dispatch(logout());
@@ -117,6 +120,15 @@ const Header = () => {
                     </span>
                     Logout
                   </NavDropdown.Item>
+                  <NavDropdown.Item onClick={()=>setModalShow(true)}>
+                    <span
+                      className='material-icons-round'
+                      style={{ transform: 'translate(-3px, 6px)' }}
+                    >
+                      info
+                    </span>
+                    About
+                  </NavDropdown.Item>
                 </NavDropdown>
                 <LinkContainer to='/' className='px-3 d-none d-lg-block'>
                   <Nav.Link className='p-0'>
@@ -158,6 +170,9 @@ const Header = () => {
           )}
         </Container>
       </Navbar>
+
+      {/*About Modal for about this app*/}
+      <About show={modalShow} onHide={()=>setModalShow(false)} />
     </header>
   );
 };

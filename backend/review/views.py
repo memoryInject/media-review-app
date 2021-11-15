@@ -259,7 +259,7 @@ class AssetDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AssetSerializer
 
 
-# Route: review/media/?<user=true>&<review=int:id>&<all=true>/
+# Route: review/media/?<user=true>&<review=int:id>&<collaborator=true>/
 # description: GET all the media if the user is in collaborators
 # of review assosiated with the media
 class MediaList(generics.ListCreateAPIView):
@@ -311,33 +311,37 @@ class MediaList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Media.objects.filter(review__collaborators=user)
+        # queryset = Media.objects.filter(review__collaborators=user)
+        queryset = Media.objects.all()
+
+        # url query_params
+        user_param = self.request.query_params.get('user')
+        collaborator_param = self.request.query_params.get('collaborator')
+        review_param = self.request.query_params.get('review')
+
+        # If user is not admin filter only collaborated reviews
+        if not is_admin(user):
+            queryset = queryset.filter(review__collaborators=user)
+
+        # If collaborator param passed filter only collaborated reviews
+        if collaborator_param:
+            queryset = queryset.filter(review__collaborators=user)
 
         # Check the user query_params, and return
         # media created by the user
-        user_param = self.request.query_params.get('user')
         if user_param:
-            queryset = Media.objects.filter(user=user)
+            queryset = queryset.filter(user=user)
 
         # Check the query_params for review=2, and return
         # all the media for that review, admin access only
         try:
-            review_id = int(self.request.query_params.get('review'))
+            review_id = int(review_param)
         except (ValueError, TypeError,):
             # If the review_id is str
             review_id = 0
 
-        if review_id and is_admin(user):
-            queryset = Media.objects.filter(review__id=review_id)
-
-            # Check if the user_param supplied with review,
-            # eg: /?review=2&user=true
-            queryset = queryset.filter(user=user) if user_param else queryset
-
-        # Check the query_params for all, and return
-        # all the media for admin user
-        if self.request.query_params.get('all') and is_admin(user):
-            queryset = Media.objects.all()
+        if review_id:
+            queryset = queryset.filter(review__id=review_id)
 
         return queryset
 

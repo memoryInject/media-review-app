@@ -10,21 +10,17 @@ import ModalDialog from './ModalDialog';
 
 import { seekToPlayer } from '../actions/playerActions';
 import {
-  activeFeedback,
   deleteFeedback,
   listFeedbacks,
   replyFeedback,
 } from '../actions/feedbackActions';
 import {
-  FEEDBACK_LIST_RESET,
-  FEEDBACK_CREATE_RESET,
   FEEDBACK_ACTIVE_RESET,
   FEEDBACK_TO_UPDATE,
   FEEDBACK_REPLY_RESET,
   FEEDBACK_TO_UPDATE_RESET,
   FEEDBACK_TO_DELETE,
   FEEDBACK_DELETE_RESET,
-  FEEDBACK_TO_DELETE_RESET,
 } from '../constants/feedbackConstants';
 
 const FeedbackList = () => {
@@ -44,8 +40,6 @@ const FeedbackList = () => {
 
   const feedbackCreate = useSelector((state) => state.feedbackCreate);
   let {
-    loading: feedbackCreateLoading,
-    error: feedbackCreateError,
     feedback: feedbackCreateSuccess,
   } = feedbackCreate;
 
@@ -179,7 +173,7 @@ const FeedbackList = () => {
           minHeight: getHeight(),
           overflow: 'auto',
           position: 'relative',
-          transition: 'all 0.5s ease-in-out',
+          transition: 'all 0.3s ease-in-out',
         }}
       >
         {loading || feedbackDeleteLoading ? (

@@ -9,11 +9,12 @@ export const listPlaylistDetails = () => (dispatch, getState) => {
   dispatch({ type: PLAYLIST_DETAILS_REQUEST });
 
   const {
-    reviewDetails: { review },
+    mediaList: {media, review}
   } = getState();
 
-  if (review && review.media) {
-    const playlist = getFormattedPlaylist(review.media);
-    dispatch({ type: PLAYLIST_DETAILS_SUCCESS, payload: playlist });
+  if (media && review) {
+    const playlist = getFormattedPlaylist(media);
+    const data = {playlist, review: {id: review.id}}
+    dispatch({ type: PLAYLIST_DETAILS_SUCCESS, payload: data });
   }
 };

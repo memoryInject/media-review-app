@@ -11,8 +11,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import CollaboratorDetails from './CollaboratorDetails';
 import UsersList from './UsersList';
 import InvitationForm from './InvitationForm';
+import Message from '../Message';
 
-import { hideUICollaborator } from '../../actions/collaboratorActions';
+import {
+  hideUICollaborator,
+  listCollaborator,
+} from '../../actions/collaboratorActions';
 
 const Collaborators = () => {
   const dispatch = useDispatch();
@@ -27,8 +31,21 @@ const Collaborators = () => {
   const collaboratorUI = useSelector((state) => state.collaboratorUI);
   const { showUI } = collaboratorUI;
 
+  const collaboratorList = useSelector((state) => state.collaboratorList);
+  const { collaborators, loading, error, reviewId } = collaboratorList;
+
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
+
+  useEffect(() => {
+    if (!collaborators && !loading) {
+      dispatch(listCollaborator());
+    }
+
+    if (collaborators && review && !loading && reviewId !== review.id) {
+      dispatch(listCollaborator());
+    }
+  }, [dispatch, collaborators, review, reviewId, loading]);
 
   useEffect(() => {
     setCollabInfo(null);
@@ -83,9 +100,10 @@ const Collaborators = () => {
         </Offcanvas.Header>
         <Offcanvas.Body>
           {/*Collaborator list*/}
+          {error && <Message>{error}</Message>}
           <div>
-            {review &&
-              review.collaborators.map((c, idx) => (
+            {collaborators &&
+              collaborators.map((c, idx) => (
                 <div key={idx} style={{ display: 'inline' }}>
                   <OverlayTrigger
                     placement='bottom'

@@ -13,6 +13,7 @@ from review.serializers import MediaSerializer
 MEDIA_LIST_URL = reverse('media_list')
 MEDIA_LIST_CREATED_BY_USER_URL = MEDIA_LIST_URL + '?user=true'
 MEDIA_LIST_ALL_URL = MEDIA_LIST_URL + '?all=true'
+MEDIA_LIST_BY_COLLABORATION_URL = reverse('media_list') + '?collaborator=true'
 
 
 def media_list_by_review(review_id=1, user=False):
@@ -145,10 +146,34 @@ class PrivateMediaApiTest(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(self.user)
 
-    def test_retrieve_media_list(self):
+    def test_retrieve_media_list_by_collaboration_normal_user(self):
         """Retrive all the media that user collaborated on it's review"""
         queryset = Media.objects.filter(review__collaborators=self.user)
         serializer = MediaSerializer(queryset, many=True)
+
+        res = self.client.get(MEDIA_LIST_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_retrieve_media_list_by_collaboration_admin_user(self):
+        """Retrive all the media that user collaborated on it's review"""
+        queryset = Media.objects.filter(review__collaborators=self.admin)
+        serializer = MediaSerializer(queryset, many=True)
+
+        self.client.force_authenticate(self.admin)
+
+        res = self.client.get(MEDIA_LIST_BY_COLLABORATION_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_retrieve_all_media_list(self):
+        """Retrive all the media """
+        queryset = Media.objects.all()
+        serializer = MediaSerializer(queryset, many=True)
+
+        self.client.force_authenticate(self.admin)
 
         res = self.client.get(MEDIA_LIST_URL)
 
@@ -194,19 +219,6 @@ class PrivateMediaApiTest(TestCase):
         # then filter with logged in user
         res = self.client.get(
             media_list_by_review(review_id=self.review1.id, user=True))
-
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
-
-    def test_retrieve_all_media_list(self):
-        """Retrive all the media in the database"""
-        queryset = Media.objects.all()
-
-        serializer = MediaSerializer(queryset, many=True)
-
-        self.client.force_authenticate(self.admin)
-
-        res = self.client.get(MEDIA_LIST_ALL_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)

@@ -5,7 +5,10 @@ import { Row, Col, Dropdown } from 'react-bootstrap';
 
 import { listMediaDetails } from '../actions/mediaActions';
 import { listFeedbacks } from '../actions/feedbackActions';
-import { FEEDBACK_CREATE_RESET } from '../constants/feedbackConstants';
+import {
+  FEEDBACK_CREATE_RESET,
+  FEEDBACK_LIST_RESET,
+} from '../constants/feedbackConstants';
 import {
   MEDIA_CREATE_PARENT,
   MEDIA_CREATE_SHOW,
@@ -34,7 +37,7 @@ const MediaInfoBar = () => {
         setVersions([...parent.child, parent]);
       } else {
         let playMedia = playlistDetail.filter((p) => p.id === media.id)[0];
-        if (!playMedia.child) {
+        if (playMedia && !playMedia.child) {
           setVersions([]);
         }
       }
@@ -45,6 +48,7 @@ const MediaInfoBar = () => {
     dispatch(listMediaDetails(media.id));
     dispatch(listFeedbacks(media.id));
     dispatch({ type: FEEDBACK_CREATE_RESET });
+    dispatch({ type: FEEDBACK_LIST_RESET });
   };
 
   const addVersionHandler = () => {

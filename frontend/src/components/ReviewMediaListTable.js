@@ -8,7 +8,7 @@ import { showToast, messageToast, variantToast } from '../actions/toastActions';
 import ModalDialog from './ModalDialog';
 import ReviewUpdateMediaModal from './ReviewUpdateMediaModal';
 
-import { deleteMedia } from '../actions/mediaActions';
+import { deleteMedia, listMedia } from '../actions/mediaActions';
 import { listReviewDetails } from '../actions/reviewActions';
 import { MEDIA_DELETE_RESET } from '../constants/mediaConstants';
 
@@ -27,6 +27,7 @@ const ReviewMediaListTable = ({ history, match, review, userDetails }) => {
     if (success) {
       dispatch({ type: MEDIA_DELETE_RESET });
       dispatch(listReviewDetails(match.params.reviewId));
+      dispatch(listMedia(match.params.reviewId))
       dispatch(messageToast('Media deleted successfully'));
       dispatch(variantToast('success'));
       dispatch(showToast(true));

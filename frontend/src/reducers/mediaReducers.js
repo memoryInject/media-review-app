@@ -4,6 +4,10 @@ import {
   MEDIA_CREATE_RESET,
   MEDIA_CREATE_SUCCESS,
   MEDIA_CREATE_PARENT,
+  MEDIA_LIST_FAIL,
+  MEDIA_LIST_REQUEST,
+  MEDIA_LIST_RESET,
+  MEDIA_LIST_SUCCESS,
   MEDIA_DETAILS_FAIL,
   MEDIA_DETAILS_REQUEST,
   MEDIA_DETAILS_RESET,
@@ -21,10 +25,29 @@ import {
   MEDIA_DELETE_RESET,
 } from '../constants/mediaConstants';
 
+export const mediaListReducer = (state = { media: null, review: null }, action) => {
+  switch (action.type) {
+    case MEDIA_LIST_REQUEST:
+      return { loading: true, media: state.media, review: state.review };
+
+    case MEDIA_LIST_SUCCESS:
+      return { loading: false, media: action.payload.media, review: action.payload.review };
+
+    case MEDIA_LIST_FAIL:
+      return { loading: false, error: action.payload, media: null, review: null };
+
+    case MEDIA_LIST_RESET:
+      return { loading: false, media: null, review: null };
+
+    default:
+      return state;
+  }
+};
+
 export const mediaDetailsReducer = (state = { media: null }, action) => {
   switch (action.type) {
     case MEDIA_DETAILS_REQUEST:
-      return { loading: true, media: null };
+      return { loading: true, media: state.media };
 
     case MEDIA_DETAILS_SUCCESS:
       return { loading: false, media: action.payload };

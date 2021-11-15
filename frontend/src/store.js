@@ -34,6 +34,7 @@ import {
   mediaCreateReducer,
   mediaDeleteReducer,
   mediaDetailsReducer,
+  mediaListReducer,
   mediaUpdateReducer,
 } from './reducers/mediaReducers';
 import {
@@ -92,6 +93,7 @@ const reducer = combineReducers({
   collaboratorAdd: collaboratorAddReducer,
   collaboratorRemove: collaboratorRemoveReducer,
   playlistDetails: playlistDetailsReducer,
+  mediaList: mediaListReducer,
   mediaDetails: mediaDetailsReducer,
   mediaCreate: mediaCreateReducer,
   mediaUpdate: mediaUpdateReducer,

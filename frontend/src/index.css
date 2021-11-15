@@ -1,14 +1,14 @@
-html {
+body {
   overflow-y: scroll;
 }
 
-html::-webkit-scrollbar-track {
+body::-webkit-scrollbar-track {
     background: linear-gradient(rgba(48,48,48,1) 0%,rgba(48,48,48,1) 5.89%, rgba(34,34,34,1) 5.8%, rgba(34,34,34) 100%);
 }
-html::-webkit-scrollbar {
+body::-webkit-scrollbar {
   width: 10px;
 }
-html::-webkit-scrollbar-thumb {
+body::-webkit-scrollbar-thumb {
   border-radius: 10px;
   /*background-color: #3A3A3A;*/
   background-color: #404040;

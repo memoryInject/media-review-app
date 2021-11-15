@@ -19,7 +19,7 @@ const getFormattedPlaylist = (data) => {
 
   playlist.forEach((p) => {
     if (p.parent) {
-      let parent = map[`id${p.parent}`];
+      let parent = map[`id${p.parent.id}`];
       if (parent.child) {
         parent.child.push(p);
         parent.child.sort(function (a, b) {

@@ -9,10 +9,10 @@ import {
   messageToast,
   variantToast,
 } from '../../actions/toastActions';
-import { listReviewDetails } from '../../actions/reviewActions';
 import {
   removeCollaborator,
   hideUICollaborator,
+  listCollaborator,
 } from '../../actions/collaboratorActions';
 import {
   COLLABORATOR_REMOVE_RESET,
@@ -49,7 +49,7 @@ const CollaboratorDetails = ({ collaborator }) => {
       dispatch(variantToast('success'));
       dispatch(showToast());
       dispatch({ type: COLLABORATOR_REMOVE_RESET });
-      dispatch(listReviewDetails(review.id));
+      dispatch(listCollaborator());
       dispatch(hideUICollaborator());
     }
   }, [success, review, dispatch]);

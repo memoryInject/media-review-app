@@ -42,7 +42,7 @@ const ReactPlayerComp = () => {
   const dispatch = useDispatch();
 
   const playerDetails = useSelector((state) => state.playerDetails);
-  const { seekTo, top, height, width, videoSize } = playerDetails;
+  const { seekTo, top, height } = playerDetails;
 
   const annotationDeatils = useSelector((state) => state.annotationDeatils);
   const { active } = annotationDeatils;
@@ -60,6 +60,7 @@ const ReactPlayerComp = () => {
     }
   }, [loading]);
 
+  // Run this after mediaDetails changes
   useEffect(() => {
     if (!media) {
       setShowPlayer(false);
@@ -79,10 +80,9 @@ const ReactPlayerComp = () => {
       dispatch(seekToPlayer(-1));
       setSeeking(false);
     }
-
-    //return () => dispatch(seekToPlayer(0));
   }, [seekTo, dispatch]);
 
+  // Update player info when widow resize
   useEffect(() => {
     const updateWindowDimensions = () => {
       if (player && player.current) {
@@ -97,6 +97,7 @@ const ReactPlayerComp = () => {
     return () => window.removeEventListener('resize', updateWindowDimensions);
   }, [dispatch]);
 
+  // Update player info state when there is a source
   useEffect(() => {
     if (player.current) {
       dispatch(heightPlayer(player.current.wrapper.clientHeight));
@@ -121,13 +122,14 @@ const ReactPlayerComp = () => {
     }
   }, [height, player, showPlayer, dispatch]);
 
+  // When player is ready
   const onReadyHandler = () => {
-    if (player) {
+    if (player && player.current) {
       const videoHeight = player.current.wrapper.childNodes[0].videoHeight;
       const videoWidth = player.current.wrapper.childNodes[0].videoWidth;
       const factor = progressHolder.current.clientWidth / videoWidth;
       setAdjHeight(Math.ceil(videoHeight * factor));
-      setTimeout(() => setShowPlayer(true), 510);
+      setTimeout(() => setShowPlayer(true), 210);
       dispatch(heightPlayer(player.current.wrapper.clientHeight));
       dispatch(widthPlayer(player.current.wrapper.clientWidth));
       dispatch(topPlayer(player.current.wrapper.offsetTop));
@@ -183,7 +185,7 @@ const ReactPlayerComp = () => {
 
   const handleNextFrame = () => {
     setSeeking(true);
-    let fps = media.asset.frameRate ? media.asset.frameRate : 24
+    let fps = media.asset.frameRate ? media.asset.frameRate : 24;
     const nextFrame = seconds + 1.0 / fps;
     player.current.seekTo(
       nextFrame > duration ? duration : nextFrame,
@@ -194,7 +196,7 @@ const ReactPlayerComp = () => {
 
   const handlePrevFrame = () => {
     setSeeking(true);
-    let fps = media.asset.frameRate ? media.asset.frameRate : 24
+    let fps = media.asset.frameRate ? media.asset.frameRate : 24;
     const prevFrame = seconds - 1.0 / fps;
     player.current.seekTo(prevFrame < 0 ? 0 : prevFrame, 'seconds');
     setSeeking(false);
@@ -301,25 +303,25 @@ const ReactPlayerComp = () => {
                   zIndex: '12',
                   minHeight: `${
                     progressHolder.current &&
-                    (720 * (progressHolder.current.clientWidth/1280)) + 5.5
-                    }px`,
+                    720 * (progressHolder.current.clientWidth / 1280) + 5.5
+                  }px`,
                   height: `${adjHeight + 5.5}px`,
                   width: `${
                     progressHolder &&
                     progressHolder.current &&
                     progressHolder.current.clientWidth
                   }px`,
-                  transition: 'all 0.5s ease-in-out',
+                  transition: 'all 0.2s ease-in-out',
                   backgroundColor: 'rgba(255, 0, 0, 0)',
                   top: `${top}px`,
-                  display: `${showPlayer ? 'none' : 'block'}`,
+                  display: `${showPlayer && player.current ? 'none' : 'block'}`,
                   position: 'relative',
                 }}
                 className='text-center'
               >
                 <Spinner
                   animation='border'
-                  style={{position: 'absolute', top: '50%'}}
+                  style={{ position: 'absolute', top: '50%' }}
                 />
               </div>
             </>
@@ -349,7 +351,7 @@ const ReactPlayerComp = () => {
                 backgroundColor: 'black',
                 display: `${showPlayer ? 'block' : 'none'}`,
                 //display: 'none',
-                transition: 'all 0.5s ease-in-out',
+                transition: 'all 0.2s ease-in-out',
               }}
             />
           )}
