@@ -12,7 +12,7 @@ import {
   messageToast,
   variantToast,
 } from '../../actions/toastActions';
-import {COLLABORATOR_INVITATION_RESET} from '../../constants/collaboratorConstants';
+import { COLLABORATOR_INVITATION_RESET } from '../../constants/collaboratorConstants';
 
 const InvitationForm = () => {
   const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const InvitationForm = () => {
       dispatch(variantToast('success'));
       dispatch(showToast());
       setEmail('');
-      dispatch({type: COLLABORATOR_INVITATION_RESET})
+      dispatch({ type: COLLABORATOR_INVITATION_RESET });
       dispatch(hideUICollaborator());
     }
   }, [success, dispatch]);
@@ -74,7 +74,11 @@ const InvitationForm = () => {
             />
           </div>
         ) : (
-          <Button variant='primary' type='submit'>
+          <Button
+            variant='primary'
+            type='submit'
+            data-testid='send-invitation-btn'
+          >
             Send invitation
           </Button>
         )}

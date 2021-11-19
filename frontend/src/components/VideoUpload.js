@@ -13,7 +13,6 @@ import {
   MEDIA_CREATE_HIDE,
   MEDIA_CREATE_PARENT_RESET,
   MEDIA_CREATE_RESET,
-  MEDIA_CREATE_SHOW,
   MEDIA_UPDATE_RESET,
 } from '../constants/mediaConstants';
 
@@ -185,15 +184,6 @@ const VideoUpload = ({ match }) => {
 
   return (
     <>
-      <Button
-        variant='outline-success'
-        style={{ minHeight: '6rem', width: '49%' }}
-        onClick={() => dispatch({ type: MEDIA_CREATE_SHOW })}
-        className='d-none'
-      >
-        <span className='material-icons-round'>cloud_upload</span>
-        <h6>Upload</h6>
-      </Button>{' '}
       <Offcanvas show={show} onHide={closeUIHandler} placement='end'>
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>

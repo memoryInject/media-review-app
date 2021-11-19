@@ -111,7 +111,7 @@ const ReviewUpdateMediaModal = (props) => {
                 <Form.Label>Name</Form.Label>
                 <Form.Control
                   type='text'
-                  placeholder='Enter review name'
+                  placeholder='Enter media name'
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={mediaUpdateLoading ? true : false}

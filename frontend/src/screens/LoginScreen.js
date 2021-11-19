@@ -71,7 +71,7 @@ const LoginScreen = ({ location, history }) => {
           </Form.Group>
 
           <div className='text-end'>
-            <Button type='submit' variant='primary'>
+            <Button type='submit' variant='primary' data-testid='sign-in-btn'>
               Sign In
             </Button>
           </div>

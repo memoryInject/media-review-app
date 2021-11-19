@@ -162,6 +162,7 @@ const UsersList = () => {
                   <Form>
                     <Form.Group className='mb-3' controlId='formBasicCheckbox'>
                       <Form.Check
+                        data-testid={`user-add-checkbox${idx}`}
                         type='checkbox'
                         onChange={(e) => addUserHandler(e, user)}
                       />

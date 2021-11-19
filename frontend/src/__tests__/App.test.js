@@ -1,15 +1,27 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+
+import { testRender, makeTestStore } from '../reduxTestUtils';
 import App from '../App';
 
-// Mock component and screens
+jest.mock('axios');
 jest.mock('../components/Header', () => () => <div>Header</div>);
-jest.mock('../components/Footer', () => () => <div>Footer</div>);
+jest.mock('react-konva', ()=>()=><></>)
 
-test('check componets and screens on App', () => {
-  render(<App />);
+let store;
+
+beforeEach(() => {
+  store = makeTestStore();
+  testRender(
+    <Router>
+      <App />
+    </Router>,
+    {store}
+  );
+});
+
+test('check components and screens on App', () => {
   const Header = screen.getByText(/Header/);
-  const Footer = screen.getByText(/Footer/);
 
   expect(Header).toBeInTheDocument();
-  expect(Footer).toBeInTheDocument();
 });
