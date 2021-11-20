@@ -1,4 +1,7 @@
 version: 2.1
+orbs:
+  python: circleci/python@1.2
+
 workflows:
   django-react-tests:
     jobs:
@@ -17,6 +20,9 @@ jobs:
       
     steps:
       - checkout
+      - python/install-packages:
+          pkg-manager: pip
+
       - run:
           name: python version
           command: python --version
