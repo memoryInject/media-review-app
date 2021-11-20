@@ -52,6 +52,7 @@ jobs:
       - run:
           name: install packages frontend
           command: |
+            node --version
             ls
             cd frontend
             npm install
