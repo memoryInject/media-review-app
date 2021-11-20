@@ -1,12 +1,4 @@
 version: 2.1
-
-orbs:
-  # The python orb contains a set of prepackaged CircleCI configuration you can use repeatedly in your configuration files
-  # Orb commands and jobs help you with common scripting around a language/tool
-  # so you dont have to copy and paste it everywhere.
-  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
-  python: circleci/python@1.2
-
 workflows:
   django-react-tests:
     jobs:
@@ -15,12 +7,6 @@ workflows:
 jobs:
   build-and-test:
     docker:
-      - image: cimg/python:3.8
-      # Checkout the code as the first step. This is a dedicated CircleCI step.
-      # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
-      # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
-      # Then run your tests!
-      # CircleCI will report the results back to your VCS provider.
       - image: circleci/postgres:9.6.5-alpine-ram
         environment:
           POSTGRES_USER: postgres
@@ -32,16 +18,6 @@ jobs:
           TERM: xterm
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
-          # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
-          # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
-      - run:
-          name: Run django migrate
-          command: |
-            ls
-            cd backend
-            python manage.py migrate
       - restore_cache:
           # See the configuration reference documentation for more details on using restore_cache and save_cache steps
           # https://circleci.com/docs/2.0/configuration-reference/?section=reference#save_cache
