@@ -4,10 +4,12 @@
   "description": "collaborative media review app",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "cd backend && python manage.py runserver",
-    "client": "npm start --prefix frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "test-frontend": "npm test --prefix frontend -- --watchAll=false",
+    "test-backend": "cd backend && python manage.py test && flake8",
+    "test": "concurrently \"npm run test-backend\" \"npm run test-frontend\"",
+    "backend": "cd backend && python manage.py runserver",
+    "frontend": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
   },
   "repository": {
     "type": "git",

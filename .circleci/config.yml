@@ -8,13 +8,17 @@ orbs:
   python: circleci/python@1.2
 
 workflows:
-  dajngo-test:
+  django-react-tests:
     jobs:
       - build-and-test
 
 jobs:
   build-and-test:
     docker:
+      - image: cypress/base:14.15.0
+        environment:
+          # this enables colors in the output
+          TERM: xterm
       - image: cimg/python:3.8
       # Checkout the code as the first step. This is a dedicated CircleCI step.
       # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
@@ -34,9 +38,40 @@ jobs:
           # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
           # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
       - run:
-          name: Run django tests
+          name: Run django migrate
           command: |
             ls
             cd backend
             python manage.py migrate
-            python manage.py test && flake8
+      - restore_cache:
+          # See the configuration reference documentation for more details on using restore_cache and save_cache steps
+          # https://circleci.com/docs/2.0/configuration-reference/?section=reference#save_cache
+          keys:
+            - frontend-node-deps-v1-{{ .Branch }}-{{checksum "frontend/package-lock.json"}}
+            - frontend-node-deps-v1-
+      - run:
+          name: install packages frontend
+          command: |
+            ls
+            cd frontend
+            npm install
+      - save_cache:
+          key: frontend-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
+          paths:
+            - frontend/node_modules
+      - restore_cache:
+          keys:
+            - root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
+            - root-node-deps-v1-
+      - run:
+          name: install packages root
+          command: |
+            ls
+            npm install
+      - save_cache:
+          key: root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
+          paths:
+            - node_modules
+      - run:
+          name: Run frontend and backend tests
+          command: npm run test
