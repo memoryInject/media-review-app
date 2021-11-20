@@ -22,10 +22,39 @@ jobs:
       - checkout
       - python/install-packages:
           pkg-manager: pip
-
       - run:
-          name: python version
-          command: python --version
+          name: Run django migrate
+          command: |
+            ls
+            cd backend
+            python manage.py migrate
+      - restore_cache:
+          keys:
+            - frontend-node-deps-v1-{{ .Branch }}-{{checksum "frontend/package-lock.json"}}
+            - frontend-node-deps-v1-
       - run:
-          name: node version
-          command: node --version
+          name: Install node packages frontend
+          command: |
+            ls
+            cd frontend
+            npm install
+      - save_cache:
+          key: frontend-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
+          paths:
+            - frontend/node_modules
+      - restore_cache:
+          keys:
+            - root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
+            - root-node-deps-v1-
+      - run:
+          name: install packages root
+          command: |
+            ls
+            npm install
+      - save_cache:
+          key: root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
+          paths:
+            - node_modules
+      - run:
+          name: Run frontend and backend tests
+          command: npm run test
