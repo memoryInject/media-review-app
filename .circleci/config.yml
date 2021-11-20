@@ -7,10 +7,6 @@ workflows:
 jobs:
   build-and-test:
     docker:
-      - image: cypress/base:14.15.0
-        environment:
-          # this enables colors in the output
-          TERM: xterm
       - image: cimg/python:3.8
       - image: circleci/postgres:9.6.5-alpine-ram
         environment:
@@ -23,10 +19,3 @@ jobs:
       - run:
           name: python version
           command: python --version
-
-      - run:
-          name: install packages frontend
-          command: |
-            node --version
-            ls
-            cd frontend
