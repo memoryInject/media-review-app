@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run:
           name: python version
-          command: python --verion
+          command: python --version
 
       - run:
           name: install packages frontend
