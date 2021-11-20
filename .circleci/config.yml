@@ -15,16 +15,16 @@ workflows:
 jobs:
   build-and-test:
     docker:
-      - image: cypress/base:14.15.0
-        environment:
-          # this enables colors in the output
-          TERM: xterm
       - image: cimg/python:3.8
       # Checkout the code as the first step. This is a dedicated CircleCI step.
       # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
       # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
       # Then run your tests!
       # CircleCI will report the results back to your VCS provider.
+      - image: cypress/base:14.15.0
+        environment:
+          # this enables colors in the output
+          TERM: xterm
       - image: circleci/postgres:9.6.5-alpine-ram
         environment:
           POSTGRES_USER: postgres
