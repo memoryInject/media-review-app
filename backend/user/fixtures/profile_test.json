@@ -1,0 +1,62 @@
+[
+  {
+    "model": "user.userprofile",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "image_url": "https://ui-avatars.com/api/?name=mahesh&background=402361&color=fff",
+      "company_name": null,
+      "is_admin": true,
+      "created_at": "2021-11-21T07:44:29.907Z",
+      "updated_at": "2021-11-21T07:45:18.194Z"
+    }
+  },
+  {
+    "model": "user.userprofile",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "image_url": "https://ui-avatars.com/api/?name=groovy&background=0E672E&color=fff",
+      "company_name": null,
+      "is_admin": true,
+      "created_at": "2021-11-21T07:46:00.226Z",
+      "updated_at": "2021-11-21T07:46:56.687Z"
+    }
+  },
+  {
+    "model": "user.userprofile",
+    "pk": 3,
+    "fields": {
+      "user": 3,
+      "image_url": "https://ui-avatars.com/api/?name=alexis&background=5E7546&color=fff",
+      "company_name": null,
+      "is_admin": false,
+      "created_at": "2021-11-21T07:47:34.515Z",
+      "updated_at": "2021-11-21T07:47:46.508Z"
+    }
+  },
+  {
+    "model": "user.userprofile",
+    "pk": 4,
+    "fields": {
+      "user": 4,
+      "image_url": "https://ui-avatars.com/api/?name=tester&background=672947&color=fff",
+      "company_name": null,
+      "is_admin": false,
+      "created_at": "2021-11-21T07:48:29.887Z",
+      "updated_at": "2021-11-21T07:48:47.624Z"
+    }
+  },
+  {
+    "model": "user.userprofile",
+    "pk": 5,
+    "fields": {
+      "user": 5,
+      "image_url": "https://ui-avatars.com/api/?name=adminTester&background=413771&color=fff",
+      "company_name": null,
+      "is_admin": true,
+      "created_at": "2021-11-21T07:49:29.218Z",
+      "updated_at": "2021-11-21T07:59:25.098Z"
+    }
+  }
+]

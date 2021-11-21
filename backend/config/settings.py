@@ -164,6 +164,10 @@ MEDIA_URL = '/media/'
 
 SITE_ID = 1
 
+# This will disable warning on pagination, not having a default pagination
+# class but have a PAGE_SIZE
+SILENCED_SYSTEM_CHECKS = ['rest_framework.W001']
+
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False

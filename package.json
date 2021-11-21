@@ -9,7 +9,14 @@
     "test": "concurrently \"npm run test-backend\" \"npm run test-frontend\"",
     "backend": "cd backend && python manage.py runserver",
     "frontend": "npm start --prefix frontend",
-    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend-test": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py runserver\"",
+    "frontend-test": "cross-env BROWSER=none PORT=3006 npm start --prefix frontend",
+    "dev-test": "concurrently \"npm run backend-test\" \"npm run frontend-test\"",
+    "flush-data": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py flush --noinput\"",
+    "migrate": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py migrate\"",
+    "load-data": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py loaddata user_test profile_test\"",
+    "backend-test-shell": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py shell\""
   },
   "repository": {
     "type": "git",
@@ -22,6 +29,11 @@
   },
   "homepage": "https://github.com/memoryInject/media-review-app#readme",
   "devDependencies": {
-    "concurrently": "^6.2.2"
+    "concurrently": "^6.2.2",
+    "cross-env": "^7.0.3",
+    "cypress": "^9.0.0"
+  },
+  "dependencies": {
+    "cypress-dark": "^1.8.3"
   }
 }
