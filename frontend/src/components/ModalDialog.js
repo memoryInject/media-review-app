@@ -32,7 +32,7 @@ const ModalDialog = ({ title, content, callback, state, stateCallback }) => {
           <Button variant='secondary' onClick={handleClose}>
             Close
           </Button>
-          <Button variant='primary' onClick={confirm}>
+          <Button data-cy='understood' variant='primary' onClick={confirm}>
             Understood
           </Button>
         </Modal.Footer>

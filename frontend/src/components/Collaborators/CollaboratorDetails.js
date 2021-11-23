@@ -138,6 +138,7 @@ const CollaboratorDetails = ({ collaborator }) => {
           </ListGroup>
           {review.user.id !== collaborator.id && review.user.id === user.id && (
             <Button
+              data-cy='collaborator-remove'
               variant='danger'
               className='my-2'
               onClick={() => removeCollaboratorHandler(collaborator)}

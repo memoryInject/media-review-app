@@ -103,6 +103,7 @@ const Header = () => {
                   <LinkContainer to='/settings'>
                     <NavDropdown.Item>
                       <span
+                        data-cy='header-settings'
                         className='material-icons-round'
                         style={{ transform: 'translate(-3px, 6px)' }}
                       >
@@ -113,6 +114,7 @@ const Header = () => {
                   </LinkContainer>
                   <NavDropdown.Item onClick={logoutHandler}>
                     <span
+                      data-cy='header-logout'
                       className='material-icons-round'
                       style={{ transform: 'translate(-3px, 6px)' }}
                     >
@@ -122,6 +124,7 @@ const Header = () => {
                   </NavDropdown.Item>
                   <NavDropdown.Item onClick={()=>setModalShow(true)}>
                     <span
+                      data-cy='header-about'
                       className='material-icons-round'
                       style={{ transform: 'translate(-3px, 6px)' }}
                     >
@@ -146,6 +149,7 @@ const Header = () => {
                   </Nav.Link>
                 </LinkContainer>
                 <div
+                  data-cy='header-profile'
                   onClick={() => navdrop.current.children[0].click()}
                   style={{
                     cursor: 'pointer',

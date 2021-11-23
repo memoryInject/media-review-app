@@ -53,6 +53,7 @@ const InvitationForm = () => {
             Send an email invitation to add a collaborator
           </Form.Label>
           <Form.Control
+            data-cy='invitaion-email'
             type='email'
             placeholder='Enter email'
             value={email}
@@ -75,6 +76,7 @@ const InvitationForm = () => {
           </div>
         ) : (
           <Button
+            data-cy='submit-invitation'
             variant='primary'
             type='submit'
             data-testid='send-invitation-btn'

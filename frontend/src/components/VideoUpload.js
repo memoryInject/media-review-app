@@ -226,6 +226,7 @@ const VideoUpload = ({ match }) => {
                 <Form.Group controlId='formFile' className='mb-3' hidden>
                   <Form.Label></Form.Label>
                   <Form.Control
+                    data-cy='file'
                     type='file'
                     ref={filePick}
                     onChange={uploadFileHandler}
@@ -250,6 +251,7 @@ const VideoUpload = ({ match }) => {
                     <Form.Group className='mb-3' controlId='formGroupName'>
                       <Form.Label>Media Name</Form.Label>
                       <Form.Control
+                        data-cy='media-name'
                         type='text'
                         placeholder='Enter media name'
                         value={mediaName}
@@ -259,6 +261,7 @@ const VideoUpload = ({ match }) => {
                     <Form.Group className='mb-3' controlId='formGroupVersion'>
                       <Form.Label>Version</Form.Label>
                       <Form.Control
+                        data-cy='media-version'
                         type='number'
                         placeholder='Enter version'
                         value={mediaVersion}
@@ -267,12 +270,14 @@ const VideoUpload = ({ match }) => {
                     </Form.Group>
                     <div className='text-center'>
                       <Button
+                        data-cy='update-media'
                         style={{ width: '49%' }}
                         onClick={mediaUpdateHandler}
                       >
                         Update
                       </Button>{' '}
                       <Button
+                        data-cy='cancel'
                         style={{ width: '49%' }}
                         variant='danger'
                         onClick={closeUIHandler}

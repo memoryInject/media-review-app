@@ -209,6 +209,7 @@ const FeedbackForm = () => {
             <Form onSubmit={submitHandler}>
               <Form.Group controlId='email'>
                 <Form.Control
+                  data-cy='feedback-textarea'
                   as='textarea'
                   rows={2}
                   disabled={
@@ -232,9 +233,10 @@ const FeedbackForm = () => {
                   }}
                 ></Form.Control>
               </Form.Group>
-              {user && review && isCollaborator(user, review) && (
+              {user && review && media && isCollaborator(user, review) && (
                 <>
                   <Button
+                    data-cy='feedback-submit'
                     type='submit'
                     variant={update ? 'success' : 'primary'}
                     className='float-end'

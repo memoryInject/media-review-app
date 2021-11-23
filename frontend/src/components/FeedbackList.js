@@ -8,6 +8,7 @@ import Loader from './Loader';
 import Message from './Message';
 import ModalDialog from './ModalDialog';
 
+import { showToast, messageToast, variantToast } from '../actions/toastActions';
 import { seekToPlayer } from '../actions/playerActions';
 import {
   deleteFeedback,
@@ -60,7 +61,6 @@ const FeedbackList = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     if (feedbackCreateSuccess) {
@@ -92,8 +92,10 @@ const FeedbackList = () => {
   useEffect(() => {
     if (feedbackDeleteSuccess && media) {
       dispatch({ type: FEEDBACK_DELETE_RESET });
+      dispatch(messageToast('Feedback successfully deleted.'));
+      dispatch(variantToast('success'));
+      dispatch(showToast(true));
       dispatch(listFeedbacks(media.id));
-      setShowToast(true);
     }
   }, [feedbackDeleteSuccess, media, dispatch]);
 
@@ -226,6 +228,7 @@ const FeedbackList = () => {
                 {user && user.id === f.user.id && (
                   <Col>
                     <span
+                      data-cy={`feedback-${idx}-edit`}
                       className='material-icons-round text-light feed-edit'
                       style={{
                         transform: 'translate(8px, 0px)',
@@ -236,6 +239,7 @@ const FeedbackList = () => {
                       edit_note
                     </span>
                     <span
+                      data-cy={`feedback-${idx}-delete`}
                       className='material-icons-round text-light feed-del'
                       style={{
                         transform: 'translate(8px, 0px)',
@@ -250,6 +254,7 @@ const FeedbackList = () => {
                 <Col className='text-end'>
                   {user && review && isCollaborator(user, review) && (
                     <Card.Link
+                      data-cy={`feedback-${idx}-reply`}
                       href='#'
                       style={{
                         paddingRight: '0.6rem',
@@ -276,24 +281,6 @@ const FeedbackList = () => {
         stateCallback={setShowModal}
         callback={confirmDeleteHandler}
       />
-
-      {/*Feedback delete successful toast*/}
-      <ToastContainer position='top-end' className='p-3'>
-        <Toast
-          onClose={() => setShowToast(false)}
-          show={showToast}
-          delay={3000}
-          autohide
-          bg='success'
-        >
-          <Toast.Header>
-            <span className='material-icons-round'>movie</span>
-            <strong className='me-auto'>&nbsp;Media-Review</strong>
-            <small className='text-muted'>just now</small>
-          </Toast.Header>
-          <Toast.Body>Feedback successfully deleted.</Toast.Body>
-        </Toast>
-      </ToastContainer>
     </div>
   );
 };

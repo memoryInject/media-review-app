@@ -31,7 +31,8 @@
   "devDependencies": {
     "concurrently": "^6.2.2",
     "cross-env": "^7.0.3",
-    "cypress": "^9.0.0"
+    "cypress": "^9.1.0",
+    "cypress-file-upload": "^5.0.8"
   },
   "dependencies": {
     "cypress-dark": "^1.8.3"

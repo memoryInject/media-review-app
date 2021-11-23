@@ -89,6 +89,7 @@ const ReviewEditModal = ({ match, show, onHide, userDetails, review }) => {
             <Form.Group className='mb-3' controlId='formBasicEmail'>
               <Form.Label>Name</Form.Label>
               <Form.Control
+                data-cy='review-name'
                 type='text'
                 placeholder='Enter review name'
                 value={name}
@@ -107,6 +108,7 @@ const ReviewEditModal = ({ match, show, onHide, userDetails, review }) => {
             <Form.Group className='mb-3'>
               <Form.Label>Description</Form.Label>
               <Form.Control
+                data-cy='review-description'
                 type='text'
                 placeholder='Enter review description'
                 value={description}
@@ -127,6 +129,7 @@ const ReviewEditModal = ({ match, show, onHide, userDetails, review }) => {
           {/*Put this checkbox outside the form to avoid color change during validation*/}
           <Form.Group>
             <Form.Check
+              data-cy='form-check'
               checked={open}
               onChange={(e) => setOpen(e.target.checked)}
               type='switch'
@@ -154,7 +157,7 @@ const ReviewEditModal = ({ match, show, onHide, userDetails, review }) => {
               <Button onClick={onHide} variant='danger'>
                 Close
               </Button>
-              <Button variant='primary' onClick={submitHandler}>
+              <Button data-cy='submit' variant='primary' onClick={submitHandler}>
                 Submit
               </Button>
             </Modal.Footer>

@@ -110,6 +110,7 @@ const ReviewUpdateMediaModal = (props) => {
               <Form.Group className='mb-3' controlId='validationCustom01'>
                 <Form.Label>Name</Form.Label>
                 <Form.Control
+                  data-cy='media-name'
                   type='text'
                   placeholder='Enter media name'
                   value={name}
@@ -125,6 +126,7 @@ const ReviewUpdateMediaModal = (props) => {
               <Form.Group className='mb-3'>
                 <Form.Label>Version</Form.Label>
                 <Form.Control
+                  data-cy='media-version'
                   type='number'
                   placeholder='Enter media version'
                   value={version}
@@ -156,7 +158,11 @@ const ReviewUpdateMediaModal = (props) => {
                 <Button onClick={props.onHide} variant='danger'>
                   Close
                 </Button>
-                <Button variant='primary' onClick={submitHandler}>
+                <Button
+                  data-cy='submit'
+                  variant='primary'
+                  onClick={submitHandler}
+                >
                   Submit
                 </Button>
               </Modal.Footer>

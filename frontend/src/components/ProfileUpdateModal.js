@@ -140,6 +140,7 @@ const ProfileUpdateModal = (props) => {
             <Form.Group className='mb-3' controlId='validationCustom01'>
               <Form.Label>Username</Form.Label>
               <Form.Control
+                data-cy='username'
                 type='text'
                 placeholder='Enter user name'
                 value={username}
@@ -155,6 +156,7 @@ const ProfileUpdateModal = (props) => {
             <Form.Group className='mb-3'>
               <Form.Label>First name</Form.Label>
               <Form.Control
+                data-cy='first-name'
                 type='text'
                 placeholder='Enter first name'
                 value={firstName}
@@ -166,6 +168,7 @@ const ProfileUpdateModal = (props) => {
             <Form.Group className='mb-3'>
               <Form.Label>Last name</Form.Label>
               <Form.Control
+                data-cy='last-name'
                 type='text'
                 placeholder='Enter last name'
                 value={lastName}
@@ -177,6 +180,7 @@ const ProfileUpdateModal = (props) => {
             <Form.Group className='mb-3'>
               <Form.Label>Company name</Form.Label>
               <Form.Control
+                data-cy='company-name'
                 type='text'
                 placeholder='Enter company name'
                 value={companyName}
@@ -216,7 +220,11 @@ const ProfileUpdateModal = (props) => {
               <Button onClick={props.onHide} variant='danger'>
                 Close
               </Button>
-              <Button variant='primary' onClick={submitHandler}>
+              <Button
+                data-cy='submit'
+                variant='primary'
+                onClick={submitHandler}
+              >
                 Submit
               </Button>
             </Modal.Footer>

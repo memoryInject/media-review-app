@@ -25,6 +25,7 @@ const ReviewButtons = ({ history }) => {
     >
       {user && user.profile.isAdmin && (
         <div
+          data-cy='upload'
           className='d-inline text-center noselect review-buttons'
           style={{ ...style, borderRadius: '0.25rem 0 0 0.25rem' }}
           onClick={() => dispatch({ type: MEDIA_CREATE_SHOW })}
@@ -43,6 +44,7 @@ const ReviewButtons = ({ history }) => {
         </div>
       )}
       <div
+        data-cy='collaborators'
         className='d-inline text-center noselect mx-1 review-buttons'
         style={
           user && user.profile.isAdmin
@@ -64,6 +66,7 @@ const ReviewButtons = ({ history }) => {
         </h6>
       </div>
       <div
+        data-cy='settings'
         className='d-inline text-center noselect review-buttons'
         style={{
           ...style,

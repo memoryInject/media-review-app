@@ -30,9 +30,9 @@ const AppSettingsScreen = ({ history, match }) => {
   const [radioValue, setRadioValue] = useState('1');
 
   const radios = [
-    { name: 'Account', value: '1' },
-    { name: 'Project List', value: '2' },
-    { name: 'User List', value: '3' },
+    { name: 'Account', value: '1', test: 'account' },
+    { name: 'Project List', value: '2', test: 'project-list' },
+    { name: 'User List', value: '3', test: 'user-list' },
   ];
 
   useEffect(() => {
@@ -67,6 +67,7 @@ const AppSettingsScreen = ({ history, match }) => {
             {radios.map((radio, idx) => (
               <ToggleButton
                 key={idx}
+                data-cy={radio.test}
                 id={`radio-${idx}`}
                 type='radio'
                 variant='outline-success'
@@ -111,11 +112,17 @@ const AppSettingsScreen = ({ history, match }) => {
               <UserProfileListGroup user={user} />
 
               <div className='py-3 text-end'>
-                <Button onClick={() => setShowPasswordResetModal(true)}>
+                <Button
+                  data-cy='change-password'
+                  onClick={() => setShowPasswordResetModal(true)}
+                >
                   Change password
                 </Button>
                 &nbsp; &nbsp;
-                <Button onClick={() => setShowUpdateModal(true)}>
+                <Button
+                  data-cy='edit-profile'
+                  onClick={() => setShowUpdateModal(true)}
+                >
                   Edit profile
                 </Button>
               </div>

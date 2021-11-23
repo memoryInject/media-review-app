@@ -93,6 +93,7 @@ const ReviewMediaListTable = ({ history, match, review, userDetails }) => {
                           onClick={() => settingsMediaHandler(media.id)}
                           className='material-icons-round text-info noselect px-1'
                           style={buttonStyle}
+                          data-cy={`edit-${idx}`}
                         >
                           edit
                         </span>
@@ -100,6 +101,7 @@ const ReviewMediaListTable = ({ history, match, review, userDetails }) => {
                           onClick={() => deleteMediaHandler(media.id)}
                           className='material-icons-round text-danger noselect'
                           style={buttonStyle}
+                          data-cy={`delete-${idx}`}
                         >
                           delete
                         </span>

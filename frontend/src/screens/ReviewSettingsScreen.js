@@ -47,8 +47,8 @@ const ReviewSettingsScreen = ({ history, match }) => {
   const [radioValue, setRadioValue] = useState('1');
 
   const radios = [
-    { name: 'Details', value: '1' },
-    { name: 'Media List', value: '2' },
+    { name: 'Details', value: '1', test: 'details' },
+    { name: 'Media List', value: '2', test: 'media-list' },
   ];
 
   useEffect(() => {
@@ -118,6 +118,7 @@ const ReviewSettingsScreen = ({ history, match }) => {
             {radios.map((radio, idx) => (
               <ToggleButton
                 key={idx}
+                data-cy={radio.test}
                 id={`radio-${idx}`}
                 type='radio'
                 variant='outline-success'
@@ -178,13 +179,17 @@ const ReviewSettingsScreen = ({ history, match }) => {
                       review.user.id === user.id && (
                         <div className='text-end py-3'>
                           <Button
+                            data-cy='delete'
                             onClick={() => setShowModal(true)}
                             variant='danger'
                           >
                             Delete
                           </Button>
                           &nbsp; &nbsp;
-                          <Button onClick={() => setShowReviewEditModal(true)}>
+                          <Button
+                            data-cy='edit'
+                            onClick={() => setShowReviewEditModal(true)}
+                          >
                             Edit
                           </Button>
                         </div>

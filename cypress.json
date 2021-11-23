@@ -7,7 +7,7 @@
       "password": "testpass123"
     },
     "admin": {
-      "email": "testerAdmin@example.com",
+      "email": "adminTester@example.com",
       "password": "testpass123"
     }
   },

@@ -112,6 +112,7 @@ const Collaborators = () => {
                     }
                   >
                     <Image
+                      data-cy={`profile-${c.username}`}
                       src={c.profile.imageUrl}
                       roundedCircle
                       style={{ height: '42px', cursor: 'pointer' }}
@@ -130,15 +131,15 @@ const Collaborators = () => {
             review.user.id === user.id && (
               <div className='py-3'>
                 <Dropdown className='my-2'>
-                  <Dropdown.Toggle variant='outline-info' id='dropdown-basic'>
+                  <Dropdown.Toggle data-cy='add-collaborator' variant='outline-info' id='dropdown-basic'>
                     Add Collaborator
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu>
-                    <Dropdown.Item onClick={getUsersHandler}>
+                    <Dropdown.Item data-cy='add-existing-user' onClick={getUsersHandler}>
                       Add existing user
                     </Dropdown.Item>
-                    <Dropdown.Item onClick={() => addCollabHandler()}>
+                    <Dropdown.Item data-cy='send-invitation' onClick={() => addCollabHandler()}>
                       Send invitation
                     </Dropdown.Item>
                   </Dropdown.Menu>

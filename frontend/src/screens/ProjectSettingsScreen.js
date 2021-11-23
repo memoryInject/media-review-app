@@ -45,8 +45,8 @@ const ProjectSettingsScreen = ({ match, history }) => {
   const [radioValue, setRadioValue] = useState('1');
 
   const radios = [
-    { name: 'Details', value: '1' },
-    { name: 'Review List', value: '2' },
+    { name: 'Details', value: '1', test: 'details' },
+    { name: 'Review List', value: '2', test: 'review-list' },
   ];
 
   useEffect(() => {
@@ -98,6 +98,7 @@ const ProjectSettingsScreen = ({ match, history }) => {
             {radios.map((radio, idx) => (
               <ToggleButton
                 key={idx}
+                data-cy={radio.test}
                 id={`radio-${idx}`}
                 type='radio'
                 variant='outline-success'
@@ -158,11 +159,15 @@ const ProjectSettingsScreen = ({ match, history }) => {
                           <Button
                             onClick={() => setShowModal(true)}
                             variant='danger'
+                            data-cy='delete'
                           >
                             Delete
                           </Button>
                           &nbsp; &nbsp;
-                          <Button onClick={() => setShowProjectEditModal(true)}>
+                          <Button
+                            data-cy='edit'
+                            onClick={() => setShowProjectEditModal(true)}
+                          >
                             Edit
                           </Button>
                         </div>

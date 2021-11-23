@@ -114,6 +114,7 @@ const ProjectEditModal = (props) => {
               <Form.Control
                 type='text'
                 placeholder='Enter project name'
+                data-cy='project-name'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 disabled={
@@ -169,7 +170,11 @@ const ProjectEditModal = (props) => {
               <Button onClick={props.onHide} variant='danger'>
                 Close
               </Button>
-              <Button variant='primary' onClick={submitHandler}>
+              <Button
+                data-cy='submit'
+                variant='primary'
+                onClick={submitHandler}
+              >
                 Submit
               </Button>
             </Modal.Footer>

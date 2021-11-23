@@ -34,7 +34,7 @@ const ProjectSideBar = ({ id, settingsHandler }) => {
           <Image
             src={project.imageUrl ? project.imageUrl : placeholderUrl}
             className='project-bar-img'
-            style={{opacity: `${project.imageUrl ? '1' : '0.4'}`}}
+            style={{ opacity: `${project.imageUrl ? '1' : '0.4'}` }}
           />
           <div className='project-bar-gradient'></div>
           <h5 className='px-2' style={{ position: 'relative', top: '-25px' }}>
@@ -75,6 +75,7 @@ const ProjectSideBar = ({ id, settingsHandler }) => {
           </div>
           <div className='p-2'>
             <Button
+              data-cy='settings'
               size='sm'
               variant='secondary'
               style={{ paddingTop: '0px', width: '100%' }}

@@ -79,6 +79,7 @@ const PasswordResetEmailModal = (props) => {
             <Form.Group className='mb-3' controlId='validationCustom01'>
               <Form.Label>Email</Form.Label>
               <Form.Control
+                data-cy='email'
                 type='email'
                 placeholder='Enter email'
                 value={email}
@@ -113,7 +114,11 @@ const PasswordResetEmailModal = (props) => {
               <Button onClick={props.onHide} variant='danger'>
                 Close
               </Button>
-              <Button variant='primary' onClick={submitHandler}>
+              <Button
+                data-cy='submit'
+                variant='primary'
+                onClick={submitHandler}
+              >
                 Submit
               </Button>
             </Modal.Footer>
