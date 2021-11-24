@@ -8,7 +8,7 @@ orbs:
   python: circleci/python@1.2
 
 workflows:
-  django-react-tests:
+  django-react-cypress-tests:
     jobs:
       - build-and-test
 
@@ -21,10 +21,6 @@ jobs:
       # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
       # Then run your tests!
       # CircleCI will report the results back to your VCS provider.
-      - image: cypress/base:14.15.0
-        environment:
-          # this enables colors in the output
-          TERM: xterm
       - image: circleci/postgres:9.6.5-alpine-ram
         environment:
           POSTGRES_USER: postgres
@@ -43,6 +39,11 @@ jobs:
             ls
             cd backend
             python manage.py migrate
+      - run:
+          name: Install cypress dependencies
+          command: |
+            sudo apt-get update 
+            sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
       - restore_cache:
           # See the configuration reference documentation for more details on using restore_cache and save_cache steps
           # https://circleci.com/docs/2.0/configuration-reference/?section=reference#save_cache
@@ -50,7 +51,7 @@ jobs:
             - frontend-node-deps-v1-{{ .Branch }}-{{checksum "frontend/package-lock.json"}}
             - frontend-node-deps-v1-
       - run:
-          name: install packages frontend
+          name: Install packages frontend
           command: |
             ls
             cd frontend
@@ -59,19 +60,30 @@ jobs:
           key: frontend-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
           paths:
             - frontend/node_modules
+      
       - restore_cache:
           keys:
-            - root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
-            - root-node-deps-v1-
+            - root-node-deps-v3-{{ .Branch }}-{{checksum "package-lock.json"}}
+            - root-node-deps-v3-
       - run:
-          name: install packages root
+          name: Install packages root
           command: |
             ls
+            node --version
             npm install
       - save_cache:
-          key: root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
+          key: root-node-deps-v3-{{ .Branch }}-{{checksum "package-lock.json"}}
           paths:
             - node_modules
+            - /home/circleci/.cache/Cypress
+
+      - run:
+          name: Run test dev servers
+          command: npm run dev-test
+          background: true
       - run:
           name: Run frontend and backend tests
           command: npm run test
+      - run:
+          name: Run cypress test
+          command: npm run cypress-test
