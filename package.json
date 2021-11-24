@@ -16,6 +16,8 @@
     "flush-data": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py flush --noinput\"",
     "migrate": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py migrate\"",
     "load-data": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py loaddata user_test profile_test\"",
+    "cypress-test": "cross-env-shell DB_NAME=media_review_app_test \"npx cypress run --record --key $CYPRESS_KEY\"",
+    "cypress-open": "npx cypress open",
     "backend-test-shell": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py shell\""
   },
   "repository": {
