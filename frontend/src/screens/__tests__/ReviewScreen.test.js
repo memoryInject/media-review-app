@@ -243,9 +243,6 @@ beforeEach(async () => {
 test('review screen show expected components', async () => {
   expect(screen.getByText('ReactPlayerComp')).toBeInTheDocument();
 
-  // Feedback form
-  expect(screen.getByText('POST')).toBeInTheDocument();
-
   // Feedback list
   expect(screen.getByText('Feedback')).toBeInTheDocument();
 

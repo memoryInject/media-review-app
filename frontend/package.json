@@ -33,7 +33,7 @@
   },
   "jestt": {
     "testMatch": [
-      "**/Collaborators*test*"
+      "**/ReviewScreen*test*"
     ]
   },
   "eslintConfig": {
