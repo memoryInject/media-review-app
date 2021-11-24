@@ -26,6 +26,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: media_review_app_test
           POSTGRES_PASSWORD: 1234
+      - image: cypress/base:14.17.3
 
     steps:
       - checkout
@@ -70,20 +71,20 @@ jobs:
           command: |
             ls
             node --version
-      # npm install
+            npm install
       # - save_cache:
       #     key: root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
       #     paths:
       #       - node_modules
       #       - /home/circleci/.cache/Cypress
 
-      # - run:
-      #     name: Run test dev servers
-      #     command: npm run dev-test
-      #     background: true
-      # - run:
-      #     name: Run cypress test
-      #     command: npm run cypress-test
+      - run:
+          name: Run test dev servers
+          command: npm run dev-test
+          background: true
+      - run:
+          name: Run cypress test
+          command: npm run cypress-test
       # - run:
       #     name: Run frontend and backend tests
       #     command: npm run test
