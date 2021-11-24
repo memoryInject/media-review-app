@@ -59,10 +59,7 @@ jobs:
           key: frontend-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
           paths:
             - frontend/node_modules
-      - restore_cache:
-          keys:
-            - root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
-            - root-node-deps-v1-
+            
       - run:
           name: install packages root
           command: |
