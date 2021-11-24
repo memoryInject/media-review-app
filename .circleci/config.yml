@@ -72,6 +72,14 @@ jobs:
           key: root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
           paths:
             - node_modules
+            - /root/.cache/Cypress
       - run:
           name: Run frontend and backend tests
           command: npm run test
+      - run:
+          name: Run test dev servers
+          command: npm run dev-test
+          background: true
+      - run:
+          name: Run cypress test
+          command: npm run cypress-test
