@@ -69,10 +69,10 @@ jobs:
             ls
             npm install
       - save_cache:
-          key: root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
+          key: root-node-deps-v2-{{ .Branch }}-{{checksum "package-lock.json"}}
           paths:
             - node_modules
-            - /home/circleci/.cache/Cypress/
+            - /home/circleci/.cache/Cypress
 
       - run:
           name: Run test dev servers
