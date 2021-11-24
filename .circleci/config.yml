@@ -26,7 +26,6 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: media_review_app_test
           POSTGRES_PASSWORD: 1234
-      - image: cypress/base:14.17.3
 
     steps:
       - checkout
@@ -40,11 +39,11 @@ jobs:
             ls
             cd backend
             python manage.py migrate
-      # - run:
-      #     name: Cypress dependencies
-      #     command: |
-      #       sudo apt-get update 
-      #       sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+      - run:
+          name: Install cypress dependencies
+          command: |
+            sudo apt-get update 
+            sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
       - restore_cache:
           # See the configuration reference documentation for more details on using restore_cache and save_cache steps
           # https://circleci.com/docs/2.0/configuration-reference/?section=reference#save_cache
@@ -62,29 +61,30 @@ jobs:
           paths:
             - frontend/node_modules
       
-      # - restore_cache:
-      #     keys:
-      #       - root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
-      #       - root-node-deps-v1-
+      - restore_cache:
+          keys:
+            - root-node-deps-v3-{{ .Branch }}-{{checksum "package-lock.json"}}
+            - root-node-deps-v3-
       - run:
           name: install packages root
           command: |
             ls
             node --version
             npm install
-      # - save_cache:
-      #     key: root-node-deps-v1-{{ .Branch }}-{{checksum "package-lock.json"}}
-      #     paths:
-      #       - node_modules
-      #       - /home/circleci/.cache/Cypress
+      - save_cache:
+          key: root-node-deps-v3-{{ .Branch }}-{{checksum "package-lock.json"}}
+          paths:
+            - node_modules
+            - /home/circleci/.cache/Cypress
 
       - run:
           name: Run test dev servers
           command: npm run dev-test
           background: true
       - run:
+          name: Run frontend and backend tests
+          command: npm run test
+      - run:
           name: Run cypress test
           command: npm run cypress-test
-      # - run:
-      #     name: Run frontend and backend tests
-      #     command: npm run test
+
