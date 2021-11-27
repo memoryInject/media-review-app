@@ -32,6 +32,7 @@ const ProjectSideBar = ({ id, settingsHandler }) => {
       ) : (
         <>
           <Image
+            alt='project image'
             src={project.imageUrl ? project.imageUrl : placeholderUrl}
             className='project-bar-img'
             style={{ opacity: `${project.imageUrl ? '1' : '0.4'}` }}

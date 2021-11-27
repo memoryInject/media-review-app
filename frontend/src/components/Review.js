@@ -3,12 +3,13 @@ import { Card, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const Review = ({ review, projectId }) => {
-  const placeholderUrl =
-    'https://www.btklsby.go.id/images/placeholder/basic.png';
+  const placeholderUrl = '/media/images/placeholder.png'
+
   return (
     <Card className='my-3 rounded review-card'>
       <Link to={`/projects/${projectId}/reviews/${review.id}`}>
         <Card.Img
+          alt='review image'
           src={review.imageUrl ? review.imageUrl : placeholderUrl}
           className='review-img'
           style={{ opacity: `${review.imageUrl ? '1' : '0.4'}` }}

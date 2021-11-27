@@ -20,6 +20,6 @@ def key_expired(invite):
 def generate_user_image_url(username):
     def r(): return random.randint(0, 125)
     background = ('%02X%02X%02X' % (r(), r(), r()))
-    image_url = f'?name={username}&background={background}&color=fff'
+    image_url = f'?name={username}&background={background}&color=fff&size=68'
 
     return 'https://ui-avatars.com/api/' + image_url

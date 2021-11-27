@@ -170,6 +170,7 @@ const Playlist = () => {
                 >
                   <Image
                     variant='top'
+                    alt='media image'
                     src={p.child ? p.child[0].asset.imageUrl : p.asset.imageUrl}
                     //src={url}
                     style={getStyle(p)}

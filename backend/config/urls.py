@@ -14,13 +14,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import os
+import pathlib
+
 from django.contrib import admin
 from django.http.response import HttpResponseRedirect
-from django.urls import path, include, reverse
+from django.urls import path, include, reverse, re_path
 from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from django.shortcuts import render
 
 from user.views import accept_invite
 
@@ -29,6 +33,21 @@ API = 'api/v1/'
 
 def invite(request):
     return HttpResponseRedirect(reverse('user_invite'))
+
+
+def render_react(request):
+    return render(request, 'index.html')
+
+
+def render_api_doc(request):
+    return render(request, 'api-index.html')
+
+
+# For react pwa setup not necessary
+def get_css_map():
+    file = os.path.basename(sorted(
+        pathlib.Path('./client/build/static/css').glob('**/*.map'))[0])
+    return 'static/css/' + file
 
 
 urlpatterns = [
@@ -52,7 +71,29 @@ urlpatterns = [
     path(API + 'review/', include('review.urls')),
     path(API + 'upload/', include('upload.urls')),
     path(API + 'cloud/', include('cloud.urls')),
+
+    # For react pwa and seo
+    path('robots.txt', TemplateView.as_view(
+        template_name='robots.txt', content_type='text/plain')),
+    path('service-worker.js', TemplateView.as_view(
+        template_name='service-worker.js', content_type='text/javascript')),
+    path('service-worker.js.map', TemplateView.as_view(
+        template_name='service-worker.js.map',
+        content_type='application/json')),
+    path('asset-manifest.json', TemplateView.as_view(
+        template_name='asset-manifest.json', content_type='application/json')),
+    path('manifest.json', TemplateView.as_view(
+        template_name='manifest.json', content_type='application/json')),
+    re_path(r'main.\w*.chunk.css.map', TemplateView.as_view(
+        template_name=get_css_map(), content_type='application/json')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# For api doc crated with insomnia
+urlpatterns.append(re_path(r'^api/v1/', render_api_doc))
+
+# For react index.html at root and all other routes
+urlpatterns.append(re_path(r'^$', render_react))
+urlpatterns.append(re_path(r'^(?:.*)/?$', render_react))

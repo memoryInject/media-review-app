@@ -160,6 +160,7 @@ const Header = () => {
                   className='d-none d-sm-none d-lg-block'
                 >
                   <Image
+                    alt='user profile image'
                     src={user.profile.imageUrl}
                     roundedCircle
                     style={{

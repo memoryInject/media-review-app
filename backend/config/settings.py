@@ -26,18 +26,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRECT_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ.get('DJANGO_ENV') == 'development' else False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Cloudinary setup
 cloudinary.config(
-        cloud_name=os.environ.get('CD_NAME'),
-        api_key=os.environ.get('CD_API_KEY'),
-        api_secret=os.environ.get('CD_API_SECRET'),
-        secure=True
+    cloud_name=os.environ.get('CD_NAME'),
+    api_key=os.environ.get('CD_API_KEY'),
+    api_secret=os.environ.get('CD_API_SECRET'),
+    secure=True
 )
-
 
 
 # Application definition
@@ -72,6 +71,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -86,7 +86,9 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # Tell Django where to find Reacts index.html file
+        'DIRS': [os.path.join(BASE_DIR, 'client/build'),
+                 os.path.join(BASE_DIR, 'client/api-docs'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,12 +123,12 @@ DATABASES = {
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-        {
-            'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-            'OPTIONS': {
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
                 'min_length': 5,
-            }
         }
+    }
 ]
 
 
@@ -149,6 +151,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -156,8 +159,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Custom config
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'uploads', 'site_static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'uploads', 'site_static'),
+    os.path.join(BASE_DIR, 'client/build/static'),
+    os.path.join(BASE_DIR, 'client/api-docs/static'),
+]
 STATIC_ROOT = os.path.join(BASE_DIR, 'uploads', 'static')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads', 'media')
 MEDIA_URL = '/media/'
@@ -176,46 +184,45 @@ ACCOUNT_ADAPTER = 'invitations.models.InvitationsAdapter'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 AUTHENTICATION_BACKENDS = (
-        'django.contrib.auth.backends.ModelBackend',
-        'allauth.account.auth_backends.AuthenticationBackend',
-    )
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 CORS_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
-        'DEFAULT_PERMISSION_CLASSES': [
-            # 'rest_framework.permissions.IsAuthenticated',
-            'rest_framework.permissions.AllowAny',
-        ],
-        'DEFAULT_AUTHENTICATION_CLASSES': [
-            # 'rest_framework.authentication.SessionAuthentication',
-            'rest_framework.authentication.TokenAuthentication',
-        ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 
-        # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-        'PAGE_SIZE': 20, 
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
 
-		# 3rd-party snake_case to camelCase renderer and parser
-        'DEFAULT_RENDERER_CLASSES': [
-            'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
-            'djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer',
-            # Any other renders
-        ],
+    # 3rd-party snake_case to camelCase renderer and parser
+    'DEFAULT_RENDERER_CLASSES': [
+        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
+        'djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer',
+        # Any other renders
+    ],
 
-        'DEFAULT_PARSER_CLASSES': [
-            # If you use MultiPartFormParser or FormParser, we also have a camel case version
-            'djangorestframework_camel_case.parser.CamelCaseFormParser',
-            'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
-            'djangorestframework_camel_case.parser.CamelCaseJSONParser',
-            # Any other parsers
-        ],
+    'DEFAULT_PARSER_CLASSES': [
+        # If you use MultiPartFormParser or FormParser, we also have a camel case version
+        'djangorestframework_camel_case.parser.CamelCaseFormParser',
+        'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
+        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+        # Any other parsers
+    ],
 
-        'JSON_UNDERSCOREIZE': {
-            'no_underscore_before_number': True,
-        },
-    }
+    'JSON_UNDERSCOREIZE': {
+        'no_underscore_before_number': True,
+    },
+}
 
 REST_AUTH_SERIALIZERS = {
-        'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
-    }
-
+    'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
+}

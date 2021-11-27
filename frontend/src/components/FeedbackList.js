@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Row, Col, ToastContainer, Toast } from 'react-bootstrap';
+import { Card, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import getFormattedFeedbacks from '../utils/getFormattedFeedbacks';
@@ -40,9 +40,7 @@ const FeedbackList = () => {
   let { review } = reviewDetails;
 
   const feedbackCreate = useSelector((state) => state.feedbackCreate);
-  let {
-    feedback: feedbackCreateSuccess,
-  } = feedbackCreate;
+  let { feedback: feedbackCreateSuccess } = feedbackCreate;
 
   const feedbackDelete = useSelector((state) => state.feedbackDelete);
   let {
@@ -65,6 +63,7 @@ const FeedbackList = () => {
   useEffect(() => {
     if (feedbackCreateSuccess) {
       dispatch(seekToPlayer(feedbackCreateSuccess.mediaTime));
+      dispatch(seekToPlayer(-1));
     } else {
       dispatch(seekToPlayer(0.0));
     }
