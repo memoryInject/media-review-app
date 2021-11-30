@@ -29,6 +29,9 @@ export const listFeedbacks = (mediaId) => async (dispatch, getState) => {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${userInfo.key}`,
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        Expires: '0',
       },
     };
 

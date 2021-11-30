@@ -29,30 +29,30 @@ export const listProjects =
 
       const {
         userLogin: { userInfo },
-        searchFilterProject: {created, collaborated}
+        searchFilterProject: { created, collaborated },
       } = getState();
 
       let url = `/api/v1/review/projects/?s=${search}`;
 
       if (created) {
-        url += '&user=true'
+        url += '&user=true';
       }
 
       if (collaborated) {
-        url += '&collaborator=true'
+        url += '&collaborator=true';
       }
 
       const config = {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${userInfo.key}`,
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+          Expires: '0',
         },
       };
 
-      const { data } = await axios.get(
-        url,
-        config
-      );
+      const { data } = await axios.get(url, config);
 
       dispatch({
         type: PROJECT_LIST_SUCCESS,
@@ -66,39 +66,37 @@ export const listProjects =
     }
   };
 
-export const listProjectsPagination =
-  (url) =>
-  async (dispatch, getState) => {
-    try {
-      dispatch({ type: PROJECT_LIST_REQUEST });
+export const listProjectsPagination = (url) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PROJECT_LIST_REQUEST });
 
-      const {
-        userLogin: { userInfo },
-      } = getState();
+    const {
+      userLogin: { userInfo },
+    } = getState();
 
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${userInfo.key}`,
-        },
-      };
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${userInfo.key}`,
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
+    };
 
-      const { data } = await axios.get(
-        url,
-        config
-      );
+    const { data } = await axios.get(url, config);
 
-      dispatch({
-        type: PROJECT_LIST_SUCCESS,
-        payload: data,
-      });
-    } catch (error) {
-      dispatch({
-        type: PROJECT_LIST_FAIL,
-        payload: getError(error),
-      });
-    }
-  };
+    dispatch({
+      type: PROJECT_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: PROJECT_LIST_FAIL,
+      payload: getError(error),
+    });
+  }
+};
 
 export const listProjectDetails =
   (id, search = '') =>
@@ -114,15 +112,15 @@ export const listProjectDetails =
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${userInfo.key}`,
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+          Expires: '0',
         },
       };
 
       let url = `/api/v1/review/projects/${id}/?s=${search}`;
 
-      const { data } = await axios.get(
-        url,
-        config
-      );
+      const { data } = await axios.get(url, config);
 
       dispatch({
         type: PROJECT_DETAILS_SUCCESS,

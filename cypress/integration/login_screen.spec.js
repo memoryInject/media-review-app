@@ -2,6 +2,9 @@
 
 describe('MediaReviewApp login', () => {
   before(() => {
+    // Disable service worker
+    cy.disableServiceWorker();
+
     // Clean up database
     cy.exec('npm run flush-data');
 
@@ -10,6 +13,9 @@ describe('MediaReviewApp login', () => {
   });
 
   beforeEach(() => {
+    // Disable service worker
+    cy.disableServiceWorker();
+
     cy.visit('/');
   });
 

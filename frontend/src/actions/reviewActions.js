@@ -43,6 +43,9 @@ export const listReview =
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Token ${userInfo.key}`,
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+          Expires: '0',
         },
       };
 
@@ -72,6 +75,9 @@ export const listReviewPagination = (url) => async (dispatch, getState) => {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${userInfo.key}`,
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        Expires: '0',
       },
     };
 
@@ -101,6 +107,9 @@ export const listReviewDetails = (id) => async (dispatch, getState) => {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${userInfo.key}`,
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        Expires: '0',
       },
     };
 

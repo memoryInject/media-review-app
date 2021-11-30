@@ -31,6 +31,9 @@ export const listMedia = (reviewId) => async (dispatch, getState) => {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${userInfo.key}`,
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        Expires: '0',
       },
     };
 
@@ -65,6 +68,9 @@ export const listMediaDetails = (id) => async (dispatch, getState) => {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${userInfo.key}`,
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        Expires: '0',
       },
     };
 

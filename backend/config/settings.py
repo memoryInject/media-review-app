@@ -126,6 +126,7 @@ POSTGRES = {
 }
 
 DATABASES = POSTGRES if os.environ.get('DB_MANAGEMENT') == 'postgres' else SQLITE
+print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -235,17 +236,34 @@ REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
 }
 
-CACHES = {
+# For testing
+DUMMY_CACHE = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
+# For development and production
+REDIS_CACHE = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": os.environ.get('REDIS_URL'),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
 }
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# Dynamically change the cache based on env variable
+CACHES = REDIS_CACHE if os.environ.get('DJANGO_MEMCACHE') == 'redis' else DUMMY_CACHE
+
+# Avoid login error with DummyCache
+# https://stackoverflow.com/questions/46982576/the-requests-session-was-deleted-before-the-request-completed-the-user-may-hav/46985822
+# https://docs.djangoproject.com/en/3.2/topics/http/sessions/#configuring-sessions
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache" # Can not use this with DummyCache only with redis
+
+# Works In Combination With  Current Cache and Database, fairly persistant
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
 
 CACHE_TTL = 60 * 60

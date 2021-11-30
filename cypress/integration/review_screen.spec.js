@@ -2,6 +2,9 @@
 
 describe('Review-Screen', () => {
   beforeEach(() => {
+    // Disable service worker
+    cy.disableServiceWorker();
+
     // Clean up database
     cy.exec('npm run flush-data');
 
@@ -44,6 +47,9 @@ describe('Review-Screen', () => {
 
 describe('Review-Screen-Upload-Video', () => {
   beforeEach(() => {
+    // Disable service worker
+    cy.disableServiceWorker();
+
     // Clean up database
     cy.exec('npm run flush-data');
 
@@ -124,6 +130,9 @@ describe('Review-Screen-Upload-Video', () => {
 
 describe('Review-Screen-Collaborators', () => {
   beforeEach(() => {
+    // Disable service worker
+    cy.disableServiceWorker();
+
     // Clean up database
     cy.exec('npm run flush-data');
 
@@ -260,6 +269,9 @@ describe('Review-Screen-Collaborators', () => {
 
 describe('Review-Screen-Feedbacks', () => {
   beforeEach(() => {
+    // Disable service worker
+    cy.disableServiceWorker();
+
     // Clean up database
     cy.exec('npm run flush-data');
 

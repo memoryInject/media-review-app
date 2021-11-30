@@ -48,9 +48,10 @@ def get_css_map():
     # try block for running it in CI
     try:
         file = os.path.basename(sorted(
-            pathlib.Path(settings.STATIC_ROOT + '/css').glob('**/main.*.chunk.css.map'))[0])
+            pathlib.Path(settings.STATIC_ROOT + '/css').glob(
+                '**/main.*.chunk.css.map'))[0])
         return 'static/css/' + file
-    except:
+    except Exception:
         return 'static/css/' + 'main.c9aead2c.chunk.css.map'
 
 

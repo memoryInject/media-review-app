@@ -2,6 +2,9 @@
 
 describe('Review-List', () => {
   beforeEach(() => {
+    // Disable service worker
+    cy.disableServiceWorker();
+
     // Clean up database
     cy.exec('npm run flush-data');
 

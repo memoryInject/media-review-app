@@ -22,8 +22,22 @@ require('cypress-dark');
 
 const apiUrl = Cypress.env('apiUrl');
 
+// Disable serviceWorker
+Cypress.Commands.add('disableServiceWorker', () => {
+  if (window.navigator && navigator.serviceWorker) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => {
+        registration.unregister();
+      });
+    });
+  }
+});
+
 // Login user via UI
 Cypress.Commands.add('loginUser', (user = Cypress.env('user')) => {
+  // Disable serviceWorker
+  cy.disableServiceWorker();
+
   cy.visit('/login');
   cy.contains('Email Address').type(user.email);
   cy.contains('Password').type(user.password);
@@ -32,6 +46,9 @@ Cypress.Commands.add('loginUser', (user = Cypress.env('user')) => {
 
 // Login admin via UI
 Cypress.Commands.add('loginAdmin', (user = Cypress.env('admin')) => {
+  // Disable serviceWorker
+  cy.disableServiceWorker();
+
   cy.visit('/login');
   cy.contains('Email Address').type(user.email);
   cy.contains('Password').type(user.password);

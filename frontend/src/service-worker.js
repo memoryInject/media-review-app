@@ -43,19 +43,19 @@ registerRoute(
     } 
 
     // if the url is django admin or api skip
-    if (url.pathname.match(/^\/admin/)) {
+    if (url.pathname.match(/^\/admin.*/)) {
       return false;
     } 
 
-    if (url.pathname.match(/^\/api/)) {
+    if (url.pathname.match(/^\/api.*/)) {
       return false;
     } 
 
-    if (url.pathname.match(/^\/media/)) {
+    if (url.pathname.match(/^\/media.*/)) {
       return false;
     } 
 
-    if (url.pathname.match(/^\/static/)) {
+    if (url.pathname.match(/^\/static.*/)) {
       return false;
     } 
     

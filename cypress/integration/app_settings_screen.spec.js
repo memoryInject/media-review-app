@@ -2,6 +2,9 @@
 
 describe('App-Settings-Screen', () => {
   beforeEach(() => {
+    // Disable service worker
+    cy.disableServiceWorker();
+
     // Clean up database
     cy.exec('npm run flush-data');
 

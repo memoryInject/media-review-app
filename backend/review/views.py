@@ -3,7 +3,6 @@ import hashlib
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django.conf import settings
@@ -67,16 +66,22 @@ class ProjectList(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
-        # Clean up memory cache
-        cache.delete_many(cache.keys('*.project_list*'))
+        # DummyCache will throw an error if not using redis
+        # Exception: 'DummyCache' object has no attribute 'keys'
+        try:
+            # Clean up memory cache
+            cache.delete_many(cache.keys('*.project_list*'))
+        except Exception as e:
+            print(e)
 
         serializer.save(user=self.request.user)
 
     # Cache this view in memory for 60 * x, x minute
     def dispatch(self, request, *args, **kwargs):
         # Setting a custom key_prefix for cache
-        path_token = request.get_full_path() + request.headers.get(
-            'Authorization')
+        path = request.get_full_path()
+        token = request.headers.get('Authorization')
+        path_token = f"{path}{token}"
         path_hash = hashlib.md5(path_token.encode()).hexdigest()
         key = f'project_list_{path_hash}_'
 
@@ -168,15 +173,21 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.project_list*'))
-        cache.delete_many(cache.keys(f"*.project_detail_{kwargs['pk']}*"))
+        try:
+            cache.delete_many(cache.keys('*.project_list*'))
+            cache.delete_many(cache.keys(f"*.project_detail_{kwargs['pk']}*"))
+        except Exception as e:
+            print(e)
 
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.project_list*'))
-        cache.delete_many(cache.keys(f"*.project_detail_{kwargs['pk']}*"))
+        try:
+            cache.delete_many(cache.keys('*.project_list*'))
+            cache.delete_many(cache.keys(f"*.project_detail_{kwargs['pk']}*"))
+        except Exception as e:
+            print(e)
 
         return super().destroy(request, *args, **kwargs)
 
@@ -208,7 +219,10 @@ class ReviewList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.review_list*'))
+        try:
+            cache.delete_many(cache.keys('*.review_list*'))
+        except Exception as e:
+            print(e)
 
         # Make sure requested project exists
         # We have to add manually project and collaborators to serializer
@@ -270,8 +284,9 @@ class ReviewList(generics.ListCreateAPIView):
 
     # Memory cache
     def dispatch(self, request, *args, **kwargs):
-        path_token = request.get_full_path() + request.headers.get(
-            'Authorization')
+        path = request.get_full_path()
+        token = request.headers.get('Authorization')
+        path_token = f"{path}{token}"
         path_hash = hashlib.md5(path_token.encode()).hexdigest()
         key = f'review_list_{path_hash}_'
 
@@ -296,14 +311,22 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.review_list*'))
-        cache.delete_many(cache.keys(f"*.review_detail_{kwargs['pk']}*"))
+        try:
+            cache.delete_many(cache.keys('*.review_list*'))
+            cache.delete_many(cache.keys(f"*.review_detail_{kwargs['pk']}*"))
+        except Exception as e:
+            print(e)
+
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.review_list*'))
-        cache.delete_many(cache.keys(f"*.review_detail_{kwargs['pk']}*"))
+        try:
+            cache.delete_many(cache.keys('*.review_list*'))
+            cache.delete_many(cache.keys(f"*.review_detail_{kwargs['pk']}*"))
+        except Exception as e:
+            print(e)
+
         return super().destroy(request, *args, **kwargs)
 
     # Memory cache
@@ -320,7 +343,11 @@ class AssetList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.asset_list*'))
+        try:
+            cache.delete_many(cache.keys('*.asset_list*'))
+        except Exception as e:
+            print(e)
+
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
@@ -337,8 +364,9 @@ class AssetList(generics.ListCreateAPIView):
 
     # Memory cache
     def dispatch(self, request, *args, **kwargs):
-        path_token = request.get_full_path() + request.headers.get(
-            'Authorization')
+        path = request.get_full_path()
+        token = request.headers.get('Authorization')
+        path_token = f"{path}{token}"
         path_hash = hashlib.md5(path_token.encode()).hexdigest()
         key = f'asset_list_{path_hash}_'
 
@@ -355,14 +383,22 @@ class AssetDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.asset_list*'))
-        cache.delete_many(cache.keys(f"*.asset_detail_{kwargs['pk']}*"))
+        try:
+            cache.delete_many(cache.keys('*.asset_list*'))
+            cache.delete_many(cache.keys(f"*.asset_detail_{kwargs['pk']}*"))
+        except Exception as e:
+            print(e)
+
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.asset_list*'))
-        cache.delete_many(cache.keys(f"*.asset_detail_{kwargs['pk']}*"))
+        try:
+            cache.delete_many(cache.keys('*.asset_list*'))
+            cache.delete_many(cache.keys(f"*.asset_detail_{kwargs['pk']}*"))
+        except Exception as e:
+            print(e)
+
         return super().destroy(request, *args, **kwargs)
 
     # Memory cache
@@ -381,7 +417,10 @@ class MediaList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.media_list*'))
+        try:
+            cache.delete_many(cache.keys('*.media_list*'))
+        except Exception as e:
+            print(e)
 
         # Check if the request contains review and asset fields
         if self.request.data.get('review') is None or \
@@ -463,8 +502,9 @@ class MediaList(generics.ListCreateAPIView):
 
     # Memory cache
     def dispatch(self, request, *args, **kwargs):
-        path_token = request.get_full_path() + request.headers.get(
-            'Authorization')
+        path = request.get_full_path()
+        token = request.headers.get('Authorization')
+        path_token = f"{path}{token}"
         path_hash = hashlib.md5(path_token.encode()).hexdigest()
         key = f'media_list_{path_hash}_'
 
@@ -481,14 +521,22 @@ class MediaDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.media_list*'))
-        cache.delete_many(cache.keys(f"*.media_detail_{kwargs['pk']}*"))
+        try:
+            cache.delete_many(cache.keys('*.media_list*'))
+            cache.delete_many(cache.keys(f"*.media_detail_{kwargs['pk']}*"))
+        except Exception as e:
+            print(e)
+
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.media_list*'))
-        cache.delete_many(cache.keys(f"*.media_detail_{kwargs['pk']}*"))
+        try:
+            cache.delete_many(cache.keys('*.media_list*'))
+            cache.delete_many(cache.keys(f"*.media_detail_{kwargs['pk']}*"))
+        except Exception as e:
+            print(e)
+
         return super().destroy(request, *args, **kwargs)
 
     # Memory cache
@@ -506,7 +554,10 @@ class FeedbackList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.feedback_list*'))
+        try:
+            cache.delete_many(cache.keys('*.feedback_list*'))
+        except Exception as e:
+            print(e)
 
         # Check if the user is in the requested media.review.collaborators list
         if self.request.data.get('media'):
@@ -572,8 +623,9 @@ class FeedbackList(generics.ListCreateAPIView):
 
     # Memory cache
     def dispatch(self, request, *args, **kwargs):
-        path_token = request.get_full_path() + request.headers.get(
-            'Authorization')
+        path = request.get_full_path()
+        token = request.headers.get('Authorization')
+        path_token = f"{path}{token}"
         path_hash = hashlib.md5(path_token.encode()).hexdigest()
         key = f'feedback_list_{path_hash}_'
 
@@ -590,14 +642,22 @@ class FeedbackDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.feedback_list*'))
-        cache.delete_many(cache.keys(f"*.feedback_detail_{kwargs['pk']}*"))
+        try:
+            cache.delete_many(cache.keys('*.feedback_list*'))
+            cache.delete_many(cache.keys(f"*.feedback_detail_{kwargs['pk']}*"))
+        except Exception as e:
+            print(e)
+
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         # Clean up memory cache
-        cache.delete_many(cache.keys('*.feedback_list*'))
-        cache.delete_many(cache.keys(f"*.feedback_detail_{kwargs['pk']}*"))
+        try:
+            cache.delete_many(cache.keys('*.feedback_list*'))
+            cache.delete_many(cache.keys(f"*.feedback_detail_{kwargs['pk']}*"))
+        except Exception as e:
+            print(e)
+
         return super().destroy(request, *args, **kwargs)
 
     # Memory cache
