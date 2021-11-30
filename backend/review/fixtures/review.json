@@ -1,58 +1,168 @@
 [
-   {
-      "fields" : {
-         "collaborators" : [
-            2,
-            3,
-            6,
-            7
-         ],
-         "created_at" : "2021-09-30T06:49:50.846Z",
-         "description" : "color correction",
-         "image_url" : "/img/colors.jpg",
-         "project" : 4,
-         "review_name" : "Evening colors",
-         "updated_at" : "2021-09-30T06:49:50.846Z",
-         "user" : 2
-      },
-      "model" : "review.review",
-      "pk" : 12
-   },
-   {
-      "fields" : {
-         "collaborators" : [
-            3,
-            5,
-            7
-         ],
-         "created_at" : "2021-09-30T06:52:46.810Z",
-         "description" : "city fog scene",
-         "image_url" : "/img/fog.jpg",
-         "project" : 4,
-         "review_name" : "Fog city",
-         "updated_at" : "2021-09-30T06:52:46.810Z",
-         "user" : 7
-      },
-      "model" : "review.review",
-      "pk" : 13
-   },
-   {
-      "fields" : {
-         "collaborators" : [
-            2,
-            3,
-            6,
-            7
-         ],
-         "created_at" : "2021-09-30T07:09:39.856Z",
-         "description" : "A private jet making a final approach for landing.",
-         "image_url" : "https://images.unsplash.com/photo-1474302770737-173ee21bab63?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2416&q=80",
-         "project" : 5,
-         "review_name" : "Private Jet Landing Approach",
-         "updated_at" : "2021-09-30T07:09:39.856Z",
-         "user" : 7
-      },
-      "model" : "review.review",
-      "pk" : 14
-   }
+  {
+    "model": "review.review",
+    "pk": 12,
+    "fields": {
+      "review_name": "Evening colors",
+      "description": "color correction",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "project": 4,
+      "is_open": true,
+      "number_of_media": 4,
+      "number_of_collaborator": 1,
+      "user": 2,
+      "created_at": "2021-09-30T06:49:50.846Z",
+      "updated_at": "2021-11-25T17:15:08.012Z",
+      "collaborators": [
+        5,
+        2,
+        4,
+        7,
+        6
+      ]
+    }
+  },
+  {
+    "model": "review.review",
+    "pk": 13,
+    "fields": {
+      "review_name": "Fog city",
+      "description": "city fog scene",
+      "image_url": "https://images.unsplash.com/photo-1470217957101-da7150b9b681?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2148&q=80",
+      "project": 4,
+      "is_open": true,
+      "number_of_media": 0,
+      "number_of_collaborator": 1,
+      "user": 7,
+      "created_at": "2021-09-30T06:52:46.810Z",
+      "updated_at": "2021-10-30T17:22:37.892Z",
+      "collaborators": [
+        5,
+        2,
+        3,
+        7
+      ]
+    }
+  },
+  {
+    "model": "review.review",
+    "pk": 14,
+    "fields": {
+      "review_name": "Private Jet Landing Approach",
+      "description": "A private jet making a final approach for landing.",
+      "image_url": "https://images.unsplash.com/photo-1474302770737-173ee21bab63?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2416&q=80",
+      "project": 5,
+      "is_open": true,
+      "number_of_media": 0,
+      "number_of_collaborator": 1,
+      "user": 7,
+      "created_at": "2021-09-30T07:09:39.856Z",
+      "updated_at": "2021-09-30T07:09:39.856Z",
+      "collaborators": [
+        2,
+        3,
+        7,
+        6
+      ]
+    }
+  },
+  {
+    "model": "review.review",
+    "pk": 18,
+    "fields": {
+      "review_name": "test review",
+      "description": "test",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "project": 35,
+      "is_open": true,
+      "number_of_media": 0,
+      "number_of_collaborator": 1,
+      "user": 2,
+      "created_at": "2021-10-30T15:02:38.591Z",
+      "updated_at": "2021-11-07T13:34:00.748Z",
+      "collaborators": [
+        2,
+        7
+      ]
+    }
+  },
+  {
+    "model": "review.review",
+    "pk": 23,
+    "fields": {
+      "review_name": "Truck",
+      "description": "preview",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "project": 24,
+      "is_open": true,
+      "number_of_media": 0,
+      "number_of_collaborator": 2,
+      "user": 7,
+      "created_at": "2021-11-01T15:10:01.968Z",
+      "updated_at": "2021-11-11T08:48:40.997Z",
+      "collaborators": [
+        7,
+        6
+      ]
+    }
+  },
+  {
+    "model": "review.review",
+    "pk": 40,
+    "fields": {
+      "review_name": "Intro",
+      "description": "Introduction to the ad",
+      "image_url": "https://cdn.videvo.net/videvo_files/video/free/2016-07/thumbnails/160721_1_StartingStopwatch1_1080p_small.jpg",
+      "project": 51,
+      "is_open": true,
+      "number_of_media": 1,
+      "number_of_collaborator": 3,
+      "user": 7,
+      "created_at": "2021-11-25T20:06:13.771Z",
+      "updated_at": "2021-11-25T20:19:14.043Z",
+      "collaborators": [
+        7,
+        3,
+        6
+      ]
+    }
+  },
+  {
+    "model": "review.review",
+    "pk": 41,
+    "fields": {
+      "review_name": "Storm Clouds Timelapse",
+      "description": "Storm Clouds Timelapse",
+      "image_url": "https://cdn.videvo.net/videvo_files/video/free/2014-11/thumbnails/GOSTI_OBLAKI_small.jpg",
+      "project": 52,
+      "is_open": true,
+      "number_of_media": 1,
+      "number_of_collaborator": 1,
+      "user": 2,
+      "created_at": "2021-11-27T14:48:26.656Z",
+      "updated_at": "2021-11-27T14:52:56.841Z",
+      "collaborators": [
+        2
+      ]
+    }
+  },
+  {
+    "model": "review.review",
+    "pk": 42,
+    "fields": {
+      "review_name": "AI deep learning computer",
+      "description": "AI deep learning computer",
+      "image_url": "https://cdn.videvo.net/videvo_files/video/premium/getty_2/customThumbnails/istock-970279092.jpg",
+      "project": 53,
+      "is_open": true,
+      "number_of_media": 1,
+      "number_of_collaborator": 1,
+      "user": 2,
+      "created_at": "2021-11-27T15:04:33.400Z",
+      "updated_at": "2021-11-27T15:06:45.561Z",
+      "collaborators": [
+        2
+      ]
+    }
+  }
 ]

@@ -45,9 +45,13 @@ def render_api_doc(request):
 
 # For react pwa setup not necessary
 def get_css_map():
-    file = os.path.basename(sorted(
-        pathlib.Path('./client/build/static/css').glob('**/*.map'))[0])
-    return 'static/css/' + file
+    # try block for running it in CI
+    try:
+        file = os.path.basename(sorted(
+            pathlib.Path(settings.STATIC_ROOT + '/css').glob('**/main.*.chunk.css.map'))[0])
+        return 'static/css/' + file
+    except:
+        return 'static/css/' + 'main.c9aead2c.chunk.css.map'
 
 
 urlpatterns = [
@@ -96,4 +100,5 @@ urlpatterns.append(re_path(r'^api/v1/', render_api_doc))
 
 # For react index.html at root and all other routes
 urlpatterns.append(re_path(r'^$', render_react))
-urlpatterns.append(re_path(r'^(?:.*)/?$', render_react))
+# urlpatterns.append(re_path(r'^(?:.*)/?$', render_react))
+urlpatterns.append(re_path(r'^(?!.*media)(?!.*static)(?:.*)/?$', render_react))

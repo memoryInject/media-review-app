@@ -3,8 +3,9 @@ import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const Project = ({ project }) => {
-  const placeholderUrl = '/media/images/placeholder.png'
-    //'https://www.btklsby.go.id/images/placeholder/basic.png';
+  //const placeholderUrl = '/media/images/placeholder.png'
+  const placeholderUrl = 'https://www.btklsby.go.id/images/placeholder/basic.png';  
+
   return (
     <Card className='my-3 rounded project-card'>
       <Link to={`/projects/${project.id}`} style={{ position: 'relative' }}>

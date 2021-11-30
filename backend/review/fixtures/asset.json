@@ -1,57 +1,362 @@
 [
-   {
-      "fields" : {
-         "asset_name" : "sun set",
-         "created_at" : "2021-09-30T06:50:12.942Z",
-         "updated_at" : "2021-09-30T06:59:54.418Z",
-         "url" : "https://cdn.videvo.net/videvo_files/video/free/2019-01/large_watermarked/181015_13_Venice%20Beach%20Drone_25_preview.mp4",
-         "user" : 2
-      },
-      "model" : "review.asset",
-      "pk" : 5
-   },
-   {
-      "fields" : {
-         "asset_name" : "rising fog",
-         "created_at" : "2021-09-30T06:57:26.102Z",
-         "updated_at" : "2021-09-30T06:58:02.843Z",
-         "url" : "https://cdn.videvo.net/videvo_files/video/free/2016-05/large_watermarked/482952308_preview.mp4",
-         "user" : 7
-      },
-      "model" : "review.asset",
-      "pk" : 6
-   },
-   {
-      "fields" : {
-         "asset_name" : "Drone shot sun set",
-         "created_at" : "2021-09-30T07:03:00.500Z",
-         "updated_at" : "2021-09-30T07:03:00.500Z",
-         "url" : "https://cdn.videvo.net/videvo_files/video/free/2019-01/large_watermarked/190111_04_TaksinBridge_Drone_04_preview.mp4",
-         "user" : 7
-      },
-      "model" : "review.asset",
-      "pk" : 7
-   },
-   {
-      "fields" : {
-         "asset_name" : "jet landing",
-         "created_at" : "2021-09-30T07:10:10.428Z",
-         "updated_at" : "2021-09-30T07:10:10.428Z",
-         "url" : "https://cdn.videvo.net/videvo_files/video/free/2013-10/large_watermarked/PrivateJetLandingVidevo_preview.mp4",
-         "user" : 7
-      },
-      "model" : "review.asset",
-      "pk" : 8
-   },
-   {
-      "fields" : {
-         "asset_name" : "aerial of jet landing",
-         "created_at" : "2021-09-30T07:13:18.085Z",
-         "updated_at" : "2021-09-30T07:13:18.085Z",
-         "url" : "https://cdn.videvo.net/videvo_files/video/premium/video0037/large_watermarked/900-1_900-1497-PD2_preview.mp4",
-         "user" : 7
-      },
-      "model" : "review.asset",
-      "pk" : 9
-   }
+  {
+    "model": "review.asset",
+    "pk": 5,
+    "fields": {
+      "asset_name": "sun set",
+      "url": "https://cdn.videvo.net/videvo_files/video/free/2019-01/large_watermarked/181015_13_Venice%20Beach%20Drone_25_preview.mp4",
+      "height": null,
+      "width": null,
+      "asset_format": null,
+      "duration": null,
+      "frame_rate": null,
+      "resource_type": null,
+      "image_url": "https://cdn.videvo.net/videvo_files/video/free/2019-01/thumbnails/181015_13_Venice Beach Drone_04_small.jpg",
+      "user": 2,
+      "created_at": "2021-09-30T06:50:12.942Z",
+      "updated_at": "2021-10-18T19:18:19.115Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 6,
+    "fields": {
+      "asset_name": "rising fog",
+      "url": "https://cdn.videvo.net/videvo_files/video/free/2016-05/large_watermarked/482952308_preview.mp4",
+      "height": null,
+      "width": null,
+      "asset_format": null,
+      "duration": null,
+      "frame_rate": null,
+      "resource_type": null,
+      "image_url": "https://cdn.videvo.net/videvo_files/video/free/2016-05/thumbnails/482952308_small.jpg",
+      "user": 7,
+      "created_at": "2021-09-30T06:57:26.102Z",
+      "updated_at": "2021-10-18T19:24:26.970Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 7,
+    "fields": {
+      "asset_name": "Drone shot sun set",
+      "url": "https://cdn.videvo.net/videvo_files/video/free/2019-01/large_watermarked/181015_13_Venice%20Beach%20Drone_22_preview.mp4",
+      "height": null,
+      "width": null,
+      "asset_format": null,
+      "duration": null,
+      "frame_rate": null,
+      "resource_type": null,
+      "image_url": "https://cdn.videvo.net/videvo_files/video/free/2019-01/thumbnails/181015_13_Venice Beach Drone_22_small.jpg",
+      "user": 7,
+      "created_at": "2021-09-30T07:03:00.500Z",
+      "updated_at": "2021-10-18T19:22:23.025Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 8,
+    "fields": {
+      "asset_name": "jet landing",
+      "url": "https://cdn.videvo.net/videvo_files/video/free/2013-10/large_watermarked/PrivateJetLandingVidevo_preview.mp4",
+      "height": null,
+      "width": null,
+      "asset_format": null,
+      "duration": null,
+      "frame_rate": null,
+      "resource_type": null,
+      "image_url": "https://cdn.videvo.net/videvo_files/video/free/2013-10/thumbnails/PrivateJetLandingVidevo_small.jpg",
+      "user": 7,
+      "created_at": "2021-09-30T07:10:10.428Z",
+      "updated_at": "2021-10-18T19:26:18.818Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 9,
+    "fields": {
+      "asset_name": "Marine Harrier Aircraft",
+      "url": "https://cdn.videvo.net/videvo_files/video/premium/video0038/large_watermarked/900-1_900-1737-PD2_preview.mp4",
+      "height": null,
+      "width": null,
+      "asset_format": null,
+      "duration": null,
+      "frame_rate": null,
+      "resource_type": null,
+      "image_url": "https://cdn.videvo.net/videvo_files/video/premium/video0038/thumbnails/900-1_900-1737-PD2_small.jpg",
+      "user": 7,
+      "created_at": "2021-09-30T07:13:18.085Z",
+      "updated_at": "2021-10-18T19:31:29.348Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 71,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-10-31T08:07:02.440Z",
+      "updated_at": "2021-10-31T08:07:02.440Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 72,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-01T15:10:13.459Z",
+      "updated_at": "2021-11-01T15:10:13.459Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 75,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-07T08:45:02.427Z",
+      "updated_at": "2021-11-07T08:45:02.428Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 76,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-07T08:49:03.819Z",
+      "updated_at": "2021-11-07T08:49:03.819Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 77,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-07T08:49:34.368Z",
+      "updated_at": "2021-11-07T08:49:34.368Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 78,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-07T08:52:28.423Z",
+      "updated_at": "2021-11-07T08:52:28.423Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 79,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-07T08:53:08.073Z",
+      "updated_at": "2021-11-07T08:53:08.073Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 80,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-07T08:53:25.469Z",
+      "updated_at": "2021-11-07T08:53:25.469Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 82,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-07T13:16:42.147Z",
+      "updated_at": "2021-11-07T13:16:42.147Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 83,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-07T13:17:00.055Z",
+      "updated_at": "2021-11-07T13:17:00.055Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 84,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-07T13:34:00.312Z",
+      "updated_at": "2021-11-07T13:34:00.312Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 87,
+    "fields": {
+      "asset_name": "SampleVideo_1280x720_1mb",
+      "url": "http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4",
+      "height": 360,
+      "width": 638,
+      "asset_format": "mp4",
+      "duration": 5.16,
+      "frame_rate": 25,
+      "resource_type": "video",
+      "image_url": "https://res.cloudinary.com/memoryinject/video/upload/v1/media_review_app/videos/jorwbcwp0kfrb9bdubwh.jpg",
+      "user": 7,
+      "created_at": "2021-11-13T17:20:51.154Z",
+      "updated_at": "2021-11-13T17:20:51.154Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 102,
+    "fields": {
+      "asset_name": "stopwatch_v01",
+      "url": "https://cdn.videvo.net/videvo_files/video/free/2016-07/large_watermarked/160721_1_StartingStopwatch1_1080p_preview.mp4",
+      "height": 1080,
+      "width": 1920,
+      "asset_format": "mp4",
+      "duration": 19,
+      "frame_rate": 24,
+      "resource_type": "video",
+      "image_url": "https://cdn.videvo.net/videvo_files/video/free/2016-07/thumbnails/160721_1_StartingStopwatch1_1080p_small.jpg",
+      "user": 7,
+      "created_at": "2021-11-25T20:15:29.509Z",
+      "updated_at": "2021-11-25T20:18:27.204Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 103,
+    "fields": {
+      "asset_name": "storm_cloud_time_lapse",
+      "url": "https://cdn.videvo.net/videvo_files/video/free/2014-11/large_watermarked/GOSTI_OBLAKI_preview.mp4",
+      "height": 1080,
+      "width": 1920,
+      "asset_format": "mp4",
+      "duration": 20,
+      "frame_rate": 24,
+      "resource_type": "video",
+      "image_url": "https://cdn.videvo.net/videvo_files/video/free/2014-11/thumbnails/GOSTI_OBLAKI_small.jpg",
+      "user": 2,
+      "created_at": "2021-11-27T14:51:53.183Z",
+      "updated_at": "2021-11-27T14:51:53.183Z"
+    }
+  },
+  {
+    "model": "review.asset",
+    "pk": 104,
+    "fields": {
+      "asset_name": "ai_deep_learning_computer",
+      "url": "https://cdn.videvo.net/videvo_files/video/premium/getty_2/large_watermarked/istock-970279092_preview.mp4",
+      "height": 2160,
+      "width": 3840,
+      "asset_format": "mp4",
+      "duration": 7,
+      "frame_rate": 24,
+      "resource_type": "video",
+      "image_url": "https://cdn.videvo.net/videvo_files/video/premium/getty_2/customThumbnails/istock-970279092.jpg",
+      "user": 2,
+      "created_at": "2021-11-27T15:06:04.328Z",
+      "updated_at": "2021-11-27T15:06:04.328Z"
+    }
+  }
 ]

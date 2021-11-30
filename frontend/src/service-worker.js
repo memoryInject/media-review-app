@@ -50,6 +50,14 @@ registerRoute(
     if (url.pathname.match(/^\/api/)) {
       return false;
     } 
+
+    if (url.pathname.match(/^\/media/)) {
+      return false;
+    } 
+
+    if (url.pathname.match(/^\/static/)) {
+      return false;
+    } 
     
     // Return true to signal that we want to use the handler.
     return true;

@@ -1,6 +1,13 @@
 # review/views.py
+import hashlib
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+from django.conf import settings
+
 from rest_framework import generics, serializers, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -60,7 +67,24 @@ class ProjectList(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.project_list*'))
+
         serializer.save(user=self.request.user)
+
+    # Cache this view in memory for 60 * x, x minute
+    def dispatch(self, request, *args, **kwargs):
+        # Setting a custom key_prefix for cache
+        path_token = request.get_full_path() + request.headers.get(
+            'Authorization')
+        path_hash = hashlib.md5(path_token.encode()).hexdigest()
+        key = f'project_list_{path_hash}_'
+
+        # This will cache with name '*.project_list_fwefweg23423_*'
+        # generated hash will be unique for each user with each urls
+        # and it store each user with each urls in memory
+        return cache_page(settings.CACHE_TTL, key_prefix=key)(
+            super(ProjectList, self).dispatch)(request, *args, **kwargs)
 
 
 # Route: /review/projects/<int:pk>/?<s_review=review_name>&<user_review=true>&
@@ -79,6 +103,7 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
+        ProjectDetail.key = '2'
         queryset = Project.objects.all()
 
         if not self.request.user.userprofile.is_admin:
@@ -88,6 +113,9 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
+        # store pk in to key
+        ProjectDetail.key = kwargs['pk']
+
         # Make sure requested project exists
         try:
             Project.objects.get(pk=kwargs['pk'])
@@ -138,6 +166,30 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return Response(data)
 
+    def update(self, request, *args, **kwargs):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.project_list*'))
+        cache.delete_many(cache.keys(f"*.project_detail_{kwargs['pk']}*"))
+
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.project_list*'))
+        cache.delete_many(cache.keys(f"*.project_detail_{kwargs['pk']}*"))
+
+        return super().destroy(request, *args, **kwargs)
+
+    # Cache this view in memory for fast access
+    def dispatch(self, request, *args, **kwargs):
+        # Setting a custom key_prefix for cache
+        key = f"project_detail_{kwargs['pk']}_"
+
+        # This will cache with name '*.project_detail_2_*'
+        # it store each project with pk in memory
+        return cache_page(settings.CACHE_TTL, key_prefix=key)(
+            super(ProjectDetail, self).dispatch)(request, *args, **kwargs)
+
 
 # Route:
 # /review/reviews/?<user=true>&<collaborator=true>&<project=int:id>&<s=item>
@@ -155,6 +207,9 @@ class ReviewList(generics.ListCreateAPIView):
     pagination_class = PageNumberPagination
 
     def perform_create(self, serializer):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.review_list*'))
+
         # Make sure requested project exists
         # We have to add manually project and collaborators to serializer
         # because of custom field representation in serializer.py
@@ -213,6 +268,16 @@ class ReviewList(generics.ListCreateAPIView):
 
         return queryset
 
+    # Memory cache
+    def dispatch(self, request, *args, **kwargs):
+        path_token = request.get_full_path() + request.headers.get(
+            'Authorization')
+        path_hash = hashlib.md5(path_token.encode()).hexdigest()
+        key = f'review_list_{path_hash}_'
+
+        return cache_page(settings.CACHE_TTL, key_prefix=key)(
+            super(ReviewList, self).dispatch)(request, *args, **kwargs)
+
 
 # Route: review/reviews/<int:pk>/
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -229,6 +294,24 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return super().perform_update(serializer)
 
+    def update(self, request, *args, **kwargs):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.review_list*'))
+        cache.delete_many(cache.keys(f"*.review_detail_{kwargs['pk']}*"))
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.review_list*'))
+        cache.delete_many(cache.keys(f"*.review_detail_{kwargs['pk']}*"))
+        return super().destroy(request, *args, **kwargs)
+
+    # Memory cache
+    def dispatch(self, request, *args, **kwargs):
+        key = f"review_detail_{kwargs['pk']}_"
+        return cache_page(settings.CACHE_TTL, key_prefix=key)(
+            super(ReviewDetail, self).dispatch)(request, *args, **kwargs)
+
 
 # Route: review/assets/?<user=true>/
 class AssetList(generics.ListCreateAPIView):
@@ -236,6 +319,8 @@ class AssetList(generics.ListCreateAPIView):
     serializer_class = AssetSerializer
 
     def perform_create(self, serializer):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.asset_list*'))
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
@@ -250,6 +335,16 @@ class AssetList(generics.ListCreateAPIView):
 
         return queryset
 
+    # Memory cache
+    def dispatch(self, request, *args, **kwargs):
+        path_token = request.get_full_path() + request.headers.get(
+            'Authorization')
+        path_hash = hashlib.md5(path_token.encode()).hexdigest()
+        key = f'asset_list_{path_hash}_'
+
+        return cache_page(settings.CACHE_TTL, key_prefix=key)(
+            super(AssetList, self).dispatch)(request, *args, **kwargs)
+
 
 # Route: review/assets/<int:pk>/
 class AssetDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -257,6 +352,24 @@ class AssetDetail(generics.RetrieveUpdateDestroyAPIView):
         IsAuthenticated, IsCreatorOrReadOnly, IsAdmin,)
     queryset = Asset.objects.all()
     serializer_class = AssetSerializer
+
+    def update(self, request, *args, **kwargs):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.asset_list*'))
+        cache.delete_many(cache.keys(f"*.asset_detail_{kwargs['pk']}*"))
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.asset_list*'))
+        cache.delete_many(cache.keys(f"*.asset_detail_{kwargs['pk']}*"))
+        return super().destroy(request, *args, **kwargs)
+
+    # Memory cache
+    def dispatch(self, request, *args, **kwargs):
+        key = f"asset_detail_{kwargs['pk']}_"
+        return cache_page(settings.CACHE_TTL, key_prefix=key)(
+            super(AssetDetail, self).dispatch)(request, *args, **kwargs)
 
 
 # Route: review/media/?<user=true>&<review=int:id>&<collaborator=true>/
@@ -267,6 +380,9 @@ class MediaList(generics.ListCreateAPIView):
     serializer_class = MediaSerializer
 
     def perform_create(self, serializer):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.media_list*'))
+
         # Check if the request contains review and asset fields
         if self.request.data.get('review') is None or \
                 self.request.data.get('asset') is None:
@@ -345,6 +461,16 @@ class MediaList(generics.ListCreateAPIView):
 
         return queryset
 
+    # Memory cache
+    def dispatch(self, request, *args, **kwargs):
+        path_token = request.get_full_path() + request.headers.get(
+            'Authorization')
+        path_hash = hashlib.md5(path_token.encode()).hexdigest()
+        key = f'media_list_{path_hash}_'
+
+        return cache_page(settings.CACHE_TTL, key_prefix=key)(
+            super(MediaList, self).dispatch)(request, *args, **kwargs)
+
 
 # Route: review/media/<int:pk>/
 class MediaDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -352,6 +478,24 @@ class MediaDetail(generics.RetrieveUpdateDestroyAPIView):
                           IsCollaboratorMedia | IsAdmin,)
     queryset = Media.objects.all()
     serializer_class = MediaSerializer
+
+    def update(self, request, *args, **kwargs):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.media_list*'))
+        cache.delete_many(cache.keys(f"*.media_detail_{kwargs['pk']}*"))
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.media_list*'))
+        cache.delete_many(cache.keys(f"*.media_detail_{kwargs['pk']}*"))
+        return super().destroy(request, *args, **kwargs)
+
+    # Memory cache
+    def dispatch(self, request, *args, **kwargs):
+        key = f"media_detail_{kwargs['pk']}_"
+        return cache_page(settings.CACHE_TTL, key_prefix=key)(
+            super(MediaDetail, self).dispatch)(request, *args, **kwargs)
 
 
 # Route: review/feedbacks/?<user=true>&<media=int:id>&<all=true>/
@@ -361,6 +505,9 @@ class FeedbackList(generics.ListCreateAPIView):
     serializer_class = FeedbackSerializer
 
     def perform_create(self, serializer):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.feedback_list*'))
+
         # Check if the user is in the requested media.review.collaborators list
         if self.request.data.get('media'):
             try:
@@ -423,6 +570,16 @@ class FeedbackList(generics.ListCreateAPIView):
 
         return queryset
 
+    # Memory cache
+    def dispatch(self, request, *args, **kwargs):
+        path_token = request.get_full_path() + request.headers.get(
+            'Authorization')
+        path_hash = hashlib.md5(path_token.encode()).hexdigest()
+        key = f'feedback_list_{path_hash}_'
+
+        return cache_page(settings.CACHE_TTL, key_prefix=key)(
+            super(FeedbackList, self).dispatch)(request, *args, **kwargs)
+
 
 # Route: review/feedbacks/<int:pk>/
 class FeedbackDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -430,3 +587,21 @@ class FeedbackDetail(generics.RetrieveUpdateDestroyAPIView):
                           IsCollaboratorFeedback | IsAdmin,)
     queryset = Feedback.objects.all()
     serializer_class = FeedbackSerializer
+
+    def update(self, request, *args, **kwargs):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.feedback_list*'))
+        cache.delete_many(cache.keys(f"*.feedback_detail_{kwargs['pk']}*"))
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # Clean up memory cache
+        cache.delete_many(cache.keys('*.feedback_list*'))
+        cache.delete_many(cache.keys(f"*.feedback_detail_{kwargs['pk']}*"))
+        return super().destroy(request, *args, **kwargs)
+
+    # Memory cache
+    def dispatch(self, request, *args, **kwargs):
+        key = f"feedback_detail_{kwargs['pk']}_"
+        return cache_page(settings.CACHE_TTL, key_prefix=key)(
+            super(FeedbackDetail, self).dispatch)(request, *args, **kwargs)
