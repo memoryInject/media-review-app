@@ -9,9 +9,10 @@
 
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
+import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { StaleWhileRevalidate } from 'workbox-strategies';
+import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
 
 clientsClaim();
 
@@ -35,30 +36,30 @@ registerRoute(
 
     if (url.pathname.startsWith('/_')) {
       return false;
-    } 
-    
+    }
+
     // If this looks like a URL for a resource, because it contains // a file extension, skip.
     if (url.pathname.match(fileExtensionRegexp)) {
       return false;
-    } 
+    }
 
     // if the url is django admin or api skip
     if (url.pathname.match(/^\/admin.*/)) {
       return false;
-    } 
+    }
 
     if (url.pathname.match(/^\/api.*/)) {
       return false;
-    } 
+    }
 
     if (url.pathname.match(/^\/media.*/)) {
       return false;
-    } 
+    }
 
     if (url.pathname.match(/^\/static.*/)) {
       return false;
-    } 
-    
+    }
+
     // Return true to signal that we want to use the handler.
     return true;
   },
@@ -69,13 +70,48 @@ registerRoute(
 // precache, in this case same-origin .png requests like those from in public/
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
-  ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'), // Customize this strategy as needed, e.g., by changing to CacheFirst.
+  ({ url }) =>
+    url.origin === self.location.origin && url.pathname.endsWith('.png'), // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new StaleWhileRevalidate({
     cacheName: 'images',
     plugins: [
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
       new ExpirationPlugin({ maxEntries: 50 }),
+    ],
+  })
+);
+
+// Cache Bootsrap css 
+// href="https://bootswatch.com/5/darkly/bootstrap.min.css"
+registerRoute(
+  ({ url }) => url.origin === 'https://bootswatch.com',
+  new StaleWhileRevalidate({
+    cacheName: 'bootswatch-bootstrap-stylesheet',
+  })
+);
+
+// Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
+registerRoute(
+  ({ url }) => url.origin === 'https://fonts.googleapis.com',
+  new StaleWhileRevalidate({
+    cacheName: 'google-fonts-stylesheets',
+  })
+);
+
+// Cache the underlying font files with a cache-first strategy for 1 year.
+registerRoute(
+  ({ url }) => url.origin === 'https://fonts.gstatic.com',
+  new CacheFirst({
+    cacheName: 'google-fonts-webfonts',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxAgeSeconds: 60 * 60 * 24 * 365,
+        maxEntries: 30,
+      }),
     ],
   })
 );

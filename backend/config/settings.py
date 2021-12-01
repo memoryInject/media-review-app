@@ -126,7 +126,6 @@ POSTGRES = {
 }
 
 DATABASES = POSTGRES if os.environ.get('DB_MANAGEMENT') == 'postgres' else SQLITE
-print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -190,7 +189,14 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_ADAPTER = 'invitations.models.InvitationsAdapter'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+SMTP_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+CONSOLE_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = SMTP_BACKEND if os.environ.get('EMAIL_BACKEND') == 'smtp' else CONSOLE_BACKEND
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') 
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',

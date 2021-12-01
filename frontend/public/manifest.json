@@ -4,24 +4,59 @@
   "icons": [
     {
       "src": "/static/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "48x48",
       "type": "image/x-icon"
+    },
+    {
+      "src": "/static/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
     },
     {
       "src": "/static/logo192.png",
       "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
+      "sizes": "192x192"
     },
     {
       "src": "/static/logo512.png",
       "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any maskable"
+      "sizes": "512x512"
+    },
+    {
+      "src": "/static/maskable_icon_x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
     }
   ],
   "start_url": ".",
+  "id": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#222222",
+  "background_color": "#000000",
+  "description": "Media review is a platform for review media by team collaboration in cloud.",
+  "lang": "en",
+  "categories": ["SaaS", "video sharing"],
+  "screenshots": [
+    {
+      "src": "/static/screenshot1.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/screenshot2.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/screenshot3.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+  ]
 }

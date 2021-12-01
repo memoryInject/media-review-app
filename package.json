@@ -24,7 +24,7 @@
     "cypress-redis-test": "cross-env-shell DB_NAME=media_review_app_test DJANGO_MEMCACHE=redis \"npx cypress run --record --key $CYPRESS_KEY\"",
     "cypress-open": "npx cypress open",
     "backend-test-shell": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py shell\"",
-    "build": "npm run build --prefix frontend && rm -rf backend/client/build && mv -f frontend/build ./backend/client/ && cd backend/client/build && cp asset-manifest.json manifest.json service-worker.js service-worker.js.map robots.txt favicon.ico logo192.png logo512.png ./static",
+    "build": "npm run build --prefix frontend && rm -rf backend/client/build && mv -f frontend/build ./backend/client/ && cd backend/client/build && cp asset-manifest.json manifest.json service-worker.js service-worker.js.map robots.txt favicon.ico *.png *.xml *.svg ./static",
     "swap-env": "mv .envrc tmp && mv .env.production.local .envrc && mv tmp .env.production.local"
   },
   "repository": {
@@ -41,7 +41,8 @@
     "concurrently": "^6.2.2",
     "cross-env": "^7.0.3",
     "cypress": "^9.1.0",
-    "cypress-file-upload": "^5.0.8"
+    "cypress-file-upload": "^5.0.8",
+    "lighthouse": "^9.1.0"
   },
   "dependencies": {
     "cypress-dark": "^1.8.3"
