@@ -31,6 +31,7 @@ const ReactPlayerComp = () => {
   const [seconds, setSeconds] = useState(0);
   const [loop, setLoop] = useState(false);
   const [seeking, setSeeking] = useState(false);
+  const [showNoMediaMessage, setShowNoMediaMessage] = useState(false);
 
   const [volSeeking, setVolSeeking] = useState(false);
   const [showAnnotaionImage, setShowAnnotationImage] = useState(true);
@@ -59,6 +60,20 @@ const ReactPlayerComp = () => {
       setShowPlayer(false);
     }
   }, [loading]);
+
+  // Check if there is any media in this review
+  useEffect(() => {
+    const mediaCheck = () => {
+      if (!loading && !media) {
+        setShowNoMediaMessage(true);
+      } else {
+        setShowNoMediaMessage(false);
+      }
+    };
+    //setFeedbackListHeight();
+    let timer1 = setTimeout(() => mediaCheck(), 2000);
+    return () => clearTimeout(timer1);
+  }, [loading, media]);
 
   // Run this after mediaDetails changes
   useEffect(() => {
@@ -306,11 +321,12 @@ const ReactPlayerComp = () => {
                     720 * (progressHolder.current.clientWidth / 1280) + 5.5
                   }px`,
                   height: `${adjHeight + 5.5}px`,
-                  width: `${
-                    progressHolder &&
-                    progressHolder.current &&
-                    progressHolder.current.clientWidth
-                  }px`,
+                  //width: `${
+                  //progressHolder &&
+                  //progressHolder.current &&
+                  //progressHolder.current.clientWidth
+                  //}px`,
+                  width: '100%',
                   transition: 'all 0.2s ease-in-out',
                   backgroundColor: 'rgba(255, 0, 0, 0)',
                   top: `${top}px`,
@@ -319,10 +335,21 @@ const ReactPlayerComp = () => {
                 }}
                 className='text-center'
               >
-                <Spinner
-                  animation='border'
-                  style={{ position: 'absolute', top: '50%' }}
-                />
+                {showNoMediaMessage && !error ? (
+                  <div
+                    style={{ position: 'absolute', top: '43%', left: '35%' }}
+                    className='text-center text-muted p-2'
+                  >
+                    <span className='material-icons-round'>announcement</span>
+                    <h6>There is no media in this review,</h6>
+                    <h6>please upload a video first.</h6>
+                  </div>
+                ) : (
+                  <Spinner
+                    animation='border'
+                    style={{ position: 'absolute', top: '50%' }}
+                  />
+                )}
               </div>
             </>
           )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -26,9 +26,11 @@ import {
 import {
   FEEDBACK_REPLY_RESET,
   FEEDBACK_TO_UPDATE_RESET,
+  FEEDBACK_HEIGHT_SET,
 } from '../constants/feedbackConstants';
 
 const FeedbackForm = () => {
+  const formFeedback = useRef(null);
   const [feedback, setFeedback] = useState('');
   const [showColorPalette, setShowColorPalette] = useState(false);
 
@@ -47,7 +49,7 @@ const FeedbackForm = () => {
   let { media } = mediaDetails;
 
   const playerDetails = useSelector((state) => state.playerDetails);
-  let { currentTime } = playerDetails;
+  let { currentTime, height } = playerDetails;
 
   const feedbackCreate = useSelector((state) => state.feedbackCreate);
   let {
@@ -64,6 +66,20 @@ const FeedbackForm = () => {
     feedback: feedbackUpdateSuccess,
     update,
   } = feedbackUpdate;
+
+  // Update feedback list height info when player height changes
+  useEffect(() => {
+    const setFeedbackListHeight = () => {
+      if (formFeedback && formFeedback.current) {
+        const currentHeight =
+          window.pageYOffset + formFeedback.current.getBoundingClientRect().top;
+        dispatch({ type: FEEDBACK_HEIGHT_SET, payload: currentHeight });
+      }
+    }
+    //setFeedbackListHeight();
+    let timer1 = setTimeout(()=>setFeedbackListHeight())
+    return () => clearTimeout(timer1)
+  }, [dispatch, height]);
 
   // Run this if there is an annotaion exists
   useEffect(() => {
@@ -186,7 +202,7 @@ const FeedbackForm = () => {
   };
 
   return (
-    <Row className='justify-content-md-center'>
+    <Row className='justify-content-md-center' ref={formFeedback}>
       {image && image.loading ? (
         <Loader />
       ) : feedbackCreateLoading ? (

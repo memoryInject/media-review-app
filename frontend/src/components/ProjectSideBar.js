@@ -8,8 +8,8 @@ const ProjectSideBar = ({ id, settingsHandler }) => {
   const projectDetails = useSelector((state) => state.projectDetails);
   const { loading, project } = projectDetails;
 
-  const placeholderUrl =
-    'https://www.btklsby.go.id/images/placeholder/basic.png';
+  const placeholderUrl = '/static/placeholder.png'
+  //const placeholderUrl = 'https://www.btklsby.go.id/images/placeholder/basic.png';
 
   return (
     <div

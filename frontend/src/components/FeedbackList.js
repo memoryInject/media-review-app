@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Row, Col } from 'react-bootstrap';
+import { Card, Row, Col, Spinner, Image } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import getFormattedFeedbacks from '../utils/getFormattedFeedbacks';
 import isCollaborator from '../utils/isCollaborator';
-import Loader from './Loader';
 import Message from './Message';
 import ModalDialog from './ModalDialog';
 
@@ -28,7 +27,13 @@ const FeedbackList = () => {
   const dispatch = useDispatch();
 
   const feedbackList = useSelector((state) => state.feedbackList);
-  const { loading, error, feedbacks, active } = feedbackList;
+  const {
+    loading,
+    error,
+    feedbacks,
+    active,
+    height: feedbackListHeight,
+  } = feedbackList;
 
   const mediaDetails = useSelector((state) => state.mediaDetails);
   let { media } = mediaDetails;
@@ -50,8 +55,8 @@ const FeedbackList = () => {
     delete: feedbackToDelete,
   } = feedbackDelete;
 
-  const playerDetails = useSelector((state) => state.playerDetails);
-  const { height, videoSize } = playerDetails;
+  //const playerDetails = useSelector((state) => state.playerDetails);
+  //const { height, videoSize } = playerDetails;
 
   const cardFocus = useRef(null);
 
@@ -103,14 +108,30 @@ const FeedbackList = () => {
     return `${secToDate.substr(14, 5)}:${secToDate.substr(20, 2)}`;
   };
 
+  // For better UI/UX, this will help to hide old feedbacklist instantly
+  const checkReview = () => {
+    if (review && feedbacks && feedbacks.length > 0) {
+      if (review.id !== feedbacks[0].media.review) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    return true;
+  };
+
   // This will calculate the hight of the feedback list
   const getHeight = () => {
-    return height
-      ? `${height + 243}px`
-      : videoSize
-      ? `${Math.ceil(videoSize.height * videoSize.scaleFactor) + 243 + 6}px`
-      : `${80 + 243}px`;
+    return feedbackListHeight ? `${feedbackListHeight + 43}px` : `100%`;
   };
+
+  //const getHeight = () => {
+  //return height
+  //? `${height + 243}px`
+  //: videoSize
+  //? `${Math.ceil(videoSize.height * videoSize.scaleFactor) + 243 + 6}px`
+  //: `${80 + 243}px`;
+  //};
 
   const seekToHandler = (feedback) => {
     dispatch(seekToPlayer(feedback.mediaTime));
@@ -143,6 +164,7 @@ const FeedbackList = () => {
       style={{
         backgroundColor: '#303030',
         borderRadius: '.25rem',
+        height: '99%',
       }}
     >
       <h6
@@ -165,25 +187,44 @@ const FeedbackList = () => {
         className='scrollbar'
         id='style-1'
         style={{
-          height: '99%',
+          //height: '99%',
           width: '100%',
           backgroundColor: '#303030',
           borderRadius: '.25rem',
           padding: '0.5rem',
           maxHeight: getHeight(),
-          minHeight: getHeight(),
+          //minHeight: getHeight(),
           overflow: 'auto',
           position: 'relative',
-          transition: 'all 0.3s ease-in-out',
+          //transition: 'all 0.1s ease-in-out',
         }}
       >
         {loading || feedbackDeleteLoading ? (
-          <Loader />
+          <Spinner
+            animation='grow'
+            role='status'
+            style={{
+              margin: 'auto',
+              display: 'block',
+            }}
+          >
+            <span className='visually-hidden'>Loading...</span>
+          </Spinner>
         ) : (
           error && <Message>{error}</Message>
         )}
         {feedbackDeleteError && <Message>{feedbackDeleteError}</Message>}
-        {feedbacks &&
+
+        {/*If there is no feedback in the media*/}
+        {feedbacks && !feedbacks.length && media && (
+          <div className='text-center text-muted m-2 p-2'>
+            <span className='material-icons-round'>announcement</span>
+            <h6>There is no feedbacks yet.</h6>
+          </div>
+        )}
+
+        {checkReview() &&
+          feedbacks &&
           formattedFeedbacks.map((f, idx) => (
             <Card
               key={idx}
@@ -197,30 +238,50 @@ const FeedbackList = () => {
             >
               {active && active.id === f.id && <span ref={cardFocus}></span>}
               <Card.Body>
-                <Card.Title>{f.user.username}</Card.Title>
-                <Card.Subtitle
-                  className='mb-2 text-muted'
-                  style={{
-                    fontSize: '0.8rem',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => seekToHandler(f)}
-                >
-                  {getTime(f.mediaTime)}
-                  {f.annotationUrl && (
-                    <span
-                      className='material-icons-round'
+                <Row sm='auto'>
+                  <Col className='align-self-center'>
+                    {f.user.profile.imageUrl && (
+                      <Image
+                        src={f.user.profile.imageUrl}
+                        roundedCircle
+                        style={{ 
+                          height: '32px', 
+                          position: 'relative',
+                          top: '-5px'
+                        }}
+                      />
+                    )}
+                  </Col>
+                  <Col className='px-0'>
+                    <Card.Title className='h6 text-light'>{f.user.username}</Card.Title>
+                    <Card.Subtitle
+                      className='text-muted mb-2'
                       style={{
-                        fontSize: '16px',
+                        fontSize: '0.8rem',
+                        cursor: 'pointer',
                         position: 'relative',
-                        top: '2px',
-                        marginLeft: '4px',
+                        top: '-3px',
                       }}
+                      onClick={() => seekToHandler(f)}
                     >
-                      brush
-                    </span>
-                  )}
-                </Card.Subtitle>
+                      {f.annotationUrl && (
+                        <span
+                          className='material-icons-round'
+                          style={{
+                            fontSize: '16px',
+                            position: 'relative',
+                            top: '2px',
+                            marginRight: '2px',
+                            marginLeft: '-1px',
+                          }}
+                        >
+                          brush
+                        </span>
+                      )}
+                      {getTime(f.mediaTime)}
+                    </Card.Subtitle>
+                  </Col>
+                </Row>
                 <Card.Text>{f.content}</Card.Text>
               </Card.Body>
               <Row>

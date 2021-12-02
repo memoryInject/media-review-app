@@ -44,6 +44,7 @@ db.sqlite3
 media
 backend/client/build
 backend/uploads/static
+backend/staticfiles
 
 npm-debug.log*
 yarn-debug.log*

@@ -172,7 +172,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'client/build/static'),
     os.path.join(BASE_DIR, 'client/api-docs/static'),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'uploads', 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads', 'media')

@@ -23,34 +23,43 @@ import {
   FEEDBACK_TO_UPDATE_RESET,
   FEEDBACK_TO_DELETE_RESET,
   FEEDBACK_TO_DELETE,
+  FEEDBACK_HEIGHT_SET,
+  FEEDBACK_HEIGHT_RESET
 } from '../constants/feedbackConstants';
 
 export const feedbackListReducer = (
-  state = { feedbacks: null, active: null },
+  state = { feedbacks: null, active: null, height: null },
   action
 ) => {
   switch (action.type) {
     case FEEDBACK_LIST_REQUEST:
-      return { loading: true, feedbacks: null, active: state.active };
+      return { loading: true, feedbacks: null, active: state.active, height: state.height };
 
     case FEEDBACK_LIST_SUCCESS:
       return {
         loading: false,
         feedbacks: action.payload,
         active: state.active,
+        height: state.height
       };
 
     case FEEDBACK_LIST_FAIL:
-      return { loading: false, error: action.payload };
+      return { loading: false, error: action.payload, height: state.height };
 
     case FEEDBACK_LIST_RESET:
-      return { loading: false, feedbacks: null, active: null };
+      return { loading: false, feedbacks: null, active: null, height: state.height };
 
     case FEEDBACK_ACTIVE_REQUEST:
       return { ...state, active: action.payload };
 
     case FEEDBACK_ACTIVE_RESET:
       return { ...state, active: null };
+
+    case FEEDBACK_HEIGHT_SET:
+      return { ...state, height: action.payload }
+
+    case FEEDBACK_HEIGHT_RESET:
+      return { ...state, height: null }
 
     default:
       return state;
