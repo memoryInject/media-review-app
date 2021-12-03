@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Row, Col, Spinner } from 'react-bootstrap';
+import { Row, Col, Spinner, Alert } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
 import screenfull from 'screenfull';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,6 +32,7 @@ const ReactPlayerComp = () => {
   const [loop, setLoop] = useState(false);
   const [seeking, setSeeking] = useState(false);
   const [showNoMediaMessage, setShowNoMediaMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false);
 
   const [volSeeking, setVolSeeking] = useState(false);
   const [showAnnotaionImage, setShowAnnotationImage] = useState(true);
@@ -70,7 +71,6 @@ const ReactPlayerComp = () => {
         setShowNoMediaMessage(false);
       }
     };
-    //setFeedbackListHeight();
     let timer1 = setTimeout(() => mediaCheck(), 2000);
     return () => clearTimeout(timer1);
   }, [loading, media]);
@@ -139,6 +139,7 @@ const ReactPlayerComp = () => {
 
   // When player is ready
   const onReadyHandler = () => {
+    setErrorMessage(false);
     if (player && player.current) {
       const videoHeight = player.current.wrapper.childNodes[0].videoHeight;
       const videoWidth = player.current.wrapper.childNodes[0].videoWidth;
@@ -156,6 +157,11 @@ const ReactPlayerComp = () => {
         })
       );
     }
+  };
+
+  const handleError = (e) => {
+    console.log('onError', e);
+    setErrorMessage(true);
   };
 
   const handlePlayPause = () => {
@@ -310,7 +316,7 @@ const ReactPlayerComp = () => {
         <Col style={{ position: 'relative' }}>
           {error && <Message>{error}</Message>}
 
-          {/*Custom Loader*/}
+          {/*Custom Loader and messages*/}
           {true && (
             <>
               <div
@@ -353,6 +359,50 @@ const ReactPlayerComp = () => {
               </div>
             </>
           )}
+
+          {/*Custom error message if there is a problem playing video*/}
+          {errorMessage && (
+            <div
+              style={{
+                zIndex: '12',
+                minHeight: `${
+                  progressHolder.current &&
+                  720 * (progressHolder.current.clientWidth / 1280) + 5.5
+                }px`,
+                height: `${adjHeight + 5.5}px`,
+                width: `${
+                  progressHolder &&
+                  progressHolder.current &&
+                  progressHolder.current.clientWidth
+                }px`,
+                //width: '100%',
+                transition: 'all 0.2s ease-in-out',
+                backgroundColor: 'rgba(255, 0, 0, 0)',
+                top: `${top}px`,
+                position: 'absolute',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: `${adjHeight / 2 - 50}px`,
+                  left: `${
+                    progressHolder &&
+                    progressHolder.current &&
+                    progressHolder.current.clientWidth / 2 - 145
+                  }px`,
+                }}
+                className='text-center p-2'
+              >
+                <Alert variant='danger'>
+                  <span className='material-icons-round h3 blink'>error</span>
+                  <h6>There is an error playing this video!</h6>
+                </Alert>
+              </div>
+            </div>
+          )}
+
+          {/*ReactPlayer - Video player*/}
           {media && media.asset.url && (
             <ReactPlayer
               url={media.asset.url}
@@ -370,14 +420,13 @@ const ReactPlayerComp = () => {
               onPlay={handlePlay}
               onPause={handlePause}
               onEnded={handleEnded}
-              onError={(e) => console.log('onError', e)}
+              onError={(e) => handleError(e)}
               onProgress={handleProgress}
               onDuration={handleDuration}
               progressInterval={1}
               style={{
                 backgroundColor: 'black',
                 display: `${showPlayer ? 'block' : 'none'}`,
-                //display: 'none',
                 transition: 'all 0.2s ease-in-out',
               }}
             />

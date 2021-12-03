@@ -13,6 +13,7 @@ __node_modules/
 # testing
 frontend/coverage
 /cypress/videos
+/cypress/screenshots
 
 # production
 frontend/build

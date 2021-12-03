@@ -60,6 +60,8 @@ const FeedbackList = () => {
 
   const cardFocus = useRef(null);
 
+  const [delay, setDelay] = useState(false);
+
   const [formattedFeedbacks, setFormattedFeedbacks] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
@@ -84,6 +86,13 @@ const FeedbackList = () => {
     }
   }, [formattedFeedbacks, active]);
 
+  // setup a short delay for showing feedbacks, it improve UI/UX by not showing,
+  // cached feedbacks when this componet first loads
+  useEffect(() => {
+    let timer1 = setTimeout(() => setDelay(true), 100);
+    return () => clearTimeout(timer1);
+  }, [feedbacks]);
+
   // Run this after the confirm from ModelDialog
   useEffect(() => {
     if (confirmDelete && feedbackToDelete) {
@@ -106,18 +115,6 @@ const FeedbackList = () => {
   const getTime = (seconds) => {
     const secToDate = new Date(seconds * 1000).toISOString();
     return `${secToDate.substr(14, 5)}:${secToDate.substr(20, 2)}`;
-  };
-
-  // For better UI/UX, this will help to hide old feedbacklist instantly
-  const checkReview = () => {
-    if (review && feedbacks && feedbacks.length > 0) {
-      if (review.id !== feedbacks[0].media.review) {
-        return false;
-      } else {
-        return true;
-      }
-    }
-    return true;
   };
 
   // This will calculate the hight of the feedback list
@@ -167,22 +164,44 @@ const FeedbackList = () => {
         height: '99%',
       }}
     >
-      <h6
-        style={{
-          paddingLeft: '0.7rem',
-          paddingTop: '0.0rem',
-          color: '#888888',
-        }}
-        className='text-start'
-      >
-        <span
-          className='material-icons-round'
-          style={{ transform: 'translate(-5px, 8px)' }}
-        >
-          chat
-        </span>
-        Feedback
-      </h6>
+      <Row>
+        <Col>
+          <h6
+            style={{
+              paddingLeft: '0.7rem',
+              paddingTop: '0.0rem',
+              color: '#888888',
+            }}
+            className='text-start'
+          >
+            <span
+              className='material-icons-round'
+              style={{ transform: 'translate(-5px, 8px)' }}
+            >
+              chat
+            </span>
+            Feedback
+          </h6>
+        </Col>
+        <Col className='d-flex flex-row-reverse'>
+          {(loading || feedbackDeleteLoading) && (
+            <Spinner
+              animation='grow'
+              role='status'
+              style={{
+                //margin: 'auto',
+                height: '20px',
+                width: '20px',
+                display: 'block',
+              }}
+              className='m-2 text-muted'
+            >
+              <span className='visually-hidden'>Loading...</span>
+            </Spinner>
+          )}
+        </Col>
+      </Row>
+
       <div
         className='scrollbar'
         id='style-1'
@@ -199,20 +218,7 @@ const FeedbackList = () => {
           //transition: 'all 0.1s ease-in-out',
         }}
       >
-        {loading || feedbackDeleteLoading ? (
-          <Spinner
-            animation='grow'
-            role='status'
-            style={{
-              margin: 'auto',
-              display: 'block',
-            }}
-          >
-            <span className='visually-hidden'>Loading...</span>
-          </Spinner>
-        ) : (
-          error && <Message>{error}</Message>
-        )}
+        {error && <Message>{error}</Message>}
         {feedbackDeleteError && <Message>{feedbackDeleteError}</Message>}
 
         {/*If there is no feedback in the media*/}
@@ -223,7 +229,7 @@ const FeedbackList = () => {
           </div>
         )}
 
-        {checkReview() &&
+        {delay &&
           feedbacks &&
           formattedFeedbacks.map((f, idx) => (
             <Card
@@ -244,16 +250,18 @@ const FeedbackList = () => {
                       <Image
                         src={f.user.profile.imageUrl}
                         roundedCircle
-                        style={{ 
-                          height: '32px', 
+                        style={{
+                          height: '32px',
                           position: 'relative',
-                          top: '-5px'
+                          top: '-5px',
                         }}
                       />
                     )}
                   </Col>
                   <Col className='px-0'>
-                    <Card.Title className='h6 text-light'>{f.user.username}</Card.Title>
+                    <Card.Title className='h6 text-light'>
+                      {f.user.username}
+                    </Card.Title>
                     <Card.Subtitle
                       className='text-muted mb-2'
                       style={{

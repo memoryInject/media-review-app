@@ -86,7 +86,7 @@ let feedbacks = [
     mediaTime: 3.14,
     annotationUrl: null,
     user,
-    media,
+    media: {...media, review: 1},
     parent: null,
   },
   {
@@ -95,7 +95,7 @@ let feedbacks = [
     mediaTime: 3.14,
     annotationUrl: null,
     user: admin,
-    media,
+    media: {...media, review: 1},
     parent: null,
   },
 ];

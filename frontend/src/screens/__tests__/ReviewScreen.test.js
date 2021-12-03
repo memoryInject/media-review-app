@@ -25,6 +25,14 @@ jest.mock('../../components/ReactPlayerComp', () => () => {
   );
 });
 
+//jest.mock('../../components/FeedbackList', () => () => {
+  //return (
+    //<div>
+      //<h1>FeedbackList</h1>
+    //</div>
+  //);
+//});
+
 // Display state for global toast message
 function DisplayState() {
   const toastDetails = useSelector((state) => state.toastDetails);
@@ -140,7 +148,7 @@ let feedbacks = [
     mediaTime: 3.14,
     annotationUrl: null,
     user,
-    mediaB,
+    mediaB: {...mediaB, review: 1},
     parent: null,
   },
   {
@@ -149,7 +157,7 @@ let feedbacks = [
     mediaTime: 3.14,
     annotationUrl: null,
     user: admin,
-    mediaB,
+    mediaB: {...mediaB, review: 1},
     parent: null,
   },
 ];
@@ -242,9 +250,6 @@ beforeEach(async () => {
 
 test('review screen show expected components', async () => {
   expect(screen.getByText('ReactPlayerComp')).toBeInTheDocument();
-
-  // Feedback list
-  expect(screen.getByText('Feedback')).toBeInTheDocument();
 
   // Feedback list
   expect(screen.getByText('Feedback')).toBeInTheDocument();
