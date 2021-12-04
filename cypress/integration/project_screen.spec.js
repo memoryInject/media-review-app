@@ -5,6 +5,9 @@ describe('Review-List', () => {
     // Disable service worker
     cy.disableServiceWorker();
 
+    //Clean up local storage
+    cy.clearLocalStorage()
+
     // Clean up database
     cy.exec('npm run flush-data');
 

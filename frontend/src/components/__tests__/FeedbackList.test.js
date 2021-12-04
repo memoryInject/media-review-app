@@ -134,20 +134,26 @@ beforeEach(async () => {
 
 test('show feedback list', async () => {
   //screen.debug();
+  // Need to wait here because there is a delay state in FeedbackList componet
+  // which use timeout.
+  await waitFor(()=>screen.findByText(feedbacks[0].content))
   expect(screen.getByText(feedbacks[0].content)).toBeInTheDocument();
   expect(screen.getByText(feedbacks[1].content)).toBeInTheDocument();
 });
 
 test('Logged in user can see edit and delete button for user written feedback', async () => {
+  await waitFor(()=>screen.findByText(feedbacks[0].content))
   expect(screen.queryAllByText('edit_note')).toHaveLength(1);
   expect(screen.queryAllByText('delete_forever')).toHaveLength(1);
 });
 
 test('Logged in user can see reply button for feedbacks', async () => {
+  await waitFor(()=>screen.findByText(feedbacks[0].content))
   expect(screen.queryAllByText('REPLY')).toHaveLength(2);
 });
 
 test('Logged in user can click delete button and show the delete confirm modal', async () => {
+  await waitFor(()=>screen.findByText(feedbacks[0].content))
   fireEvent.click(screen.getByText('delete_forever'));
   await waitFor(() =>
     screen.getByText(/This will delete the feedback forever!/)
