@@ -91,6 +91,14 @@ registerRoute(
   })
 );
 
+// Cache default profile pics 
+registerRoute(
+  ({ url }) => url.origin === 'https://ui-avatars.com',
+  new StaleWhileRevalidate({
+    cacheName: 'ui-avatars-pics',
+  })
+);
+
 // Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
 registerRoute(
   ({ url }) => url.origin === 'https://fonts.googleapis.com',
