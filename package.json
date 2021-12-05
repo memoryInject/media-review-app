@@ -26,7 +26,6 @@
     "backend-test-shell": "cross-env-shell DB_NAME=media_review_app_test \"cd backend && python manage.py shell\"",
     "build": "npm run build --prefix frontend && rm -rf backend/client/build && mv -f frontend/build ./backend/client/ && cd backend/client/build && cp asset-manifest.json manifest.json service-worker.js service-worker.js.map robots.txt favicon.ico *.png *.xml *.svg ./static",
     "heroku-postbuild": "cross-env-shell NPM_CONFIG_PRODUCTION=false INLINE_RUNTIME_CHUNK=false \"bash ./build-tasks.sh\"",
-    "heroku-release": "cd backend && python manage.py migrate && python manage.py collectstatic",
     "swap-env": "mv .envrc tmp && mv .env.production.local .envrc && mv tmp .env.production.local"
   },
   "repository": {
