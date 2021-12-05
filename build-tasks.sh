@@ -6,3 +6,6 @@ cp asset-manifest.json manifest.json service-worker.js service-worker.js.map rob
 cd ../../
 if [ ! -e "db.sqlite3" ]; then touch db.sqlite3; fi
 python manage.py collectstatic
+python manage.py migrate
+cd ../
+npm run load-data-dev
