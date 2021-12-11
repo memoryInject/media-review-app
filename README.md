@@ -1,8 +1,8 @@
 
-# Media Review App
+# Media-Review App
 [![CircleCI](https://circleci.com/gh/memoryInject/media-review-app/tree/main.svg?style=svg)](https://circleci.com/gh/memoryInject/media-review-app/tree/main)
 
-Media review PWA(Progressive Web App) is a platform for review media by team collaboration in
+Media-Review PWA(Progressive Web App) is a platform for review media by team collaboration in
 cloud, integrates reviewers, creators, content and tools needs to be
 more engaged and effective review process.
 
