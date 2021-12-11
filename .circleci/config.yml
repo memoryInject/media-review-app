@@ -6,11 +6,19 @@ orbs:
   # so you dont have to copy and paste it everywhere.
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
   python: circleci/python@1.2
+  # Invoke the heroku orb
+  heroku: circleci/heroku@1.2.6
 
 workflows:
-  django-react-cypress-tests:
+  django-react-cypress-tests_heroku-deploy:
     jobs:
       - build-and-test
+      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only: main
 
 jobs:
   build-and-test:

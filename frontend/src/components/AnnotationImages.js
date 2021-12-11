@@ -18,6 +18,7 @@ const AnnotationImages = () => {
           ) {
             return (
               <Image
+                alt='annotation image'
                 key={idx}
                 src={f.annotationUrl}
                 style={{ height, width, position: 'absolute' }}

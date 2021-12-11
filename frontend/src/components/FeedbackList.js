@@ -21,6 +21,7 @@ import {
   FEEDBACK_TO_UPDATE_RESET,
   FEEDBACK_TO_DELETE,
   FEEDBACK_DELETE_RESET,
+  FEEDBACK_CREATE_RESET
 } from '../constants/feedbackConstants';
 
 const FeedbackList = () => {
@@ -60,8 +61,6 @@ const FeedbackList = () => {
 
   const cardFocus = useRef(null);
 
-  const [delay, setDelay] = useState(false);
-
   const [formattedFeedbacks, setFormattedFeedbacks] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
@@ -71,8 +70,9 @@ const FeedbackList = () => {
     if (feedbackCreateSuccess) {
       dispatch(seekToPlayer(feedbackCreateSuccess.mediaTime));
       dispatch(seekToPlayer(-1));
+      dispatch({type: FEEDBACK_CREATE_RESET})
     } else {
-      dispatch(seekToPlayer(0.0));
+      dispatch(seekToPlayer(-1));
     }
 
     if (feedbacks) {
@@ -85,13 +85,6 @@ const FeedbackList = () => {
       cardFocus.current.scrollIntoView();
     }
   }, [formattedFeedbacks, active]);
-
-  // setup a short delay for showing feedbacks, it improve UI/UX by not showing,
-  // cached feedbacks when this componet first loads
-  useEffect(() => {
-    let timer1 = setTimeout(() => setDelay(true), 100);
-    return () => clearTimeout(timer1);
-  }, [feedbacks]);
 
   // Run this after the confirm from ModelDialog
   useEffect(() => {
@@ -229,7 +222,7 @@ const FeedbackList = () => {
           </div>
         )}
 
-        {delay &&
+        {
           feedbacks &&
           formattedFeedbacks.map((f, idx) => (
             <Card
@@ -244,10 +237,11 @@ const FeedbackList = () => {
             >
               {active && active.id === f.id && <span ref={cardFocus}></span>}
               <Card.Body>
-                <Row sm='auto'>
+                <Row xs='auto'>
                   <Col className='align-self-center'>
                     {f.user.profile.imageUrl && (
                       <Image
+                        alt='user profile picture'
                         src={f.user.profile.imageUrl}
                         roundedCircle
                         style={{

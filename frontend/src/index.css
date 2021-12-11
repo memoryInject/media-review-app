@@ -50,8 +50,8 @@ main {
 }
 
 .project-top-bar {
-  filter: blur(1px);
   -webkit-filter: blur(1px);
+  filter: blur(1px);
 }
 
 .project-top-bar-gradient {
@@ -277,8 +277,8 @@ main {
 
 /*Blink animation*/
 .blink {
-        animation: blink-animation 1s steps(5, start) infinite;
         -webkit-animation: blink-animation 1s steps(5, start) infinite;
+        animation: blink-animation 1s steps(5, start) infinite;
       }
       @keyframes blink-animation {
         to {

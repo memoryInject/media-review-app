@@ -99,6 +99,14 @@ registerRoute(
   })
 );
 
+// Cache cloudinary assets (this might me expensive for storage)
+registerRoute(
+  ({ url }) => url.origin === 'https://res.cloudinary.com',
+  new StaleWhileRevalidate({
+    cacheName: 'cloudinary-assets',
+  })
+);
+
 // Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
 registerRoute(
   ({ url }) => url.origin === 'https://fonts.googleapis.com',

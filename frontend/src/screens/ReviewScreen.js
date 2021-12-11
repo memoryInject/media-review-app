@@ -40,6 +40,7 @@ const ReviewScreen = ({ history, match }) => {
       history.push('/login');
     } else {
       dispatch({ type: MEDIA_DETAILS_RESET });
+      dispatch({ type: FEEDBACK_LIST_RESET });
       if (
         !review ||
         (review && review.id.toString() !== match.params.reviewId.toString())
@@ -48,7 +49,6 @@ const ReviewScreen = ({ history, match }) => {
         dispatch({ type: PLAYER_RESET });
         dispatch({ type: MEDIA_LIST_RESET });
         dispatch({ type: PLAYLIST_DETAILS_RESET });
-        dispatch({ type: FEEDBACK_LIST_RESET });
         dispatch({ type: FEEDBACK_CREATE_RESET });
         dispatch(listReviewDetails(match.params.reviewId));
       }

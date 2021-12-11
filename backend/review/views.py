@@ -437,6 +437,14 @@ class MediaList(generics.ListCreateAPIView):
             raise serializers.ValidationError(
                 {"detail": "Review does not exists"})
 
+        # If the review exists clear the memory cache for the review
+        # because review image update every time assosiated media changes.
+        try:
+            cache.delete_many(cache.keys(
+                f"*.review_detail_{self.request.data.get('review')}*"))
+        except Exception as e:
+            print(e)
+
         try:
             asset = Asset.objects.get(id=self.request.data.get('asset'))
         except ObjectDoesNotExist:
@@ -524,6 +532,11 @@ class MediaDetail(generics.RetrieveUpdateDestroyAPIView):
         try:
             cache.delete_many(cache.keys('*.media_list*'))
             cache.delete_many(cache.keys(f"*.media_detail_{kwargs['pk']}*"))
+
+            # If the review exists clear the memory cache for the review
+            # because review image update every time assosiated media changes.
+            cache.delete_many(cache.keys(
+                f"*.review_detail_{self.get_object().review.id}*"))
         except Exception as e:
             print(e)
 
@@ -534,6 +547,11 @@ class MediaDetail(generics.RetrieveUpdateDestroyAPIView):
         try:
             cache.delete_many(cache.keys('*.media_list*'))
             cache.delete_many(cache.keys(f"*.media_detail_{kwargs['pk']}*"))
+
+            # If the review exists clear the memory cache for the review
+            # because review image update every time assosiated media changes.
+            cache.delete_many(cache.keys(
+                f"*.review_detail_{self.get_object().review.id}*"))
         except Exception as e:
             print(e)
 

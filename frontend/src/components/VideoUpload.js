@@ -61,17 +61,19 @@ const VideoUpload = ({ match }) => {
   // Reset all the state when open upload window
   useEffect(() => {
     const userCheck = () => {
-      const filterdUser = review.collaborators.filter(coll => coll.id === user.id)
+      const filterdUser = review.collaborators.filter(
+        (coll) => coll.id === user.id
+      );
       if (!filterdUser.length) {
         dispatch({ type: MEDIA_CREATE_HIDE });
         dispatch(messageToast('User is not a collaborator'));
         dispatch(variantToast('danger'));
         dispatch(showToast(true));
       }
-    }
+    };
 
     if (show) {
-      userCheck()
+      userCheck();
       setShowButton(true);
       setUploading(false);
       setShowUpdate(false);
@@ -104,7 +106,7 @@ const VideoUpload = ({ match }) => {
       dispatch(messageToast('Media updated successfully'));
       dispatch(variantToast('success'));
       dispatch(showToast(true));
-      dispatch(listMedia(match.params.reviewId))
+      dispatch(listMedia(match.params.reviewId));
     }
   }, [mediaUpdated, dispatch, match]);
 
@@ -112,7 +114,7 @@ const VideoUpload = ({ match }) => {
     dispatch({ type: MEDIA_CREATE_HIDE });
     dispatch({ type: MEDIA_CREATE_PARENT_RESET });
     if (showUpdate) {
-      dispatch(listMedia(match.params.reviewId))
+      dispatch(listMedia(match.params.reviewId));
     }
   };
 
@@ -134,11 +136,10 @@ const VideoUpload = ({ match }) => {
       // TODO: replace dummy url
       if (file) {
         setShowButton(false);
-        const { data } = await axios.post(
-          '/api/v1/cloud/upload/dummy/',
-          formData,
-          config
-        );
+        const url = '/api/v1/cloud/upload/dummy/';
+        //const url = '/api/v1/cloud/upload/video/';
+
+        const { data } = await axios.post(url, formData, config);
 
         if (parent) {
           dispatch(

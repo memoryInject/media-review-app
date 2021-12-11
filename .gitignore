@@ -32,6 +32,7 @@ temp/
 .envrc
 .session.vim
 .cache.fzf
+dev-notes.txt
 
 # python
 env/

@@ -35,7 +35,7 @@ const Header = () => {
               >
                 movie
               </span>
-              &nbsp; Media-Review
+              <span className='d-none d-md-inline'> &nbsp; Media-Review</span>
             </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
@@ -71,6 +71,7 @@ const Header = () => {
                   className='d-block d-sm-block d-md-block d-lg-none'
                 >
                   <Image
+                    alt='user profile image'
                     src={user.profile.imageUrl}
                     roundedCircle
                     style={{

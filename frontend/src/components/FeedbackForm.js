@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Loader from './Loader';
 import Message from './Message';
 import isCollaborator from '../utils/isCollaborator';
 
@@ -12,12 +11,16 @@ import {
   activeFeedback,
   updateFeedback,
 } from '../actions/feedbackActions';
+
 import {
   drawableTypeAnnotation,
   isEmptyAnnotation,
   setColorAnnotation,
   setActiveAnnotation,
 } from '../actions/annotationActions';
+
+import { showToast, messageToast, variantToast } from '../actions/toastActions';
+
 import {
   ANNOTATION_IMAGE_EXPORT,
   ANNOTATION_IMAGE_RESET,
@@ -75,10 +78,10 @@ const FeedbackForm = () => {
           window.pageYOffset + formFeedback.current.getBoundingClientRect().top;
         dispatch({ type: FEEDBACK_HEIGHT_SET, payload: currentHeight });
       }
-    }
+    };
     //setFeedbackListHeight();
-    let timer1 = setTimeout(()=>setFeedbackListHeight())
-    return () => clearTimeout(timer1)
+    let timer1 = setTimeout(() => setFeedbackListHeight());
+    return () => clearTimeout(timer1);
   }, [dispatch, height]);
 
   // Run this if there is an annotaion exists
@@ -151,6 +154,11 @@ const FeedbackForm = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    if (feedback === '') {
+      dispatch(messageToast('Feedback should not be empty.'));
+      dispatch(variantToast('danger'));
+      return dispatch(showToast(true));
+    }
     if (!isEmpty) {
       // Check if the annotaion exists
       dispatch({ type: ANNOTATION_IMAGE_EXPORT });
@@ -203,53 +211,67 @@ const FeedbackForm = () => {
 
   return (
     <Row className='justify-content-md-center' ref={formFeedback}>
-      {image && image.loading ? (
-        <Loader />
-      ) : feedbackCreateLoading ? (
-        <Loader />
-      ) : feedbackUpdateLoading ? (
-        <Loader />
-      ) : (
-        <Col md={10}>
-          <div
-            className='my-2 p-3'
-            style={{
-              backgroundColor: '#303030',
-              borderRadius: '.25rem',
-              //marginLeft: '12rem',
-              //marginRight: '12rem',
-              width: '100%',
-              display: 'inline-block',
-            }}
-          >
-            <Form onSubmit={submitHandler}>
-              <Form.Group controlId='email'>
-                <Form.Control
-                  data-cy='feedback-textarea'
-                  as='textarea'
-                  rows={2}
-                  disabled={
-                    user && review && !isCollaborator(user, review)
-                      ? true
-                      : false
-                  }
-                  placeholder={
-                    user && review && !isCollaborator(user, review)
-                      ? 'User is not a collaborator!'
-                      : reply
-                      ? `@${reply.user.username}: ${reply.content}`
-                      : 'Write feedback...'
-                  }
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  className='text-white'
-                  style={{
-                    backgroundColor: '#3A3A3A',
-                    border: '0px',
-                  }}
-                ></Form.Control>
-              </Form.Group>
-              {user && review && media && isCollaborator(user, review) && (
+      <Col md={10}>
+        <div
+          className='my-2 p-3'
+          style={{
+            backgroundColor: '#303030',
+            borderRadius: '.25rem',
+            //marginLeft: '12rem',
+            //marginRight: '12rem',
+            width: '100%',
+            display: 'inline-block',
+          }}
+        >
+          <Form onSubmit={submitHandler}>
+            <Form.Group controlId='email'>
+              <Form.Control
+                data-cy='feedback-textarea'
+                as='textarea'
+                rows={2}
+                disabled={
+                  user && review && !isCollaborator(user, review) ? true : false
+                }
+                placeholder={
+                  user && review && !isCollaborator(user, review)
+                    ? 'User is not a collaborator!'
+                    : reply
+                    ? `@${reply.user.username}: ${reply.content}`
+                    : 'Write feedback...'
+                }
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+                className='text-white'
+                style={{
+                  backgroundColor: '#3A3A3A',
+                  border: '0px',
+                }}
+              ></Form.Control>
+            </Form.Group>
+            {(image && image.loading) ||
+            feedbackCreateLoading ||
+            feedbackUpdateLoading ? (
+              <Button
+                className='float-end'
+                disabled
+                style={{
+                  marginTop: '0.65rem',
+                }}
+              >
+                <Spinner
+                  as='span'
+                  animation='grow'
+                  size='sm'
+                  role='status'
+                  aria-hidden='true'
+                />
+                &nbsp;Loading...
+              </Button>
+            ) : (
+              user &&
+              review &&
+              media &&
+              isCollaborator(user, review) && (
                 <>
                   <Button
                     data-cy='feedback-submit'
@@ -292,203 +314,203 @@ const FeedbackForm = () => {
                     )
                   )}
                 </>
-              )}
-            </Form>
-
-            {/*Canvas Draw Options Start*/}
-            <div
-              style={{
-                marginTop: '1.0rem',
-                top: '-6px',
-                border: '1px solid #222222',
-                borderRadius: '0.25rem',
-                display: 'inline-block',
-              }}
-            >
-              {/*TODO: refactor onClick action and set active annotation*/}
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0 0.65rem',
-                  color: `${
-                    drawableType === 'CircleDrawable' && active
-                      ? '#FFFFFF'
-                      : '#222222'
-                  }`,
-                }}
-                onClick={() => drawableTypeHandler('CircleDrawable')}
-              >
-                radio_button_unchecked
-              </span>
-
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  //transform: 'rotate(-45deg)',
-                  cursor: 'pointer',
-                  fontSize: '28px',
-                  padding: '0 0.65rem',
-                  color: `${
-                    drawableType === 'ArrowDrawable' && active
-                      ? '#FFFFFF'
-                      : '#222222'
-                  }`,
-                }}
-                onClick={() => drawableTypeHandler('ArrowDrawable')}
-              >
-                trending_flat
-              </span>
-
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0 0.65rem',
-                  color: `${
-                    drawableType === 'FreePathDrawable' && active
-                      ? '#FFFFFF'
-                      : '#222222'
-                  }`,
-                }}
-                onClick={() => drawableTypeHandler('FreePathDrawable')}
-              >
-                brush
-              </span>
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0 0.65rem',
-                  color: '#E74C3C',
-                }}
-                onClick={clearAnnotationHandler}
-              >
-                highlight_off
-              </span>
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0 0.65rem',
-                  color: color,
-                }}
-                onClick={() => setShowColorPalette(!showColorPalette)}
-              >
-                circle
-              </span>
-            </div>
-
-            {/*Color Palette Start*/}
-            <div
-              style={{
-                //backgroundColor: '#222222',
-                borderRadius: '0.25rem',
-                marginTop: '0.4rem',
-                display: `${showColorPalette ? 'block' : 'none'}`,
-              }}
-              className='text-center'
-            >
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0.4rem 0.2rem',
-                  color: '#E74C3C',
-                }}
-                onClick={() => dispatch(setColorAnnotation('#E74C3C'))}
-              >
-                circle
-              </span>
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0.4rem 0.2rem',
-                  color: '#F38D1C',
-                }}
-                onClick={() => dispatch(setColorAnnotation('#F38D1C'))}
-              >
-                circle
-              </span>
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0.4rem 0.2rem',
-                  color: '#00BC71',
-                }}
-                onClick={() => dispatch(setColorAnnotation('#00BC71'))}
-              >
-                circle
-              </span>
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0.4rem 0.2rem',
-                  color: '#3498DB',
-                }}
-                onClick={() => dispatch(setColorAnnotation('#3498DB'))}
-              >
-                circle
-              </span>
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0.4rem 0.2rem',
-                  color: '#841397',
-                }}
-                onClick={() => dispatch(setColorAnnotation('#841397'))}
-              >
-                circle
-              </span>
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0.4rem 0.2rem',
-                  color: 'white',
-                }}
-                onClick={() => dispatch(setColorAnnotation('white'))}
-              >
-                circle
-              </span>
-              <span
-                className='material-icons-round noselect'
-                style={{
-                  cursor: 'pointer',
-                  padding: '0.4rem 0.2rem',
-                  color: 'black',
-                }}
-                onClick={() => dispatch(setColorAnnotation('black'))}
-              >
-                circle
-              </span>
-            </div>
-            {/*Color Palette end*/}
-            {/*Canvas Draw Options End*/}
-            {/*Error Messages start*/}
-            {image && image.error ? (
-              <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
-                <Message>{image.error}</Message>
-              </div>
-            ) : feedbackCreateError ? (
-              <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
-                <Message>Error {feedbackCreateError}</Message>
-              </div>
-            ) : (
-              feedbackUpdateError && (
-                <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
-                  <Message>Error {feedbackUpdateError}</Message>
-                </div>
               )
             )}
-            {/*Error Messages end*/}
+          </Form>
+
+          {/*Canvas Draw Options Start*/}
+          <div
+            style={{
+              marginTop: '1.0rem',
+              top: '-6px',
+              border: '1px solid #222222',
+              borderRadius: '0.25rem',
+              display: 'inline-block',
+            }}
+          >
+            {/*TODO: refactor onClick action and set active annotation*/}
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0 0.65rem',
+                color: `${
+                  drawableType === 'CircleDrawable' && active
+                    ? '#FFFFFF'
+                    : '#222222'
+                }`,
+              }}
+              onClick={() => drawableTypeHandler('CircleDrawable')}
+            >
+              radio_button_unchecked
+            </span>
+
+            <span
+              className='material-icons-round noselect'
+              style={{
+                //transform: 'rotate(-45deg)',
+                cursor: 'pointer',
+                fontSize: '28px',
+                padding: '0 0.65rem',
+                color: `${
+                  drawableType === 'ArrowDrawable' && active
+                    ? '#FFFFFF'
+                    : '#222222'
+                }`,
+              }}
+              onClick={() => drawableTypeHandler('ArrowDrawable')}
+            >
+              trending_flat
+            </span>
+
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0 0.65rem',
+                color: `${
+                  drawableType === 'FreePathDrawable' && active
+                    ? '#FFFFFF'
+                    : '#222222'
+                }`,
+              }}
+              onClick={() => drawableTypeHandler('FreePathDrawable')}
+            >
+              brush
+            </span>
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0 0.65rem',
+                color: '#E74C3C',
+              }}
+              onClick={clearAnnotationHandler}
+            >
+              highlight_off
+            </span>
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0 0.65rem',
+                color: color,
+              }}
+              onClick={() => setShowColorPalette(!showColorPalette)}
+            >
+              circle
+            </span>
           </div>
-        </Col>
-      )}
+
+          {/*Color Palette Start*/}
+          <div
+            style={{
+              //backgroundColor: '#222222',
+              borderRadius: '0.25rem',
+              marginTop: '0.4rem',
+              display: `${showColorPalette ? 'block' : 'none'}`,
+            }}
+            className='text-center'
+          >
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0.4rem 0.2rem',
+                color: '#E74C3C',
+              }}
+              onClick={() => dispatch(setColorAnnotation('#E74C3C'))}
+            >
+              circle
+            </span>
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0.4rem 0.2rem',
+                color: '#F38D1C',
+              }}
+              onClick={() => dispatch(setColorAnnotation('#F38D1C'))}
+            >
+              circle
+            </span>
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0.4rem 0.2rem',
+                color: '#00BC71',
+              }}
+              onClick={() => dispatch(setColorAnnotation('#00BC71'))}
+            >
+              circle
+            </span>
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0.4rem 0.2rem',
+                color: '#3498DB',
+              }}
+              onClick={() => dispatch(setColorAnnotation('#3498DB'))}
+            >
+              circle
+            </span>
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0.4rem 0.2rem',
+                color: '#841397',
+              }}
+              onClick={() => dispatch(setColorAnnotation('#841397'))}
+            >
+              circle
+            </span>
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0.4rem 0.2rem',
+                color: 'white',
+              }}
+              onClick={() => dispatch(setColorAnnotation('white'))}
+            >
+              circle
+            </span>
+            <span
+              className='material-icons-round noselect'
+              style={{
+                cursor: 'pointer',
+                padding: '0.4rem 0.2rem',
+                color: 'black',
+              }}
+              onClick={() => dispatch(setColorAnnotation('black'))}
+            >
+              circle
+            </span>
+          </div>
+          {/*Color Palette end*/}
+          {/*Canvas Draw Options End*/}
+          {/*Error Messages start*/}
+          {image && image.error ? (
+            <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
+              <Message>{image.error}</Message>
+            </div>
+          ) : feedbackCreateError ? (
+            <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
+              <Message>Error {feedbackCreateError}</Message>
+            </div>
+          ) : (
+            feedbackUpdateError && (
+              <div style={{ marginTop: '1rem', marginBottom: '0px' }}>
+                <Message>Error {feedbackUpdateError}</Message>
+              </div>
+            )
+          )}
+          {/*Error Messages end*/}
+        </div>
+      </Col>
     </Row>
   );
 };

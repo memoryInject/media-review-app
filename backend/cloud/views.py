@@ -60,7 +60,7 @@ class UploadVideoView(APIView):
 
         data = {
             'asset_name': uploaded_data['original_filename'],
-            'url': uploaded_data['url'],
+            'url': uploaded_data['secure_url'],
             'height': uploaded_data['height'],
             'width': uploaded_data['width'],
             'asset_format': uploaded_data['format'],
@@ -101,7 +101,7 @@ class UploadImageView(APIView):
 
         # Create a thumbnail for prfile pic usages
         uploaded_data['thumbnail'] = 'upload/c_thumb,w_200,h_200,g_face'.join(
-            uploaded_data.get('url').split('upload'))
+            uploaded_data.get('secure_url').split('upload'))
 
         return Response(
             uploaded_data, status=status.HTTP_201_CREATED)
@@ -133,7 +133,7 @@ class UploadDummyView(APIView):
             'etag': '4a3295f532ea9c8fdea8839913fe2582',
             'placeholder': False,
             'url': 'http://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4',
-            'secureUrl': 'https://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4',
+            'secure_url': 'https://res.cloudinary.com/memoryinject/video/upload/v1634395855/media_review_app/videos/jorwbcwp0kfrb9bdubwh.mp4',
             'audio': {
                 'codec': 'aac',
                 'bitRate': '127547',
@@ -165,7 +165,7 @@ class UploadDummyView(APIView):
             print(request.user)
             data = {
                 'asset_name': uploaded_data['original_filename'],
-                'url': uploaded_data['url'],
+                'url': uploaded_data['secure_url'],
                 'height': uploaded_data['height'],
                 'width': uploaded_data['width'],
                 'asset_format': uploaded_data['format'],

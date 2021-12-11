@@ -87,8 +87,9 @@ urlpatterns = [
         content_type='application/json')),
     path('asset-manifest.json', TemplateView.as_view(
         template_name='asset-manifest.json', content_type='application/json')),
-    path('manifest.json', TemplateView.as_view(
-        template_name='manifest.json', content_type='application/json')),
+    path('manifest.webmanifest', TemplateView.as_view(
+        template_name='manifest.webmanifest',
+        content_type='application/manifest+json')),
     path('browserconfig.xml', TemplateView.as_view(
         template_name='browserconfig.xml', content_type='application/xml')),
     re_path(r'main.\w*.chunk.css.map', TemplateView.as_view(

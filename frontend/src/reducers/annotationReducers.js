@@ -40,7 +40,7 @@ export const annotationDeatilsReducer = (
       return { ...state, image: { loading: true } };
 
     case ANNOTATION_IMAGE_SUCCESS:
-      return { ...state, image: { loading: false, url: action.payload.url } };
+      return { ...state, image: { loading: false, url: action.payload.secureUrl } };
 
     case ANNOTATION_IMAGE_FAIL:
       return { ...state, image: { loading: false, error: action.payload } };
