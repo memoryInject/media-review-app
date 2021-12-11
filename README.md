@@ -151,7 +151,7 @@ By default react dev server running on port 3000 and django server running on po
 
 [insomnia-api-spec.json](https://github.com/memoryInject/media-review-app/blob/main/insomnia-api-spec.json): for API testing with [Insomnia](https://insomnia.rest/)
 
-All the API Reference are at: https://media-review.heroku.com/api/v1/
+All the API Reference are at: https://media-review.herokuapp.com/api/v1/
 
 
 ## Deployment
