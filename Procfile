@@ -1,2 +1,2 @@
 release: bash ./release-tasks.sh
-web: cd backend && gunicorn config.wsgi
+web: cd backend && daphene config.asgi:application

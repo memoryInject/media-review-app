@@ -42,6 +42,9 @@ cloudinary.config(
 # Application definition
 
 INSTALLED_APPS = [
+    # Channels
+    'channels',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -167,6 +170,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Custom config
+ASGI_APPLICATION = "config.asgi.application"
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'uploads', 'site_static'),
     os.path.join(BASE_DIR, 'client/build/static'),
