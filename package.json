@@ -41,7 +41,7 @@
   "devDependencies": {
     "concurrently": "^6.2.2",
     "cross-env": "^7.0.3",
-    "cypress": "^9.1.0",
+    "cypress": "^9.5.1",
     "cypress-file-upload": "^5.0.8",
     "lighthouse": "^9.1.0"
   },
