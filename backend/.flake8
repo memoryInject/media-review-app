@@ -4,5 +4,6 @@ exclude =
   __pycache__,
   manage.py,
   settings.py,
+  apps.py,
   __temp__.py,
   cloud/views.py,

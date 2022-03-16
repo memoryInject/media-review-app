@@ -11,6 +11,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+from logging import Filter
 import cloudinary
 
 from pathlib import Path
@@ -169,8 +170,59 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Custom config
+# <--Custom Configurations-->
 ASGI_APPLICATION = "config.asgi.application"
+
+# This will stop logging on testing
+# more info: https://stackoverflow.com/questions/5255657/how-can-i-disable-logging-while-running-unit-tests-in-python-django
+class NotInTestingFilter(Filter):
+    def filter(self, record):
+        import sys
+        if len(sys.argv) > 1 and sys.argv[1] == 'test':
+            return False
+        else:
+            return True
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'testing': {
+            '()': NotInTestingFilter
+        }
+    },
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+        'color': {
+            '()': 'colorlog.ColoredFormatter',
+            'format': '%(log_color)s%(levelname)-8s %(message)s',
+            'log_colors': {
+                'DEBUG':    'cyan',
+                'INFO':     'green',
+                'WARNING':  'yellow',
+                'ERROR':    'red',
+                'CRITICAL': 'bold_red, bg_bold_black',
+            },
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'filters': ['testing'],
+            'formatter': 'color'
+        },
+    },
+    'loggers': {
+        'user': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'uploads', 'site_static'),

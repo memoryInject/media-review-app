@@ -1,5 +1,6 @@
 # review/views.py
 import hashlib
+import logging
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
@@ -24,6 +25,9 @@ from user.utils import is_admin
 from review.utils import filter_project_reviews_by_collaborator,\
     filter_project_reviews_by_created_user,\
     filter_project_reviews_by_review_name
+
+
+logger = logging.getLogger(__name__)
 
 
 # Route: /review/projects/?<user=true>&<s=search_item>&<collaborator=true>
@@ -72,7 +76,7 @@ class ProjectList(generics.ListCreateAPIView):
             # Clean up memory cache
             cache.delete_many(cache.keys('*.project_list*'))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         serializer.save(user=self.request.user)
 
@@ -177,7 +181,7 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
             cache.delete_many(cache.keys('*.project_list*'))
             cache.delete_many(cache.keys(f"*.project_detail_{kwargs['pk']}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         return super().update(request, *args, **kwargs)
 
@@ -187,7 +191,7 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
             cache.delete_many(cache.keys('*.project_list*'))
             cache.delete_many(cache.keys(f"*.project_detail_{kwargs['pk']}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         return super().destroy(request, *args, **kwargs)
 
@@ -222,7 +226,7 @@ class ReviewList(generics.ListCreateAPIView):
         try:
             cache.delete_many(cache.keys('*.review_list*'))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         # Make sure requested project exists
         # We have to add manually project and collaborators to serializer
@@ -315,7 +319,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
             cache.delete_many(cache.keys('*.review_list*'))
             cache.delete_many(cache.keys(f"*.review_detail_{kwargs['pk']}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         return super().update(request, *args, **kwargs)
 
@@ -325,7 +329,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
             cache.delete_many(cache.keys('*.review_list*'))
             cache.delete_many(cache.keys(f"*.review_detail_{kwargs['pk']}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         return super().destroy(request, *args, **kwargs)
 
@@ -346,7 +350,7 @@ class AssetList(generics.ListCreateAPIView):
         try:
             cache.delete_many(cache.keys('*.asset_list*'))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         serializer.save(user=self.request.user)
 
@@ -387,7 +391,7 @@ class AssetDetail(generics.RetrieveUpdateDestroyAPIView):
             cache.delete_many(cache.keys('*.asset_list*'))
             cache.delete_many(cache.keys(f"*.asset_detail_{kwargs['pk']}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         return super().update(request, *args, **kwargs)
 
@@ -397,7 +401,7 @@ class AssetDetail(generics.RetrieveUpdateDestroyAPIView):
             cache.delete_many(cache.keys('*.asset_list*'))
             cache.delete_many(cache.keys(f"*.asset_detail_{kwargs['pk']}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         return super().destroy(request, *args, **kwargs)
 
@@ -420,7 +424,7 @@ class MediaList(generics.ListCreateAPIView):
         try:
             cache.delete_many(cache.keys('*.media_list*'))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         # Check if the request contains review and asset fields
         if self.request.data.get('review') is None or \
@@ -443,7 +447,7 @@ class MediaList(generics.ListCreateAPIView):
             cache.delete_many(cache.keys(
                 f"*.review_detail_{self.request.data.get('review')}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         try:
             asset = Asset.objects.get(id=self.request.data.get('asset'))
@@ -538,7 +542,7 @@ class MediaDetail(generics.RetrieveUpdateDestroyAPIView):
             cache.delete_many(cache.keys(
                 f"*.review_detail_{self.get_object().review.id}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         return super().update(request, *args, **kwargs)
 
@@ -553,7 +557,7 @@ class MediaDetail(generics.RetrieveUpdateDestroyAPIView):
             cache.delete_many(cache.keys(
                 f"*.review_detail_{self.get_object().review.id}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         return super().destroy(request, *args, **kwargs)
 
@@ -575,7 +579,7 @@ class FeedbackList(generics.ListCreateAPIView):
         try:
             cache.delete_many(cache.keys('*.feedback_list*'))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         # Check if the user is in the requested media.review.collaborators list
         if self.request.data.get('media'):
@@ -664,7 +668,7 @@ class FeedbackDetail(generics.RetrieveUpdateDestroyAPIView):
             cache.delete_many(cache.keys('*.feedback_list*'))
             cache.delete_many(cache.keys(f"*.feedback_detail_{kwargs['pk']}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         return super().update(request, *args, **kwargs)
 
@@ -674,7 +678,7 @@ class FeedbackDetail(generics.RetrieveUpdateDestroyAPIView):
             cache.delete_many(cache.keys('*.feedback_list*'))
             cache.delete_many(cache.keys(f"*.feedback_detail_{kwargs['pk']}*"))
         except Exception as e:
-            print(e)
+            logger.info(e)
 
         return super().destroy(request, *args, **kwargs)
 

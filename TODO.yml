@@ -1,0 +1,7 @@
+BACKEND:
+    - Refactor signals to signals.py
+    - Implement logging
+
+
+FRONTEND:
+    - Fix logging error, when logging faild delete stored local data.
