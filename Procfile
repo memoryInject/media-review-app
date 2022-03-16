@@ -1,2 +1,2 @@
 release: bash ./release-tasks.sh
-web: cd backend && daphene config.asgi:application
+web: cd backend && daphne config.asgi:application
