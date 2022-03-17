@@ -1,10 +1,6 @@
 # review/models.py
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete
-
-from review.utils import random_hex_color_code
 
 
 class Project(models.Model):
@@ -16,12 +12,6 @@ class Project(models.Model):
     color = models.CharField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    @receiver(post_save, sender='review.Project')
-    def update_image_url(sender, instance, created, **kwargs):
-        if created:
-            instance.color = random_hex_color_code()
-            instance.save()
 
     def __str__(self):
         return self.project_name
@@ -45,31 +35,6 @@ class Review(models.Model):
         get_user_model(), related_name='reviews')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    @receiver(post_save, sender='review.Media')
-    def update_image_url(sender, instance, created, **kwargs):
-        if created:
-            review = instance.review
-            review.image_url = instance.asset.image_url
-            review.save()
-
-    @receiver(post_delete, sender='review.Media')
-    def change_image_url(sender, instance, **kwargs):
-        review = instance.review
-        media = review.media.order_by('-created_at')
-
-        if len(media):
-            review.image_url = media[0].asset.image_url
-            review.save()
-        else:
-            review.image_url = None
-            review.save()
-
-    @receiver(post_save, sender='review.Media')
-    def update_number_of_media(sender, instance, created, **kwargs):
-        review = instance.review
-        review.number_of_media = len(review.media.all())
-        review.save()
 
     def __str__(self):
         return self.review_name

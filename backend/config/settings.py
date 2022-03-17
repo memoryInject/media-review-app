@@ -91,6 +91,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # Tell Django where to find Reacts index.html file
+        # disable this if you don't have build for development
         'DIRS': [os.path.join(BASE_DIR, 'client/build'),
                  os.path.join(BASE_DIR, 'client/api-docs'), ],
         'APP_DIRS': True,
@@ -217,6 +218,11 @@ LOGGING = {
     },
     'loggers': {
         'user': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'review': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,

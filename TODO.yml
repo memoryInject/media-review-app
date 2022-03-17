@@ -1,6 +1,7 @@
 BACKEND:
-    - Refactor signals to signals.py
-    - Implement logging
+    #- Refactor signals to signals.py
+    #- Implement logging
+    - Refactor review/views into views folder with project, review, media, feedback, asset files
 
 
 FRONTEND:
