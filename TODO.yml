@@ -1,8 +1,13 @@
 BACKEND:
-    #- Refactor signals to signals.py
-    #- Implement logging
     - Refactor review/views into views folder with project, review, media, feedback, asset files
+    - Create messaging app for handling async task like notification
 
 
 FRONTEND:
     - Fix logging error, when logging faild delete stored local data.
+
+
+FEATURE:
+    - Get all the feedback created by the user and show it on user control panel
+    - Notification system
+    - Speech to text AI for writing feedback
