@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'review.apps.ReviewConfig',
     'upload.apps.UploadConfig',
     'cloud.apps.CloudConfig',
+    'messaging.apps.MessagingConfig',
 ]
 
 MIDDLEWARE = [
@@ -174,6 +175,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # <--Custom Configurations-->
 ASGI_APPLICATION = "config.asgi.application"
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
+
+# Celery Configurations
+CELERY_BROKER_URL = 'redis://localhost:6379'
+
 # This will stop logging on testing
 # more info: https://stackoverflow.com/questions/5255657/how-can-i-disable-logging-while-running-unit-tests-in-python-django
 class NotInTestingFilter(Filter):
@@ -223,6 +236,11 @@ LOGGING = {
             'propagate': True,
         },
         'review': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'messaging': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,

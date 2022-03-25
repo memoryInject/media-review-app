@@ -1,5 +1,4 @@
 BACKEND:
-    - Refactor review/views into views folder with project, review, media, feedback, asset files
     - Create messaging app for handling async task like notification
 
 

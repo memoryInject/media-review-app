@@ -1,0 +1,7 @@
+RUNNIG_CELERY_AND_REDIS:
+    - start redis server:
+        - redis-server
+
+    - start celery worker for config(it's the application name):
+        - cd backend
+        - celery -A config worker -l INFO 

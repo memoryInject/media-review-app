@@ -34,6 +34,9 @@ temp/
 .cache.fzf
 dev-notes.txt
 
+# Redis
+*.rdb
+
 # python
 env/
 
