@@ -13,6 +13,9 @@ from messaging.consumers import GROUP_NAME
 channel_layer = get_channel_layer()
 logger = logging.getLogger(__name__)
 
+@shared_task
+def add(x, y):
+    return x + y
 
 @shared_task
 def create_notification(from_user_id, to_user_id, message,
