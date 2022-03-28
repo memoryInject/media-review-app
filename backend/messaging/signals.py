@@ -10,7 +10,6 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 
 from messaging.models import Notification
-from messaging.consumers import USER_CHANNELS
 from messaging.tasks import create_notification
 
 logger = logging.getLogger(__name__)
