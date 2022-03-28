@@ -6,16 +6,18 @@ from django.contrib.auth import get_user_model
 
 class Notification(models.Model):
     """Notification table to handle user notification"""
-    REVIEW = 'RV'
-    FEEDBACK = 'FB'
-    INFO = 'IF'
-    DEEPGRAM = 'DG'
+    INFO = 0
+    PROJECT = 1
+    REVIEW = 2
+    FEEDBACK = 3
+    DEEPGRAM = 4
 
     MSG_TYPE_CHOICES = [
-        (REVIEW, 'Review'),
-        (FEEDBACK, 'Feedback'),
-        (INFO, 'Info'),
-        (DEEPGRAM, 'Deepgram'),
+        (PROJECT, 'project'),
+        (REVIEW, 'review'),
+        (FEEDBACK, 'feedback'),
+        (INFO, 'info'),
+        (DEEPGRAM, 'deepgram'),
     ]
 
     to_user = models.ForeignKey(
@@ -33,8 +35,8 @@ class Notification(models.Model):
     )
 
     message = models.TextField()
-    msg_type = models.CharField(
-        max_length=2, choices=MSG_TYPE_CHOICES, default=INFO)
+    msg_type = models.IntegerField(
+        choices=MSG_TYPE_CHOICES, default=INFO)
 
     url = models.CharField(max_length=255, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
