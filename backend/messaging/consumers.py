@@ -36,7 +36,8 @@ class NotificationConsumer(WebsocketConsumer):
             self.channel_name,
         )
         self.accept()
-        self.send(text_data=json.dumps({'type': 'info', 'msg': 'connected'}))
+        self.send(text_data=json.dumps(
+            {'type': 'info', 'msg': f'connected: {self.user.email} id: {self.user.id}'}))
 
     def disconnect(self, code):
         # Delete the channel_name from assosiated user in USER_CHANNELS
@@ -44,11 +45,11 @@ class NotificationConsumer(WebsocketConsumer):
             USER_CHANNELS.get(self.user.id).remove(self.channel_name)
 
             # Check if it's empty set after remove the channel_name
-            # the delete the dict key for user id
+            # then delete the dict key for user id
             if not USER_CHANNELS[self.user.id]:
                 del USER_CHANNELS[self.user.id]
-            else:
-                logger.info('No channel_name for remove')
+        else:
+            logger.info('No channel_name for remove')
 
             # Leave common room group
             async_to_sync(self.channel_layer.group_discard)(
@@ -78,9 +79,31 @@ class NotificationConsumer(WebsocketConsumer):
         # Send message to WebSocket
         self.send(text_data=json.dumps({'message': message}))
 
-    def notification(self, event):
-        """Receive notification from celery"""
+    def notification_message(self, event):
+        """Send message from notification"""
         message = event['message']
 
         # Send message to WebSocket
         self.send(text_data=json.dumps(message))
+
+    def notification(self, event):
+        """
+        Receive notification from celery, 
+        celery send this as a group message to all connected clients.
+        Here we filter all the connected client based on users then send
+        message using notification_message function above.
+        """
+        message = event['message']
+        users = message.get('users')
+
+        if users:
+            del message['users']
+            for user in users:
+                if user in USER_CHANNELS:
+                    for channel in USER_CHANNELS.get(user):
+                        async_to_sync(self.channel_layer.send)(
+                            channel,
+                            {
+                                'type': 'notification_message',
+                                'message': message
+                            })

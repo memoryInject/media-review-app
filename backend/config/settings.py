@@ -338,7 +338,7 @@ REDIS_CACHE = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
-    }
+    },
 }
 
 # Dynamically change the cache based on env variable
