@@ -48,6 +48,5 @@ class Notification(models.Model):
                 result = value
         return result
 
-
     def __str__(self):
         return self.get_message_type()

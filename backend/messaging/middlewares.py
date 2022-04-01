@@ -25,5 +25,9 @@ class TokenAuthMiddleware(BaseMiddleware):
         query_dict = dict(parse_qsl(scope['query_string'].decode()))
         token_key = query_dict.get('token')
 
-        scope['user'] = AnonymousUser() if not token_key else await get_user(token_key)
+        if not token_key:
+            scope['user'] = AnonymousUser()
+        else:
+            scope['user'] = await get_user(token_key)
+
         return await super().__call__(scope, receive, send)

@@ -1,13 +1,13 @@
 # messaging/signals.py
 
 import logging
-from threading import Thread
+# from threading import Thread
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save  # , post_delete
 
 from messaging.models import Notification
 from messaging.tasks import create_notification
@@ -38,18 +38,16 @@ def notification_project_created(sender, instance, created, **kwargs):
             channel_users = [admin.id] if admin.id != from_user.id else None
 
             if channel_users:
-                process_thread = Thread(
-                    target=create_notification.delay,
-                    kwargs={
-                        'from_user_id': from_user.id,
-                        'to_user_id': admin.id,
-                        'message': message,
-                        'msg_type': Notification.PROJECT,
-                        'url': url,
-                        'channel_users': channel_users,
-                        'msg_group': 'notification'
-                    })
-                process_thread.start()
+                data = {
+                    'from_user_id': from_user.id,
+                    'to_user_id': admin.id,
+                    'message': message,
+                    'msg_type': Notification.PROJECT,
+                    'url': url,
+                    'channel_users': channel_users,
+                    'msg_group': 'notification'
+                }
+                create_notification.delay(**data)
 
 
 @receiver(post_save, sender='review.Review')
@@ -79,15 +77,13 @@ def notification_review_created(sender, instance, created, **kwargs):
             channel_users = [admin.id] if admin.id != from_user.id else None
 
             if channel_users:
-                process_thread = Thread(
-                    target=create_notification.delay,
-                    kwargs={
-                        'from_user_id': from_user.id,
-                        'to_user_id': admin.id,
-                        'message': message,
-                        'msg_type': Notification.REVIEW,
-                        'url': url,
-                        'channel_users': channel_users,
-                        'msg_group': 'notification'
-                    })
-                process_thread.start()
+                data = {
+                    'from_user_id': from_user.id,
+                    'to_user_id': admin.id,
+                    'message': message,
+                    'msg_type': Notification.REVIEW,
+                    'url': url,
+                    'channel_users': channel_users,
+                    'msg_group': 'notification'
+                }
+                create_notification.delay(**data)

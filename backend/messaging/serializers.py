@@ -17,8 +17,10 @@ class UserField(serializers.RelatedField):
         }
         return fields
 
+
 class MsgTypeField(serializers.ReadOnlyField):
     """Custom msg_type field for getting full string of msg_type"""
+
     def to_representation(self, value):
         for data, name in Notification.MSG_TYPE_CHOICES:
             if data == value:
@@ -35,4 +37,4 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = ('id', 'from_user', 'message',
                   'msg_type', 'url', 'created_at')
-        read_only_fields = ('from_user','msg_type')
+        read_only_fields = ('from_user', 'msg_type')

@@ -13,13 +13,15 @@ from messaging.consumers import GROUP_NAME
 channel_layer = get_channel_layer()
 logger = logging.getLogger(__name__)
 
+
 @shared_task
 def add(x, y):
     return x + y
 
+
 @shared_task
 def create_notification(from_user_id, to_user_id, message,
-                        msg_type=Notification.INFO, url=None, 
+                        msg_type=Notification.INFO, url=None,
                         msg_group=None, channel_users=None):
     logger.debug(channel_users)
     sleep(3)  # Test delay simulation
@@ -38,8 +40,8 @@ def create_notification(from_user_id, to_user_id, message,
     type_msg = notification.get_message_type()
 
     logger.debug('message type:' + type_msg)
-    # We need to send to all the connected instance of django, 
-    # so use group send to all the channels, it's the notification function 
+    # We need to send to all the connected instance of django,
+    # so use group send to all the channels, it's the notification function
     # in consumers to filter the message to each users.
     async_to_sync(channel_layer.group_send)(
         GROUP_NAME,
@@ -47,8 +49,8 @@ def create_notification(from_user_id, to_user_id, message,
             # It will call notification function in consumers.py
             'type': 'notification',
             'message': {
-                'type': type_msg, 
-                'message': channel_message, 
+                'type': type_msg,
+                'message': channel_message,
                 'users': channel_users,
                 'group': msg_group,
             }

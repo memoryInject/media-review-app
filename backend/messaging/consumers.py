@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 GROUP_NAME = 'review'
 
 # Store user id and assosiated channel_name, use set to store multiple
-# channel_name for the same user if the user logged in with multiple tab in chrome.
+# channel_name for the same user if the user logged in
+# with multiple tab in chrome.
 USER_CHANNELS = defaultdict(set)
 
 
@@ -36,12 +37,15 @@ class NotificationConsumer(WebsocketConsumer):
             self.channel_name,
         )
         self.accept()
-        self.send(text_data=json.dumps(
-            {'type': 'info', 'msg': f'connected: {self.user.email} id: {self.user.id}'}))
+        self.send(text_data=json.dumps({
+            'type': 'info',
+            'msg': f'connected: {self.user.email} id: {self.user.id}'
+        }))
 
     def disconnect(self, code):
         # Delete the channel_name from assosiated user in USER_CHANNELS
-        if USER_CHANNELS.get(self.user.id) and self.channel_name in USER_CHANNELS.get(self.user.id):
+        if USER_CHANNELS.get(self.user.id) and (
+                self.channel_name in USER_CHANNELS.get(self.user.id)):
             USER_CHANNELS.get(self.user.id).remove(self.channel_name)
 
             # Check if it's empty set after remove the channel_name
@@ -88,7 +92,7 @@ class NotificationConsumer(WebsocketConsumer):
 
     def notification(self, event):
         """
-        Receive notification from celery, 
+        Receive notification from celery,
         celery send this as a group message to all connected clients.
         Here we filter all the connected client based on users then send
         message using notification_message function above.

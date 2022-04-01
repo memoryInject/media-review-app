@@ -8,7 +8,6 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from messaging.models import Notification
-from messaging.serializers import NotificationSerializer
 
 NOTIFICATION_LIST_URL = reverse('notification_list')
 
@@ -254,7 +253,7 @@ class PrivateNotificationApiTest(TestCase):
             'msg_type': Notification.REVIEW,
             'url': '/videos/test_video.mp4',
         }
-        n_a = Notification.objects.create(**data)
+        Notification.objects.create(**data)
         Notification.objects.create(**data)
 
         res = self.client.get(notification_detail_url(342))
@@ -316,7 +315,7 @@ class PrivateNotificationApiTest(TestCase):
             'msg_type': Notification.REVIEW,
             'url': '/videos/test_video.mp4',
         }
-        n_a = Notification.objects.create(**data)
+        Notification.objects.create(**data)
         Notification.objects.create(**data)
 
         res = self.client.delete(notification_detail_url(342))

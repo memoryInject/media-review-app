@@ -1,4 +1,5 @@
 # review/tests/test_media_api.py
+
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.test import TestCase
@@ -6,6 +7,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from config.celery import app as celery_app
 from review.models import Project, Review, Asset, Media
 from review.serializers import MediaSerializer
 
@@ -97,6 +99,11 @@ class PublicMediaApiTest(TestCase):
     """Test public routes for media"""
 
     def setUp(self):
+        # docs on using eager result:
+        # https://docs.celeryq.dev/en/stable/userguide
+        # /configuration.html#std-setting-task_always_eager
+        celery_app.conf.update(task_always_eager=True)
+
         self.client = APIClient()
 
     def test_login_required(self):
@@ -112,6 +119,8 @@ class PrivateMediaApiTest(TestCase):
     """Test that authorized user media api"""
 
     def setUp(self):
+        celery_app.conf.update(task_always_eager=True)
+
         user = {
             'username': 'tester',
             'email': 'test@test.com',

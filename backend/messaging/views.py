@@ -39,6 +39,7 @@ class NotificationDetail(APIView):
         try:
             notification = Notification.objects.get(pk=pk)
         except Exception as e:
+            logger.warn(e)
             return Response({'error': 'Notification does not exists'},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -54,6 +55,7 @@ class NotificationDetail(APIView):
         try:
             notification = Notification.objects.get(pk=pk)
         except Exception as e:
+            logger.warn(e)
             return Response({'error': 'Notification does not exists'},
                             status=status.HTTP_400_BAD_REQUEST)
 
