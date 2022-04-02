@@ -186,7 +186,7 @@ CHANNEL_LAYERS = {
 }
 
 # Celery Configurations
-CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_BROKER_URL = os.environ.get('REDIS_URL')
 
 # This will stop logging on testing
 # more info: https://stackoverflow.com/questions/5255657/how-can-i-disable-logging-while-running-unit-tests-in-python-django
