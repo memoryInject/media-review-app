@@ -16,3 +16,4 @@ channels==3.0.4
 channels-redis==3.4.0
 colorlog==6.6.0
 celery==5.2.3
+deepgram-sdk

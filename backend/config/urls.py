@@ -77,6 +77,7 @@ urlpatterns = [
     path(API + 'upload/', include('upload.urls')),
     path(API + 'cloud/', include('cloud.urls')),
     path(API + 'messaging/', include('messaging.urls')),
+    path(API + 'transcript/', include('transcript.urls')),
 
     # For react pwa and seo
     path('robots.txt', TemplateView.as_view(

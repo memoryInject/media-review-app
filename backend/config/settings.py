@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'upload.apps.UploadConfig',
     'cloud.apps.CloudConfig',
     'messaging.apps.MessagingConfig',
+    'transcript.apps.TranscriptConfig',
 ]
 
 MIDDLEWARE = [
@@ -355,3 +356,6 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
 
 CACHE_TTL = 60 * 60
+
+# Deepgrapm Secrect API Key
+DEEPGRAM_API_KEY = os.environ.get('SECRECT_KEY_DEEPGRAM')
