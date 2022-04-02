@@ -47,12 +47,13 @@ jobs:
             sudo apt update
             sudo apt install redis-server -y 
       - run:
-          name: Test redis ping
-          command: redis-cli PING
-      - run:
           name: Start redis-server
           command: redis-server
           background: true
+      - run:
+          name: Test redis ping
+          command: redis-cli PING
+
       - run:
           name: Run django migrate
           command: |
