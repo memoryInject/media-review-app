@@ -29,7 +29,7 @@ jobs:
       # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
       # Then run your tests!
       # CircleCI will report the results back to your VCS provider.
-      - image: cimg/redis:6.2.6
+      - image: redis
       - image: circleci/postgres:9.6.5-alpine-ram
         environment:
           POSTGRES_USER: postgres
@@ -38,6 +38,9 @@ jobs:
 
     steps:
       - checkout
+      - run:
+          name: Test redis ping
+          command: redis-cli PING
       - python/install-packages:
           pkg-manager: pip
           # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
@@ -86,9 +89,7 @@ jobs:
             - node_modules
             - /home/circleci/.cache/Cypress
             
-      - run:
-          name: Test redis ping
-          command: redis PING
+
           
 
       - run:
