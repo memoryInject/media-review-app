@@ -85,6 +85,11 @@ jobs:
           paths:
             - node_modules
             - /home/circleci/.cache/Cypress
+            
+      - run:
+          name: Run redis-server
+          command: redis-server
+          background: true
 
       - run:
           name: Run test dev servers
