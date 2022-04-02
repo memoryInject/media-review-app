@@ -29,12 +29,12 @@ jobs:
       # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
       # Then run your tests!
       # CircleCI will report the results back to your VCS provider.
-      - image: redis
       - image: circleci/postgres:9.6.5-alpine-ram
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: media_review_app_test
           POSTGRES_PASSWORD: 1234
+      - image: redis
 
     steps:
       - checkout
