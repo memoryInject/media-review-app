@@ -87,9 +87,9 @@ jobs:
             - /home/circleci/.cache/Cypress
             
       - run:
-          name: Run redis-server
-          command: redis-server
-          background: true
+          name: Test redis ping
+          command: redis-cli PING
+          
 
       - run:
           name: Run test dev servers
