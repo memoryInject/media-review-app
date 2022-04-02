@@ -34,17 +34,25 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: media_review_app_test
           POSTGRES_PASSWORD: 1234
-      - image: redis:6.2-alpine
 
     steps:
       - checkout
-      - run:
-          name: Test redis ping
-          command: redis-cli PING
       - python/install-packages:
           pkg-manager: pip
           # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
           # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
+      - run:
+          name: Install redis
+          command: | 
+            sudo update
+            sudo apt install redis-server -y 
+      - run:
+          name: Test redis ping
+          command: redis-cli PING
+      - run:
+          name: Start redis-server
+          command: redis-server
+          background: true
       - run:
           name: Run django migrate
           command: |
