@@ -40,7 +40,7 @@ jobs:
       - checkout
       - run:
           name: Test redis ping
-          command: redis-cli PING
+          command: redis PING
       - python/install-packages:
           pkg-manager: pip
           # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
