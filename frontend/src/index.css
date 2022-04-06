@@ -290,6 +290,61 @@ main {
           visibility: hidden;
         }
       }
+/*Blink animation end*/
+
+
+/* Start circle ripple animation*/
+.circle_ripple{
+  height:50px;
+  width:50px;
+  background:#36B37E;
+  border-radius:50%;
+  -webkit-animation-name: ripple 2s infinite; 
+  animation: ripple 2s infinite;
+  position:absolute;
+  /*left:5px;*/
+  /*top:105px;*/
+  /*z-index:1;*/
+  /*transform: translate(5px, 5px);*/
+}
+.circle_ripple-2{
+  height:50px;
+  width:50px;
+  background:#36B37E;
+  border-radius:50%;
+  -webkit-animation-name: ripple 2s infinite; 
+  animation: ripple-2 2s infinite;
+  position:absolute;
+ /*left:5px;*/
+  /*top:105px;*/
+}
+
+@keyframes ripple {
+ 0% {
+transform:scale(1);
+  }
+  50% {
+transform:scale(2);
+    opacity:0.3;
+  }
+ 100% {
+transform:scale(1);
+   
+  }  
+}
+@keyframes ripple-2 {
+ 0% {
+transform:scale(1);
+  }
+  50% {
+transform:scale(2.5);
+    opacity:0.3;
+  }
+ 100% {
+transform:scale(1);
+  }  
+}
+/* End circle ripple animation*/
 
 .scrollbar {
   background: #303030;

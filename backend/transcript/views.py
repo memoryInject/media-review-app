@@ -1,6 +1,7 @@
 # transcript/views.py
 
 import json
+import time
 from asgiref.sync import async_to_sync
 
 from rest_framework import status
@@ -17,6 +18,10 @@ from deepgram import Deepgram
 @permission_classes((IsAuthenticated,))
 def index(request):
     """Deepgrapm AI api request"""
+    # Remove the InMemoryHandler
+    # https://stackoverflow.com/questions/6906935/
+    # problem-accessing-user-uploaded-video-in-temporary-memory
+    request.upload_handlers.pop(0)
     file = request.data.get('audio')
     mimetype = request.data.get('mimetype')
     audio = open(file.temporary_file_path(), 'rb')
@@ -36,7 +41,13 @@ def index(request):
             'punctuate': True,
         }
     )
-    # print(json.dumps(response, indent=4))
+    print(json.dumps(response, indent=4))
     transcript = response['results']['channels'][0]['alternatives'][0]['transcript']
 
     return Response(data={'transcript': transcript}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def dummy_index(request):
+    time.sleep(2)
+    return Response(data={'transcript': 'hello world'}, status=status.HTTP_200_OK)

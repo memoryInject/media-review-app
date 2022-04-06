@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Message from './Message';
 import isCollaborator from '../utils/isCollaborator';
+import TranscriptModal from './TranscriptModal';
 
 import {
   listFeedbacks,
@@ -35,7 +36,9 @@ import {
 const FeedbackForm = () => {
   const formFeedback = useRef(null);
   const [feedback, setFeedback] = useState('');
+  const [transcript, setTranscript] = useState('');
   const [showColorPalette, setShowColorPalette] = useState(false);
+  const [showTranscriptModal, setShowTranscriptModal] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -151,6 +154,14 @@ const FeedbackForm = () => {
       setFeedback(update.content);
     }
   }, [update]);
+
+  // Run this if transcript created from backend
+  useEffect(() => {
+    if (transcript) {
+      setFeedback(transcript);
+      setTranscript('');
+    }
+  }, [transcript])
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -283,6 +294,30 @@ const FeedbackForm = () => {
                     }}
                   >
                     {reply ? 'REPLY' : update ? 'UPDATE' : 'POST'}
+                  </Button>
+                  <Button
+                    className='float-end'
+                    variant='danger'
+                    style={{
+                      marginTop: '0.65rem',
+                      marginRight: '0.65rem',
+                      height: '38px',
+                      width: '34px',
+                    }}
+                    onClick={() => setShowTranscriptModal(true)}
+                  >
+                    <span
+                      className='material-icons-round noselect'
+                      style={{
+                        //transform: 'rotate(-45deg)',
+                        transform: 'translateX(-9px)',
+                        fontSize: '26px',
+                        //padding: '0 0.65rem',
+                        position: 'relative',
+                      }}
+                    >
+                      mic
+                    </span>
                   </Button>
                   {reply ? (
                     <Button
@@ -509,6 +544,13 @@ const FeedbackForm = () => {
             )
           )}
           {/*Error Messages end*/}
+
+          {/*TranscriptModal*/}
+          <TranscriptModal
+            onHide={() => setShowTranscriptModal(false)}
+            show={showTranscriptModal}
+            onSuccess={setTranscript}
+          />
         </div>
       </Col>
     </Row>
