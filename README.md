@@ -2,16 +2,16 @@
 # Media-Review App
 [![CircleCI](https://circleci.com/gh/memoryInject/media-review-app/tree/main.svg?style=svg)](https://circleci.com/gh/memoryInject/media-review-app/tree/main)
 
-Media-Review PWA(Progressive Web App) is a platform for review media by team collaboration in
+Media-Review PWA (Progressive Web App) is a platform for review media by team collaboration in
 cloud, integrates reviewers, creators, content and tools needs to be
 more engaged and effective review process.
 
 
 ### Testing and CI/CD frameworks used:
 
- - Frontend: [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) with [Mock Service Worker](https://mswjs.io/)
- - Backend: [Django rest framework test](https://www.django-rest-framework.org/api-guide/testing/)
- - End-to-End: [Cypress](https://www.cypress.io/)
+ - Front-end: [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) with [Mock Service Worker](https://mswjs.io/)
+ - Back-end: [Django REST framework test](https://www.django-rest-framework.org/api-guide/testing/)
+ - End-to-end: [Cypress](https://www.cypress.io/)
  - CI/CD: [CircleCI](https://circleci.com/) with [Heroku](https://www.heroku.com/)
 
 
@@ -67,11 +67,14 @@ Local postgres development database
 For test only change database name but it's already done in npm script with cross-env, no need to set it on your .envrc   
 `DB_NAME='media_review_app_test'`    
 
+[Deepgram](https://deepgram.com/) Speech-to-Text AI   
+`SECRECT_KEY_DEEPGRAM=''`
+
 
 ## Installation
 
-It is a mono repo for both frontend and backend.
-Frontend is build with react, backend is build with python and Django-Rest-Framework.   
+It is a mono repo for both front-end and back-end.
+Front-end is build with react, back-end is build with Python and Django.   
 
 Clone this project to local drive:  
 ```bash 
@@ -80,17 +83,17 @@ Clone this project to local drive:
   cd media-review-app
 ```
 
-Install with npm for root and frontend:
+Install with npm for root and front-end:
 ```bash
   npm install && npm install --prefix frontend
 ```
 
-Create a python environment and install with pip for backend:
+Create a Python environment and install with pip for back-end:
 ```bash
   pip install -r requirements.txt
 ```
 
-Migrate django in the backend:
+Migrate django in the back-end:
 ```bash
   cd backend
   python manage.py migrate
@@ -106,9 +109,9 @@ Run the test with npm at the root:
 ```bash
   npm test
 ```
-This will run both frontend react test and backend server test.
+This will run both front-end react test and back-end server test.
 
-For End-to-End Cypress test, first run both frontend and backend dev server on test mode then open cypress.
+For End-to-End Cypress test, first run both front-end and back-end dev server on test mode then open cypress.
 ```bash
   npm run dev-test
 ```
@@ -142,6 +145,11 @@ Seed database ( optional ):
   python manage.py loaddata user profile asset media project review feedback
 ```
 
+Build front-end and setup static files on back-end:
+```bash
+  npm run build
+```
+
 Run development servers (react and django) at root:
 ```bash
   npm run dev
@@ -163,7 +171,7 @@ This project use [CircleCI](https://circleci.com/) with [Heroku](https://www.her
 
 **Client:** React, Redux, Bootstrap
 
-**Server:** Djago-Rest-Framework, Python, Redis 
+**Server:** Django, Djago REST framework, Django Channels, Python, Redis, Celery 
 
 **Database:** Postgres, Sqlite3 
 ## Contributing
