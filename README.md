@@ -175,7 +175,7 @@ This project use [CircleCI](https://circleci.com/) with [Heroku](https://www.her
 
 **Client:** React, Redux, Bootstrap
 
-**Server:** Django, Djago REST framework, Django Channels, Python, Redis, Celery 
+**Server:** Django, Django REST framework, Django Channels, Python, Redis, Celery 
 
 **Database:** Postgres, Sqlite3 
 ## Contributing
