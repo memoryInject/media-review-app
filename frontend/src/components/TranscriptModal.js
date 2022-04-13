@@ -14,6 +14,7 @@ import axios from 'axios';
 import Message from '../components/Message';
 import { showToast, messageToast, variantToast } from '../actions/toastActions';
 import CaptureAudio from '../utils/captureAudio';
+import DGLogo from './DGLogo';
 
 const TranscriptModal = ({ show, onHide, onSuccess }) => {
   const dispatch = useDispatch();
@@ -49,7 +50,7 @@ const TranscriptModal = ({ show, onHide, onSuccess }) => {
       console.log('Get transcript', blob);
       const formData = new FormData();
       formData.append('audio', blob);
-      formData.append('mimetype', 'audio/webm');
+      formData.append('mimetype', blob.type);
 
       const config = {
         headers: {
@@ -90,6 +91,7 @@ const TranscriptModal = ({ show, onHide, onSuccess }) => {
         setProgressMessage('');
         setLoading(false);
         console.log(error);
+        setErrorMessage(`${error}`)
       }
     };
 
@@ -161,7 +163,7 @@ const TranscriptModal = ({ show, onHide, onSuccess }) => {
             >
               movie
             </span>
-            &nbsp; Speech to text
+            &nbsp; Speech-to-Text
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -264,12 +266,15 @@ const TranscriptModal = ({ show, onHide, onSuccess }) => {
               </Row>
             )}
           </Container>
-          <p
-            className='text-center text-muted'
+          <div
             style={{
               marginTop: '2rem',
               marginBottom: '0px',
             }}
+          >
+          <DGLogo />
+          <p
+            className='text-center text-muted'
           >
             Powered by
             <a href='https://deepgram.com/' target='_blank' rel='noreferrer'>
@@ -277,6 +282,7 @@ const TranscriptModal = ({ show, onHide, onSuccess }) => {
             </a>{' '}
             AI
           </p>
+          </div>
           <div
             style={{
               marginTop: '2rem',

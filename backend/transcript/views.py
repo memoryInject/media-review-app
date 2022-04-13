@@ -2,6 +2,8 @@
 
 import json
 import time
+import logging
+
 from asgiref.sync import async_to_sync
 
 from rest_framework import status
@@ -12,6 +14,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 
 from deepgram import Deepgram
+
+logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])
@@ -41,13 +45,21 @@ def index(request):
             'punctuate': True,
         }
     )
-    print(json.dumps(response, indent=4))
+    logger.info(logger.name)
+    logger.debug(json.dumps(response, indent=4))
     transcript = response['results']['channels'][0]['alternatives'][0]['transcript']
 
     return Response(data={'transcript': transcript}, status=status.HTTP_200_OK)
 
+
+# For testing
 @api_view(['POST'])
 @permission_classes((IsAuthenticated,))
 def dummy_index(request):
-    time.sleep(2)
-    return Response(data={'transcript': 'hello world'}, status=status.HTTP_200_OK)
+    mimetype = request.data.get('mimetype')
+    logger.debug([logger.name, mimetype])
+    time.sleep(1)
+    # return Response(data={'transcript': 'hello world'},
+    # status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(data={'transcript': 'Make it less saturated.'},
+                    status=status.HTTP_200_OK)
