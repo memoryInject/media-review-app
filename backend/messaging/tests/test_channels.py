@@ -1,20 +1,24 @@
 # messaging/tests/test_channels.py
 
+import json
+
 from unittest.mock import patch
+from urllib.parse import unquote, urlparse
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from channels.testing import WebsocketCommunicator
+from channels.testing import ApplicationCommunicator
 from channels.routing import URLRouter
 from channels.db import database_sync_to_async
 from rest_framework.test import APIClient
 
 from messaging.middlewares import TokenAuthMiddleware
-from messaging.routing import websocket_urlpatterns
+from messaging.routing import websocket_urlpatterns, urlpatterns
+from messaging.consumers import NotificationConsumer
 
 
-def get_ws_url(token):
-    return f'ws/notifications/?token={token}'
+def get_sse_url(token):
+    return f'events/notifications/?token={token}'
 
 
 def create_user(**params):
@@ -71,16 +75,46 @@ class ChannelNotificationTest(TestCase):
     # more info: https://github.com/django/channels/issues/1091
     @patch('messaging.middlewares.get_user', mocked_get_user)
     async def test_notification_consumer(self):
+        parsed = urlparse(get_sse_url(self.admin.email))
         application = TokenAuthMiddleware(
-            URLRouter(websocket_urlpatterns))
-        communicator = WebsocketCommunicator(
-            application, get_ws_url(self.admin.email))
-        connected, subprotocol = await communicator.connect()
-        assert connected
+            URLRouter(urlpatterns))
+        scope = {
+            'type': 'http',
+            'http_version': '1.1',
+            'method': 'GET',
+            'path': unquote(parsed.path),
+            'query_string': parsed.query.encode('utf-8'),
+            'headers': []
+        }
+        communicator = ApplicationCommunicator(
+            application, scope)
 
-        # Test on connection welcome message
-        message = await communicator.receive_json_from()
-        assert message['type'] == 'info'
-        self.assertIn(self.admin.email, message['msg'])
+        await communicator.send_input({
+            'type': 'http.request'
+            })
 
-        await communicator.disconnect()
+        event = await communicator.receive_output()
+        self.assertEqual(event['type'], 'http.response.start')
+        self.assertEqual(event['status'], 200)
+
+        event = await communicator.receive_output()
+        self.assertEqual(event['type'], 'http.response.body')
+        self.assertTrue(event['more_body'])
+        body = json.loads(event['body'].decode())
+        self.assertIn(self.admin.email, body['msg'])
+
+    # @patch('messaging.middlewares.get_user', mocked_get_user)
+    # async def test_notification_consumer(self):
+        # application = TokenAuthMiddleware(
+            # URLRouter(websocket_urlpatterns))
+        # communicator = WebsocketCommunicator(
+            # application, get_sse_url(self.admin.email))
+        # connected, subprotocol = await communicator.connect()
+        # assert connected
+
+        # # Test on connection welcome message
+        # message = await communicator.receive_json_from()
+        # assert message['type'] == 'info'
+        # self.assertIn(self.admin.email, message['msg'])
+
+        # await communicator.disconnect()

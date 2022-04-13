@@ -11,6 +11,7 @@ import os
 
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
+from django.urls import re_path
 
 from messaging import routing
 from messaging.middlewares import TokenAuthMiddleware
@@ -20,7 +21,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 # application = get_asgi_application()
 
 application = ProtocolTypeRouter({
-    'http': get_asgi_application(),
+    'http': URLRouter([
+        re_path(r'events/', TokenAuthMiddleware(URLRouter(routing.urlpatterns))),
+        re_path(r'', get_asgi_application())
+    ]),
     'websocket': TokenAuthMiddleware(
         URLRouter(routing.websocket_urlpatterns)
     ),
