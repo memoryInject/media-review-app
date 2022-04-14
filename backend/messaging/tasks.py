@@ -36,6 +36,17 @@ def create_notification(from_user_id, to_user_id, message,
         url=url
     )
 
+    if from_user:
+        fromUser = {
+                'id': from_user.id,
+                'username': from_user.username,
+                'email': from_user.email,
+                'imageUrl': from_user.userprofile.image_url,
+                }
+    else:
+        fromUser = None
+
+
     channel_message = str(notification.message)
     type_msg = notification.get_message_type()
 
@@ -49,10 +60,14 @@ def create_notification(from_user_id, to_user_id, message,
             # It will call notification function in consumers.py
             'type': 'notification',
             'message': {
-                'type': type_msg,
+                'msgType': type_msg,
                 'message': channel_message,
                 'users': channel_users,
                 'group': msg_group,
+                'id': notification.id,
+                'fromUser': fromUser,
+                'url': notification.url,
+                'createdAt': notification.created_at.isoformat()
             }
         }
     )
