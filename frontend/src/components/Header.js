@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import About from './About';
 
 import { logout } from '../actions/userActions';
+import Notifications from './Notifications';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,11 @@ const Header = () => {
 
   const navdrop = useRef(null);
   const [modalShow, setModalShow] = useState(false);
+
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  const handleCloseNotification = () => setShowNotifications(false);
+  const handleShowNotification = () => setShowNotifications(true);
 
   const logoutHandler = () => {
     dispatch(logout());
@@ -41,10 +47,12 @@ const Header = () => {
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           {user && (
             <Navbar.Collapse id='basic-navbar-nav'>
-              <Nav className='me-auto'>
-              </Nav>
+              <Nav className='me-auto'></Nav>
               <Nav>
-                <LinkContainer to='/' className='d-block d-md-block d-lg-none'>
+                <div
+                  onClick={handleShowNotification}
+                  className='d-block d-md-block d-lg-none'
+                >
                   <Nav.Link className='p-0'>
                     <span
                       className='material-icons-round'
@@ -60,7 +68,7 @@ const Header = () => {
                     &nbsp; &nbsp;
                     <span>Notifications</span>
                   </Nav.Link>
-                </LinkContainer>
+                </div>
                 <div
                   onClick={() => navdrop.current.children[0].click()}
                   style={{
@@ -123,7 +131,7 @@ const Header = () => {
                     </span>
                     Logout
                   </NavDropdown.Item>
-                  <NavDropdown.Item onClick={()=>setModalShow(true)}>
+                  <NavDropdown.Item onClick={() => setModalShow(true)}>
                     <span
                       data-cy='header-about'
                       className='material-icons-round'
@@ -134,7 +142,10 @@ const Header = () => {
                     About
                   </NavDropdown.Item>
                 </NavDropdown>
-                <LinkContainer to='/' className='px-3 d-none d-lg-block'>
+                <div
+                  onClick={handleShowNotification}
+                  className='px-3 d-none d-lg-block'
+                >
                   <Nav.Link className='p-0'>
                     <span
                       className='material-icons-round'
@@ -148,7 +159,7 @@ const Header = () => {
                       notifications
                     </span>
                   </Nav.Link>
-                </LinkContainer>
+                </div>
                 <div
                   data-cy='header-profile'
                   onClick={() => navdrop.current.children[0].click()}
@@ -178,7 +189,14 @@ const Header = () => {
       </Navbar>
 
       {/*About Modal for about this app*/}
-      <About show={modalShow} onHide={()=>setModalShow(false)} />
+      <About show={modalShow} onHide={() => setModalShow(false)} />
+
+      {/*Notifiactions Offcanvas*/}
+      <Notifications
+        placement='end'
+        show={showNotifications}
+        onHide={handleCloseNotification}
+      />
     </header>
   );
 };
