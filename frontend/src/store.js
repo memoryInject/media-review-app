@@ -63,6 +63,7 @@ import {
   searchProjectReducer,
   searchReviewReducer,
 } from './reducers/searchReducers';
+import {notificationListReducer, notificationsDeleteReducer} from './reducers/notificationReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -110,13 +111,15 @@ const reducer = combineReducers({
   searchFilterProject: searchFilterProjectReducer,
   searchReview: searchReviewReducer,
   searchFilterReview: searchFilterReviewReducer,
+  notificationList: notificationListReducer,
+  notificationsDelete: notificationsDeleteReducer
 });
 
 // Config for local storage
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['userLogin', 'userDetails', 'projectList'],
+  whitelist: ['userLogin', 'userDetails', 'projectList', 'notificationList'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducer);
