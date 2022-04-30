@@ -16,6 +16,9 @@ const Header = () => {
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
 
+  const notificationList = useSelector((state) => state.notificationList);
+  const { newCount } = notificationList;
+
   const navdrop = useRef(null);
   const [modalShow, setModalShow] = useState(false);
 
@@ -44,7 +47,21 @@ const Header = () => {
               <span className='d-none d-md-inline'> &nbsp; Media-Review</span>
             </Navbar.Brand>
           </LinkContainer>
-          <Navbar.Toggle aria-controls='basic-navbar-nav' />
+          <div>
+            <Navbar.Toggle aria-controls='basic-navbar-nav' />
+            {newCount > 0 && (
+              <div
+                style={{
+                  width: '12px',
+                  height: '12px',
+                  position: 'absolute',
+                  transform: 'translate(36px, -36px)',
+                  borderRadius: '50%',
+                }}
+                className='d-block d-md-block d-lg-none bg-danger'
+              ></div>
+            )}
+          </div>
           {user && (
             <Navbar.Collapse id='basic-navbar-nav'>
               <Nav className='me-auto'></Nav>
@@ -65,6 +82,30 @@ const Header = () => {
                     >
                       notifications
                     </span>
+                    {newCount > 0 && (
+                      <div
+                        className='bg-danger text-center'
+                        style={{
+                          borderRadius: '50%',
+                          height: '18px',
+                          width: '18px',
+                          display: 'inline-block',
+                          position: 'absolute',
+                          transform: 'translate(-13px, 10px)',
+                        }}
+                      >
+                        <span
+                          className='text-center fw-bold'
+                          style={{
+                            position: 'relative',
+                            top: '-5px',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {newCount}
+                        </span>
+                      </div>
+                    )}
                     &nbsp; &nbsp;
                     <span>Notifications</span>
                   </Nav.Link>
@@ -154,10 +195,35 @@ const Header = () => {
                         padding: '0px',
                         margin: '0px',
                         transform: 'translate(0px, 7px)',
+                        position: 'relative',
                       }}
                     >
                       notifications
                     </span>
+                    {newCount > 0 && (
+                      <div
+                        className='bg-danger text-center'
+                        style={{
+                          borderRadius: '50%',
+                          height: '18px',
+                          width: '18px',
+                          display: 'inline-block',
+                          position: 'absolute',
+                          transform: 'translate(-15px, 10px)',
+                        }}
+                      >
+                        <span
+                          className='text-center fw-bold'
+                          style={{
+                            position: 'relative',
+                            top: '-5px',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {newCount}
+                        </span>
+                      </div>
+                    )}
                   </Nav.Link>
                 </div>
                 <div

@@ -33,7 +33,9 @@ def notification_project_created(sender, instance, created, **kwargs):
         from_user = instance.user
         message = '{} created new project: {}'.format(
             from_user.username, instance.project_name)
-        url = reverse('project_detail', args=[instance.id])
+        # url = reverse('project_detail', args=[instance.id])
+        # url for frontend
+        url = f'/projects/{instance.id}'
         logger.debug(url)
 
         for admin in admins:

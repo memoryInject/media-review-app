@@ -74,7 +74,7 @@ class NotificationConsumer(AsyncHttpConsumer):
             self.keepalive = True
 
         if not isinstance(body, bytes):
-            body = (body + '\n\n').encode('utf-8')
+            body = ('data: ' + body + '\n\n').encode('utf-8')
         assert isinstance(body, bytes), "Body is not bytes"
 
         await self.send({

@@ -7,4 +7,4 @@ FRONTEND:
 FEATURE:
   - Get all the feedback created by the user and show it on user control panel
   - Notification system
-  - Speech to text AI for writing feedback
+  #- Speech to text AI for writing feedback

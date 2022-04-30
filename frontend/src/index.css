@@ -206,6 +206,10 @@ main {
   color: #e74c3c !important;
 }
 
+.noti-del:hover {
+  color: #fff !important;
+}
+
 .review-buttons {
   transition: 0.3s;
 }
@@ -345,6 +349,17 @@ transform:scale(1);
   }  
 }
 /* End circle ripple animation*/
+
+/*Notification new color*/
+@keyframes noti-color {
+    0% {
+        background-color: #2C343A;
+    }
+    100% {
+        background-color: #444;
+    }
+}
+/*Notification new color end*/
 
 .scrollbar {
   background: #303030;

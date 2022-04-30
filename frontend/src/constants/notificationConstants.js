@@ -13,5 +13,14 @@ export const NOTIFICATIONS_DELETE_RESET = 'NOTIFICATIONS_DELETE_RESET';
 // Clear all notifications from frontend storage
 export const NOTIFICATION_LIST_CLEAR = 'NOTIFICATION_LIST_CLEAR';
 
+// Check new notifications
+export const NOTIFICATIONS_CHECKED = 'NOTIFICATIONS_CHECKED';
+
 // Add notification from SSE
 export const NOTIFICATION_ADD = 'NOTIFICATION_ADD';
+
+// Delete a notification from frontend
+export const NOTIFICATION_DELETE = 'NOTIFICATION_DELETE';
+
+// Reset new notification count
+export const NOTIFICATION_NEW_COUNT_RESET = 'NOTIFICATION_NEW_COUNT_RESET';
