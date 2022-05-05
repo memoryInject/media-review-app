@@ -4,7 +4,7 @@ import logging
 # from threading import Thread
 
 from django.contrib.auth import get_user_model
-from django.urls import reverse
+# from django.urls import reverse
 
 from django.dispatch import receiver
 from django.db.models.signals import post_save, m2m_changed  # , post_delete
@@ -74,7 +74,8 @@ def notification_review_created(sender, instance, created, **kwargs):
             from_user.username,
             instance.review_name,
             instance.project.project_name)
-        url = reverse('review_detail', args=[instance.id])
+        # url for frontend
+        url = f'/projects/{instance.project.id}/reviews/{instance.id}'
         logger.debug(url)
 
         for admin in admins:
@@ -92,6 +93,7 @@ def notification_review_created(sender, instance, created, **kwargs):
                 }
                 create_notification.delay(**data)
 
+
 @receiver(m2m_changed, sender=Review.collaborators.through)
 def notification_reivew_collaborators_changed(sender, instance, **kwargs):
     """Send notification to collaborators when review collaborators added/removed"""
@@ -106,8 +108,13 @@ def notification_reivew_collaborators_changed(sender, instance, **kwargs):
             'post_remove': ' removed you from ',
         }
         message = instance.user.email + action_message[action] + \
-                                'Review: ' + instance.review_name
+            'Review: ' + instance.review_name
         from_user = instance.user
+
+        if action == 'post_add':
+            url = f'/projects/{instance.project.id}/reviews/{instance.id}'
+        else:
+            url = ''
 
         for i in pk_set:
             user = get_user_model().objects.get(pk=i)
@@ -121,11 +128,127 @@ def notification_reivew_collaborators_changed(sender, instance, **kwargs):
                     'to_user_id': user.id,
                     'message': message,
                     'msg_type': Notification.REVIEW,
-                    'url': '',
+                    'url': url,
                     'channel_users': channel_users,
                     'msg_group': 'notification'
                 }
                 create_notification.delay(**data)
 
 
+@receiver(post_save, sender='review.Media')
+def notification_media(sender, instance, created, **kwargs):
+    """Notification send to all collaborators when media created/edit"""
+    from_user = instance.user
+    url = f'/projects/{instance.review.project.id}/reviews/{instance.review.id}'
 
+    logger.debug(logger.name)
+
+    if created:
+        logger.info(
+            'collaborators will receive message on creation of: '
+            + instance.media_name
+            + ' on review: '
+            + instance.review.review_name
+            + ' | project: '
+            + instance.review.project.project_name
+        )
+
+        message = '{} created new media: {} on review: {} | project: {}'.format(
+            from_user.username,
+            instance.media_name,
+            instance.review.review_name,
+            instance.review.project.project_name)
+        logger.info(message)
+    else:
+        logger.info(
+            'collaborators will receive message on update of: '
+            + instance.media_name
+            + ' on review: '
+            + instance.review.review_name
+            + ' | project: '
+            + instance.review.project.project_name
+        )
+
+        message = '{} created new media: {} on review: {} | project: {}'.format(
+            from_user.username,
+            instance.media_name,
+            instance.review.review_name,
+            instance.review.project.project_name)
+        logger.info(message)
+
+    for user in instance.review.collaborators.all():
+        if user.id is not instance.user.id:
+            channel_users = [user.id]
+            if channel_users:
+                data = {
+                    'from_user_id': from_user.id,
+                    'to_user_id': user.id,
+                    'message': message,
+                    'msg_type': Notification.REVIEW,
+                    'url': url,
+                    'channel_users': channel_users,
+                    'msg_group': 'notification'
+                }
+                create_notification.delay(**data)
+
+@receiver(post_save, sender='review.Feedback')
+def notification_feedback(sender, instance, created, **kwargs):
+    """Notification send to all collaborators when feedback created/edit"""
+    from_user = instance.user
+    url = f'/projects/{instance.media.review.project.id}/reviews/{instance.media.review.id}'
+
+    logger.debug(logger.name)
+
+    if created:
+        logger.info(
+            'collaborators will receive message on creation of: '
+            + instance.content
+            + ' on media: '
+            + instance.media.media_name
+            + ' | review: '
+            + instance.media.review.review_name
+            + ' | project: '
+            + instance.media.review.project.project_name
+        )
+
+        message = '{} created new feedback: {} on media: {} | review: {} | project: {}'.format(
+            from_user.username,
+            instance.content,
+            instance.media.media_name,
+            instance.media.review.review_name,
+            instance.media.review.project.project_name)
+        logger.info(message)
+    else:
+        logger.info(
+            'collaborators will receive message on update of: '
+            + instance.content
+            + ' on media: '
+            + instance.media.media_name
+            + ' | review: '
+            + instance.media.review.review_name
+            + ' | project: '
+            + instance.media.review.project.project_name
+        )
+
+        message = '{} update feedback: {} on media: {} | review: {} | project: {}'.format(
+            from_user.username,
+            instance.content,
+            instance.media.media_name,
+            instance.media.review.review_name,
+            instance.media.review.project.project_name)
+        logger.info(message)
+
+    for user in instance.media.review.collaborators.all():
+        if user.id is not instance.user.id:
+            channel_users = [user.id]
+            if channel_users:
+                data = {
+                    'from_user_id': from_user.id,
+                    'to_user_id': user.id,
+                    'message': message,
+                    'msg_type': Notification.FEEDBACK,
+                    'url': url,
+                    'channel_users': channel_users,
+                    'msg_group': 'notification'
+                }
+                create_notification.delay(**data)

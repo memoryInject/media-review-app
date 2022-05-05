@@ -1,5 +1,4 @@
-import axios from 'axios';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import {
   Offcanvas,
@@ -52,14 +51,15 @@ const Notifications = ({ placement, show, onHide }) => {
 
   useEffect(() => {
     if (streamOn && userInfo && userInfo.key) {
+      // Replace this url on production by removing host name
       let url = `http://127.0.0.1:8000/events/notifications/?token=${userInfo.key}`;
+      //let url = `/events/notifications/?token=${userInfo.key}`;
       EventStream.startStream(url);
       setStreamOn(false);
     }
   }, [userInfo, streamOn]);
 
   useEffect(() => {
-    //console.log('stream data', streamData);
     if (streamData && streamData.group && streamData.group === 'notification') {
       dispatch({ type: NOTIFICATION_ADD, payload: streamData });
     }
@@ -75,10 +75,8 @@ const Notifications = ({ placement, show, onHide }) => {
   // Run this after success
   useEffect(() => {
     if (success) {
-      //dispatch({type: NOTIFICATION_LIST_CLEAR})
       setFetchNotifications(false);
-      //console.log(notifications);
-      //dispatch(deleteNotifications());
+      dispatch(deleteNotifications());
     }
   }, [success, notifications, dispatch]);
 
@@ -233,7 +231,6 @@ const Notifications = ({ placement, show, onHide }) => {
                         position: 'relative',
                         top: '-3px',
                       }}
-                      //onClick={() => console.log(n)}
                     >
                       {n.url && (
                         <>

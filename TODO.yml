@@ -1,10 +1,8 @@
 BACKEND:
-  - Delete route for notificaion
+    - Notification for uploaded video for collaborators
+    - Notification for feedback write/edit for collaborators
 
 FRONTEND:
   - Fix logging error, when logging faild delete stored local data.
 
 FEATURE:
-  - Get all the feedback created by the user and show it on user control panel
-  - Notification system
-  #- Speech to text AI for writing feedback

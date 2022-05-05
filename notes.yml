@@ -5,3 +5,6 @@ RUNNIG_CELERY_AND_REDIS:
     - start celery worker for config(it's the application name):
         - cd backend
         - celery -A config worker -l INFO 
+
+CHANGE_NOTIFICATION_URL_PRODUCTION:
+    - reference: Notification.js
