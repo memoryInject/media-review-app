@@ -100,7 +100,7 @@ class ChannelNotificationTest(TestCase):
         event = await communicator.receive_output()
         self.assertEqual(event['type'], 'http.response.body')
         self.assertTrue(event['more_body'])
-        body = json.loads(event['body'].decode())
+        body = json.loads(event['body'].decode().split('data: ')[1])
         self.assertIn(self.admin.email, body['msg'])
 
     # @patch('messaging.middlewares.get_user', mocked_get_user)

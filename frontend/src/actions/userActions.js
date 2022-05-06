@@ -45,6 +45,7 @@ import {
   USER_INVITE_ACCEPT_SUCCESS,
   USER_INVITE_ACCEPT_FAIL,
 } from '../constants/userConstants';
+import { NOTIFICATION_LIST_CLEAR } from '../constants/notificationConstants';
 import getError from '../utils/getError';
 
 export const listUser =
@@ -322,4 +323,5 @@ export const logout = () => (dispatch) => {
   dispatch({ type: SEARCH_FILTER_REVIEW_CREATED_RESET });
   dispatch({ type: SEARCH_FILTER_PROJECT_COLLABORATED_RESET });
   dispatch({ type: SEARCH_FILTER_REVIEW_COLLABORATED_RESET });
+  dispatch({ type: NOTIFICATION_LIST_CLEAR });
 };
