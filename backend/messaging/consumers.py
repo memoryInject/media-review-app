@@ -3,7 +3,6 @@
 import logging
 import json
 from collections import defaultdict
-from datetime import datetime
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer

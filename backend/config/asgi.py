@@ -22,7 +22,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 application = ProtocolTypeRouter({
     'http': URLRouter([
-        re_path(r'events/', TokenAuthMiddleware(URLRouter(routing.urlpatterns))),
+        re_path(r'events/',
+                TokenAuthMiddleware(URLRouter(routing.urlpatterns))),
         re_path(r'', get_asgi_application())
     ]),
     'websocket': TokenAuthMiddleware(

@@ -8,3 +8,4 @@ exclude =
   apps.py,
   __temp__.py,
   cloud/views.py,
+  transcript/views.py,

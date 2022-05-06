@@ -13,8 +13,9 @@ from channels.db import database_sync_to_async
 from rest_framework.test import APIClient
 
 from messaging.middlewares import TokenAuthMiddleware
-from messaging.routing import websocket_urlpatterns, urlpatterns
-from messaging.consumers import NotificationConsumer
+# from messaging.routing import websocket_urlpatterns, urlpatterns
+from messaging.routing import urlpatterns
+# from messaging.consumers import NotificationConsumer
 
 
 def get_sse_url(token):
@@ -106,9 +107,9 @@ class ChannelNotificationTest(TestCase):
     # @patch('messaging.middlewares.get_user', mocked_get_user)
     # async def test_notification_consumer(self):
         # application = TokenAuthMiddleware(
-            # URLRouter(websocket_urlpatterns))
+        # URLRouter(websocket_urlpatterns))
         # communicator = WebsocketCommunicator(
-            # application, get_sse_url(self.admin.email))
+        # application, get_sse_url(self.admin.email))
         # connected, subprotocol = await communicator.connect()
         # assert connected
 
