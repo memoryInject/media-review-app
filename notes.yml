@@ -6,5 +6,9 @@ RUNNIG_CELERY_AND_REDIS:
         - cd backend
         - celery -A config worker -l INFO 
 
+    - start celery flower for monitoring: 
+        - cd backend
+        - celery -A config flower --port=5555 
+
 CHANGE_NOTIFICATION_URL_PRODUCTION:
     - reference: Notification.js
