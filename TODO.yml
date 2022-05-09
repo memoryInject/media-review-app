@@ -1,8 +1,7 @@
 BACKEND:
-    - Notification for uploaded video for collaborators
-    - Notification for feedback write/edit for collaborators
 
 FRONTEND:
   - Fix logging error, when logging faild delete stored local data.
 
 FEATURE:
+  - Dockerize application
