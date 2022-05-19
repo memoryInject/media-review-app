@@ -6,9 +6,7 @@ workflows:
       - build
 jobs:
   build:
-    docker:
-      - image: cimg/python:3.8-node
-
+    machine: true
     steps:
       - checkout
       - run:
