@@ -6,7 +6,8 @@ workflows:
       - build
 jobs:
   build:
-    machine: true
+    docker:
+      - image: cimg/python:3.8-node
     steps:
       - checkout
       - setup_remote_docker:
