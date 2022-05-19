@@ -12,11 +12,10 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 20.10.14
+          docker_layer_caching: true
       
       - run:
           name: Build docker frontend
           command: |
               docker build -t memoryinject/frontend-test -f ./compose/local/frontend/Dockerfile .
-      - run:
-          name: Run frontend test with docker
-          command: docker run -it -v $PWD/frontend:/app memoryinject/frontend-test npm test -- --watchAll=false 
+              docker run -it -v $PWD/frontend:/app memoryinject/frontend-test npm test -- --watchAll=false
