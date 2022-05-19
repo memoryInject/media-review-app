@@ -6,5 +6,29 @@ RUNNIG_CELERY_AND_REDIS:
         - cd backend
         - celery -A config worker -l INFO 
 
+    - start celery flower for monitoring: 
+        - cd backend
+        - celery -A config flower --port=5555 
+
 CHANGE_NOTIFICATION_URL_PRODUCTION:
     - reference: Notification.js
+
+SEED_DATA_BASE_BACKEND:
+    - python manage.py loaddata user userprofile project review asset media feedback
+
+DOCKER:
+    DOCKER-COMPOSE:
+        # Buld the image
+        - docker-compose build
+        # Run 
+        - docker-compose up
+        # Run in detached mode
+        - docker-compose up -d
+        # logging
+        - docker-compose logs -f
+        # Access specific service
+        - docker-compose exec <service-name> bash
+        # example
+        - docker-compose exec backend bash
+        # run a container and remove after exit bash
+        - docker-compose run --rm backend bash

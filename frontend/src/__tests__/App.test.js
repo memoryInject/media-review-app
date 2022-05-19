@@ -8,6 +8,16 @@ jest.mock('axios');
 jest.mock('../components/Header', () => () => <div>Header</div>);
 jest.mock('react-konva', ()=>()=><></>)
 
+// Mock captureAudio because jest does not have MediaRecorder
+jest.mock('../utils/captureAudio', () => {
+  return {
+    setBlobHandler: () =>{},
+    setErrorHandler: () => {},
+    startRecording: () => {},
+    stopRecording: () => {},
+  }
+});
+
 let store;
 
 beforeEach(() => {

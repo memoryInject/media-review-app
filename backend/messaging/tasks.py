@@ -38,14 +38,13 @@ def create_notification(from_user_id, to_user_id, message,
 
     if from_user:
         fromUser = {
-                'id': from_user.id,
-                'username': from_user.username,
-                'email': from_user.email,
-                'imageUrl': from_user.userprofile.image_url,
-                }
+            'id': from_user.id,
+            'username': from_user.username,
+            'email': from_user.email,
+            'imageUrl': from_user.userprofile.image_url,
+        }
     else:
         fromUser = None
-
 
     channel_message = str(notification.message)
     type_msg = notification.get_message_type()

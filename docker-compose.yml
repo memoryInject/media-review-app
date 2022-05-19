@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+    nginx:
+        restart: always
+        build:
+            context: ./compose/local/nginx
+            dockerfile: Dockerfile
+        ports:
+            - '3050:80'
+
+    backend:
+        build:
+            context: .
+            dockerfile: ./compose/local/backend/Dockerfile
+        # '/start.sh' is the shell script used to run the service
+        command: /start.sh
+        # This volume is used to map the files and folders on the host to the container
+        # so if we change code on the host, code in the docker container will also changed
+        volumes:
+            - ./backend:/app
+        ports:
+            - 8000:8000
+        # env_file is used to manage the env variables of project
+        env_file:
+            - ./.env.development.local
+        depends_on:
+            - redis
+            - db
+
+    db:
+        image: postgres:14-alpine
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        environment:
+            - POSTGRES_DB=media_review_app_dev
+            - POSTGRES_USER=myuser
+            - POSTGRES_PASSWORD=mypass
+
+    redis:
+        image: redis:6-alpine
+
+    celery_worker:
+        build:
+            context: .
+            dockerfile: ./compose/local/backend/Dockerfile
+        command: /start-celery-worker.sh
+        volumes:
+            - ./backend:/app
+        env_file:
+            - ./.env.development.local
+        depends_on:
+            - redis
+            - db
+
+    celery_flower:
+        build:
+            context: .
+            dockerfile: ./compose/local/backend/Dockerfile
+        command: /start-celery-flower.sh
+        volumes:
+            - ./backend:/app
+        env_file:
+            - ./.env.development.local
+        ports:
+            - 5558:5555
+        depends_on:
+            - redis
+            - db
+
+    frontend:
+        build:
+            context: .
+            dockerfile: ./compose/local/frontend/Dockerfile
+        command: /start.sh
+        volumes:
+            - /app/node_modules
+            - ./frontend:/app
+        ports:
+            - 3000:3000
+        env_file:
+            - ./.env.development.local
+        depends_on:
+            - backend
+volumes:
+    postgres_data:

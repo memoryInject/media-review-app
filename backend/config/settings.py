@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRECT_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('DJANGO_ENV') == 'development' else False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'media-review.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'media-review.herokuapp.com', 'backend']
 
 # Cloudinary setup
 cloudinary.config(

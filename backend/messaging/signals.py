@@ -96,7 +96,10 @@ def notification_review_created(sender, instance, created, **kwargs):
 
 @receiver(m2m_changed, sender=Review.collaborators.through)
 def notification_reivew_collaborators_changed(sender, instance, **kwargs):
-    """Send notification to collaborators when review collaborators added/removed"""
+    """
+        Send notification to collaborators
+        when review collaborators added/removed
+    """
 
     action = kwargs['action']
     pk_set = kwargs['pk_set']
@@ -139,7 +142,8 @@ def notification_reivew_collaborators_changed(sender, instance, **kwargs):
 def notification_media(sender, instance, created, **kwargs):
     """Notification send to all collaborators when media created/edit"""
     from_user = instance.user
-    url = f'/projects/{instance.review.project.id}/reviews/{instance.review.id}'
+    url = '/projects/{}/reviews/{}'.format(
+        instance.review.project.id, instance.review.id)
 
     logger.debug(logger.name)
 
@@ -153,7 +157,8 @@ def notification_media(sender, instance, created, **kwargs):
             + instance.review.project.project_name
         )
 
-        message = '{} created new media: {} on review: {} | project: {}'.format(
+        msg_template = '{} created new media: {} on review: {} | project: {}'
+        message = msg_template.format(
             from_user.username,
             instance.media_name,
             instance.review.review_name,
@@ -169,7 +174,8 @@ def notification_media(sender, instance, created, **kwargs):
             + instance.review.project.project_name
         )
 
-        message = '{} created new media: {} on review: {} | project: {}'.format(
+        msg_template = '{} created new media: {} on review: {} | project: {}'
+        message = msg_template.format(
             from_user.username,
             instance.media_name,
             instance.review.review_name,
@@ -191,11 +197,14 @@ def notification_media(sender, instance, created, **kwargs):
                 }
                 create_notification.delay(**data)
 
+
 @receiver(post_save, sender='review.Feedback')
 def notification_feedback(sender, instance, created, **kwargs):
     """Notification send to all collaborators when feedback created/edit"""
     from_user = instance.user
-    url = f'/projects/{instance.media.review.project.id}/reviews/{instance.media.review.id}'
+    url = '/projects/{}/reviews/{}'.format(
+        instance.media.review.project.id,
+        instance.media.review.id)
 
     logger.debug(logger.name)
 
@@ -211,7 +220,9 @@ def notification_feedback(sender, instance, created, **kwargs):
             + instance.media.review.project.project_name
         )
 
-        message = '{} created new feedback: {} on media: {} | review: {} | project: {}'.format(
+        msg_template = '{} created new feedback: ' + \
+            '{} on media: {} | review: {} | project: {}'
+        message = msg_template.format(
             from_user.username,
             instance.content,
             instance.media.media_name,
@@ -229,8 +240,9 @@ def notification_feedback(sender, instance, created, **kwargs):
             + ' | project: '
             + instance.media.review.project.project_name
         )
-
-        message = '{} update feedback: {} on media: {} | review: {} | project: {}'.format(
+        msg_template = '{} update feedback: {} on media: {} ' + \
+            '| review: {} | project: {}'
+        message = msg_template.format(
             from_user.username,
             instance.content,
             instance.media.media_name,

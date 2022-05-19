@@ -33,6 +33,16 @@ jest.mock('../../components/ReactPlayerComp', () => () => {
   //);
 //});
 
+// Mock captureAudio because jest does not have MediaRecorder
+jest.mock('../../utils/captureAudio', () => {
+  return {
+    setBlobHandler: () =>{},
+    setErrorHandler: () => {},
+    startRecording: () => {},
+    stopRecording: () => {},
+  }
+});
+
 // Display state for global toast message
 function DisplayState() {
   const toastDetails = useSelector((state) => state.toastDetails);

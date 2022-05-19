@@ -3,7 +3,7 @@ import { Card, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const Review = ({ review, projectId }) => {
-  const placeholderUrl = '/static/placeholder.png'
+  const placeholderUrl = '/images/placeholder.png'
   //const placeholderUrl = 'https://www.btklsby.go.id/images/placeholder/basic.png';  
 
   return (

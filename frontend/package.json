@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "proxy": "http://127.0.0.1:8000",
+  "_proxy": "http://backend:8000",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -8,6 +8,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.4",
+    "http-proxy-middleware": "^0.19.1",
     "konva": "^8.2.2",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-rc.1",
@@ -45,7 +46,7 @@
   },
   "jestt": {
     "testMatch": [
-      "**/FeedbackList*test*"
+      "**/App*test*"
     ]
   },
   "eslintConfig": {
