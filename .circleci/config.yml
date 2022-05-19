@@ -9,6 +9,9 @@ jobs:
     machine: true
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+      
       - run:
           name: Build docker frontend
           command: |
@@ -16,5 +19,3 @@ jobs:
       - run:
           name: Run frontend test with docker
           command: docker run -it -v $PWD/frontend:/app memoryinject/frontend-test npm test -- --watchAll=false 
-      - setup_remote_docker:
-          version: 20.10.14
