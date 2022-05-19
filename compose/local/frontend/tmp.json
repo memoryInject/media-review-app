@@ -1,0 +1,4 @@
+{
+"proxy": "http://backend",
+    "server": "default"
+}
