@@ -1,6 +1,14 @@
 version: '3.8'
 
 services:
+    nginx:
+        restart: always
+        build:
+            context: ./compose/local/nginx
+            dockerfile: Dockerfile
+        ports:
+            - '3050:80'
+
     backend:
         build:
             context: .
