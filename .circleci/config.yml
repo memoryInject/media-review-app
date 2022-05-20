@@ -7,15 +7,16 @@ workflows:
 jobs:
   build:
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: docker:20.10.14-git
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 20.10.14
       - run:
           name: Install dependencies
           command: | 
             apk add --no-cache py-pip=9.0.0-r1
-            pip install docker-compose==1.15.0
+            pip install docker-compose==1.29.2
       - run:
           name: Run tests
           command: |
