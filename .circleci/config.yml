@@ -26,4 +26,4 @@ jobs:
               # copy frontend into this volume
               docker cp ./frontend config:/app
               # start an application container using this volume
-              docker run --volume-from configs memoryinject/frontend-test ls
+              docker run --volume-from configs memoryinject/frontend-test npm test -- --watchAll=false
