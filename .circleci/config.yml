@@ -1,109 +1,24 @@
 version: 2.1
 
-orbs:
-  # The python orb contains a set of prepackaged CircleCI configuration you can use repeatedly in your configuration files
-  # Orb commands and jobs help you with common scripting around a language/tool
-  # so you dont have to copy and paste it everywhere.
-  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
-  python: circleci/python@1.2
-  # Invoke the heroku orb
-  heroku: circleci/heroku@1.2.6
-
 workflows:
   django-react-cypress-tests_heroku-deploy:
     jobs:
-      - build-and-test
-      # - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
-      #     requires:
-      #       - build-and-test
-      #     filters:
-      #       branches:
-      #         only: main
-
+      - build
 jobs:
-  build-and-test:
+  build:
     docker:
-      - image: cimg/python:3.8-node
-      # Checkout the code as the first step. This is a dedicated CircleCI step.
-      # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
-      # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
-      # Then run your tests!
-      # CircleCI will report the results back to your VCS provider.
-      - image: circleci/postgres:9.6.5-alpine-ram
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: media_review_app_test
-          POSTGRES_PASSWORD: 1234
-
+      - image: docker:20.10.14-git
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
-          # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
-          # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
+      - setup_remote_docker:
+          version: 20.10.14
       - run:
-          name: Install redis
+          name: Install dependencies
+          command: | 
+            apk add --no-cache py-pip
+            apk add docker-compose
+      - run:
+          name: Docker tests
           command: |
-              sudo apt update
-              sudo apt install redis-server -y
-      - run:
-          name: Start redis server
-          command: redis-server
-          background: true
-      - run:
-          name: Test redis ping
-          command: redis-cli PING
-      - run:
-          name: Run django migrate
-          command: |
-            ls
-            cd backend
-            python manage.py migrate
-      - run:
-          name: Install cypress dependencies
-          command: |
-            sudo apt-get update 
-            sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-      - restore_cache:
-          # See the configuration reference documentation for more details on using restore_cache and save_cache steps
-          # https://circleci.com/docs/2.0/configuration-reference/?section=reference#save_cache
-          keys:
-            - frontend-node-deps-v2-{{ .Branch }}-{{checksum "frontend/package-lock.json"}}
-            - frontend-node-deps-v2-
-      - run:
-          name: Install packages frontend
-          command: |
-            ls
-            cd frontend
-            npm install
-      - save_cache:
-          key: frontend-node-deps-v2-{{ .Branch }}-{{checksum "package-lock.json"}}
-          paths:
-            - frontend/node_modules
-      
-      - restore_cache:
-          keys:
-            - root-node-deps-v4-{{ .Branch }}-{{checksum "package-lock.json"}}
-            - root-node-deps-v4-
-      - run:
-          name: Install packages root
-          command: |
-            ls
-            node --version
-            npm install
-      - save_cache:
-          key: root-node-deps-v4-{{ .Branch }}-{{checksum "package-lock.json"}}
-          paths:
-            - node_modules
-            - /home/circleci/.cache/Cypress
-
-      - run:
-          name: Run test dev servers
-          command: npm run dev-test
-          background: true
-      - run:
-          name: Run frontend and backend tests
-          command: npm run test
-      - run:
-          name: Run cypress test
-          command: npm run cypress-test
+            docker-compose -f docker-compose.test.yml up -d
+            docker-compose -f docker-compose.test.yml run frontend npm test -- --watchAll=false
