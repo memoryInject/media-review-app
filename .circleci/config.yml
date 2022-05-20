@@ -18,4 +18,4 @@ jobs:
           name: Build docker frontend
           command: |
               docker build -t memoryinject/frontend-test -f ./compose/local/frontend/Dockerfile .
-              docker run -it -v $PWD/frontend:/app memoryinject/frontend-test npm test -- --watchAll=false
+              docker run -it -v $PWD/frontend:/app memoryinject/frontend-test ls
