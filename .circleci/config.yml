@@ -15,8 +15,8 @@ jobs:
       - run:
           name: Install dependencies
           command: | 
-            apk add --no-cache py-pip=20.3.4-r1
-            pip install docker-compose==1.29.2
+            apk add --no-cache py-pip
+            pip install docker-compose
       - run:
           name: Run tests
           command: |
