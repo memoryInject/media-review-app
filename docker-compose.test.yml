@@ -29,6 +29,10 @@ services:
             - DB_NAME=media_review_app_dev
             - DB_USER=myuser
             - DB_PASSWORD=mypass
+            - CD_NAME=testname
+            - CD_API_KEY=testkey
+            - CD_API_SECRET=testsecret
+            - CD_API_ENV_VAR=testvar
         depends_on:
             - redis
             - db
