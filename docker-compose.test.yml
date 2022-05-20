@@ -98,11 +98,8 @@ services:
     frontend:
         build:
             context: .
-            dockerfile: ./compose/local/frontend/Dockerfile
+            dockerfile: ./compose/test/frontend/Dockerfile
         command: /start.sh
-        volumes:
-            - /app/node_modules
-            - ./frontend:/app
         ports:
             - 3000:3000
         environment:
