@@ -21,4 +21,4 @@ jobs:
       - run:
           name: Run docker commands
           command: |
-              docker run -it -v $PWD/frontend:/app memoryinject/frontend-test ls
+              docker run -it -v $PWD/frontend:/app memoryinject/frontend-test ls -al
