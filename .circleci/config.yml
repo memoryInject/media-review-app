@@ -18,7 +18,10 @@ jobs:
             apk add --no-cache py-pip
             apk add docker-compose
       - run:
-          name: Run tests
+          name: Docker compose up
           command: |
             docker-compose -f docker-compose.test.yml up -d
+      - run:
+          name: Run tests
+          command: |
             docker-compose exec -it frontend npm test -- --watchAll=false
