@@ -7,23 +7,17 @@ workflows:
 jobs:
   build:
     docker:
-      - image: cimg/python:3.8-node
+      - image: docker:17.05.0-ce-git
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.14
-          docker_layer_caching: true
-      
+      - setup_remote_docker
       - run:
-          name: Build docker frontend
-          command: |
-              docker build -t memoryinject/frontend-test -f ./compose/local/frontend/Dockerfile .
+          name: Install dependencies
+          command: | 
+            apk add --no-cache py-pip=9.0.0-r1
+            pip install docker-compose==1.15.0
       - run:
-          name: Run docker commands
+          name: Run tests
           command: |
-              # Create a dummy container which will hold a volume with config
-              docker create -v /app --name config alpine:3.4 /bin/true
-              # copy frontend into this volume
-              docker cp ./frontend config:/app
-              # start an application container using this volume
-              docker run --volumes-from config memoryinject/frontend-test npm test -- --watchAll=false
+            docker-compose up -d
+            docker-compose exec -it frontend npm test -- --watchAll=false
