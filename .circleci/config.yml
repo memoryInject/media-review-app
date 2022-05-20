@@ -13,12 +13,12 @@ workflows:
   django-react-cypress-tests_heroku-deploy:
     jobs:
       - build-and-test
-      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only: main
+      # - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
+      #     requires:
+      #       - build-and-test
+      #     filters:
+      #       branches:
+      #         only: main
 
 jobs:
   build-and-test:
