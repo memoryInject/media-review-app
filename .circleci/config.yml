@@ -18,4 +18,7 @@ jobs:
           name: Build docker frontend
           command: |
               docker build -t memoryinject/frontend-test -f ./compose/local/frontend/Dockerfile .
+      - run:
+          name: Run docker commands
+          command: |
               docker run -it -v $PWD/frontend:/app memoryinject/frontend-test ls
