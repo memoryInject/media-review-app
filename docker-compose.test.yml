@@ -12,13 +12,9 @@ services:
     backend:
         build:
             context: .
-            dockerfile: ./compose/local/backend/Dockerfile
+            dockerfile: ./compose/test/backend/Dockerfile
         # '/start.sh' is the shell script used to run the service
         command: /start.sh
-        # This volume is used to map the files and folders on the host to the container
-        # so if we change code on the host, code in the docker container will also changed
-        volumes:
-            - ./backend:/app
         ports:
             - 8000:8000
         # env_file is used to manage the env variables of project
@@ -52,10 +48,8 @@ services:
     celery_worker:
         build:
             context: .
-            dockerfile: ./compose/local/backend/Dockerfile
+            dockerfile: ./compose/test/backend/Dockerfile
         command: /start-celery-worker.sh
-        volumes:
-            - ./backend:/app
         environment:
             - DJANGO_SECRECT_KEY=${DJANGO_SECRECT_KEY}
             - DJANGO_ENV=development
@@ -74,10 +68,8 @@ services:
     celery_flower:
         build:
             context: .
-            dockerfile: ./compose/local/backend/Dockerfile
+            dockerfile: ./compose/test/backend/Dockerfile
         command: /start-celery-flower.sh
-        volumes:
-            - ./backend:/app
         environment:
             - DJANGO_SECRECT_KEY=${DJANGO_SECRECT_KEY}
             - DJANGO_ENV=development
