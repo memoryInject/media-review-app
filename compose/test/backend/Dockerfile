@@ -18,6 +18,7 @@ RUN apt-get update \
 COPY ./requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 RUN pip install ipython
+RUN pip install flask
 
 COPY ./compose/test/backend/entrypoint.sh /entrypoint.sh
 RUN sed -i 's/\r$//g' /entrypoint.sh
@@ -35,7 +36,20 @@ COPY ./compose/test/backend/celery/flower/start.sh /start-celery-flower.sh
 RUN sed -i 's/\r$//g' /start-celery-flower.sh
 RUN chmod +x /start-celery-flower.sh
 
+COPY ./compose/test/backend/flask/start.sh /start-flask.sh
+RUN sed -i 's/\r$//g' /start-flask.sh
+RUN chmod +x /start-flask.sh
+
 WORKDIR /app
 COPY ./backend ./ 
+
+# COPY flask service files
+COPY ./compose/test/backend/flask/app.py ./
+COPY ./compose/test/backend/flask/flush.sh ./
+COPY ./compose/test/backend/flask/load.sh ./
+RUN sed -i 's/\r$//g' ./flush.sh
+RUN chmod +x ./flush.sh
+RUN sed -i 's/\r$//g' ./load.sh
+RUN chmod +x ./load.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

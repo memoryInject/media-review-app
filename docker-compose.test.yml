@@ -26,7 +26,7 @@ services:
             - DB_MANAGEMENT=postgres
             - DB_HOST=db
             - DB_PORT=5432
-            - DB_NAME=media_review_app_dev
+            - DB_NAME=media_review_app_test
             - DB_USER=myuser
             - DB_PASSWORD=mypass
             - CD_NAME=testname
@@ -39,10 +39,8 @@ services:
 
     db:
         image: postgres:14-alpine
-        volumes:
-            - postgres_data:/var/lib/postgresql/data/
         environment:
-            - POSTGRES_DB=media_review_app_dev
+            - POSTGRES_DB=media_review_app_test
             - POSTGRES_USER=myuser
             - POSTGRES_PASSWORD=mypass
 
@@ -62,7 +60,7 @@ services:
             - DB_MANAGEMENT=postgres
             - DB_HOST=db
             - DB_PORT=5432
-            - DB_NAME=media_review_app_dev
+            - DB_NAME=media_review_app_test
             - DB_USER=myuser
             - DB_PASSWORD=mypass
         depends_on:
@@ -82,11 +80,34 @@ services:
             - DB_MANAGEMENT=postgres
             - DB_HOST=db
             - DB_PORT=5432
-            - DB_NAME=media_review_app_dev
+            - DB_NAME=media_review_app_test
             - DB_USER=myuser
             - DB_PASSWORD=mypass
         ports:
             - 5558:5555
+        depends_on:
+            - redis
+            - db
+
+    # Flask service for cypress to flush and load data on database
+    flask:
+        build:
+            context: .
+            dockerfile: ./compose/test/backend/Dockerfile
+        command: /start-flask.sh
+        environment:
+            - DJANGO_SECRECT_KEY=${DJANGO_SECRECT_KEY}
+            - DJANGO_ENV=development
+            - DJANGO_MEMCACHE=dummy
+            - REDIS_URL=redis://redis:6379/1
+            - DB_MANAGEMENT=postgres
+            - DB_HOST=db
+            - DB_PORT=5432
+            - DB_NAME=media_review_app_test
+            - DB_USER=myuser
+            - DB_PASSWORD=mypass
+        ports:
+            - 4000:4000
         depends_on:
             - redis
             - db
@@ -102,5 +123,11 @@ services:
             - API_HOST=http://backend:8000
         depends_on:
             - backend
-volumes:
-    postgres_data:
+
+    cypress:
+        build:
+            context: .
+            dockerfile: ./compose/test/e2e/Dockerfile
+        depends_on:
+            - backend
+            - frontend
