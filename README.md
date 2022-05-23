@@ -86,6 +86,7 @@ Clone this project to local drive:
   
   cd media-review-app
 ```
+##### **None: You just need to clone this repo if you decided to run this project on docker, if you want to run this on local continue the steps below.
 
 Install with npm for root and front-end:
 ```bash
@@ -108,6 +109,36 @@ Seed databse in django (Optional):
 ```
 
 ## Running Tests
+
+#### Testing in Docker
+**Note: Make sure to install docker and docker-compose on your computer first
+Build the docker image with docker-compose at the root:
+This will execute docker-compose.test.yml, if you are using windows open the appropriate `.sh` file in a text editor and copy those command and run it in the shell. 
+```bash
+  ./compose/test/bin/build.sh
+```
+
+Docker-compose up all the build containers:
+```bash
+  ./compose/test/bin/up.sh
+```
+
+Open another terminal window and run frontend test:
+```bash
+  ./compose/test/bin/test-frontend.sh
+```
+
+Open another terminal window and run backend test:
+```bash
+  ./compose/test/bin/test-backend.sh
+```
+
+Open another terminal window and run end-to-end test with cypress:
+```bash
+  ./compose/test/bin/cypress-run.sh
+```
+
+#### Testing in Local (without docker)
 
 Run the test with npm at the root:
 ```bash
@@ -132,7 +163,30 @@ For Cypress CLI test ( make sure CYPRESS_KEY environent is set ):
 
 
 ## Development
+#### Docker
+Create `.env.development.local` file at root and add all the environment variable mentioned above plus add `API_HOST='http://backend:8000'`
 
+Build and up with docker-compose:
+```bash
+  docker-compose up --build
+```
+
+Open another terminal window and seed the data base (Optional)
+```bash
+  ./compose/local/bin/seed-data.sh
+```
+
+Create superuser for django:
+```bash
+  docker-compose exec -it backend python manage.py createsuperuser
+```
+
+The frontend running at port `3000` and backend running at port `8000`. 
+Now you can live edit the files and see the results. 
+There is also an nginx proxy running at port `3050`, you can use it instead of frontend port 3000. 
+Celery flower dashbord running at port `5558`.
+
+#### Local (without docker)
 Before doing anyting make sure to migrate and seed the database,  
 also make sure to run postgres and create media_review_app_dev database and   
 check all the environement variables.
@@ -146,7 +200,7 @@ Migrate database:
 Seed database ( optional ):
 ```bash
   cd backend
-  python manage.py loaddata user profile asset media project review feedback
+  python manage.py loaddata user userprofile project review asset media feedback
 ```
 
 Build front-end and setup static files on back-end:
@@ -154,11 +208,24 @@ Build front-end and setup static files on back-end:
   npm run build
 ```
 
+Make sure redis server is running on port 6379.
+Run celery worker on a new terminal:
+```bash
+  cd backend
+  celery -A config worker -l INFO
+```
+Run celery flower on a new terminal:
+```bash
+  cd backend
+  celery -A config flower --port=5555
+```
+
 Run development servers (react and django) at root:
 ```bash
   npm run dev
 ```
-By default react dev server running on port 3000 and django server running on port 8000.
+By default react dev server running on port `3000` and django server running on port `8000`. 
+Celery flower running at port `5555`.
 ## API Reference
 
 [insomnia-api-spec.json](https://github.com/memoryInject/media-review-app/blob/main/insomnia-api-spec.json): for API testing with [Insomnia](https://insomnia.rest/)
