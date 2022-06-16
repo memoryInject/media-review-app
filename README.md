@@ -176,7 +176,8 @@ Open another terminal window and seed the data base (Optional)
   ./compose/local/bin/seed-data.sh
 ```
 
-Create superuser for django:
+Create superuser for django:    
+**Note: Make sure to provide username, email and password when creating superuser, use this email and password for login into frontend 
 ```bash
   docker-compose exec -it backend python manage.py createsuperuser
 ```
@@ -202,6 +203,14 @@ Seed database ( optional ):
   cd backend
   python manage.py loaddata user userprofile project review asset media feedback
 ```
+
+Create superuser for django:    
+**Note: Make sure to provide username, email and password when creating superuser, use this email and password for login into frontend 
+```bash
+  cd backend
+  python manage.py createsuperuser
+```
+
 
 Build front-end and setup static files on back-end:
 ```bash
