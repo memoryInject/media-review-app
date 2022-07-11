@@ -1,4 +1,5 @@
 # review/views/project.py
+'''Project view for CRUD operation to Project Model'''
 
 import hashlib
 import logging
@@ -26,15 +27,18 @@ from review.utils import filter_project_reviews_by_collaborator,\
 logger = logging.getLogger(__name__)
 
 
-# Route: /review/projects/?<user=true>&<s=search_item>&<collaborator=true>
-# Access: Admin and restricted user
-# Description: If user query passed in the url,
-# it will return only projects created by the user
-# Search project by query s=search_item
-# Get only collaborated projects by query collaborator=true for admin
-# For non admin it always return collaborated projects only
 class ProjectList(generics.ListCreateAPIView):
-    """Get all the projects"""
+    '''Get All the Projects or Create a Project
+    Route: /review/projects/?<user=true>&<s=search_item>&<collaborator=true>
+    Access: Admin and restricted user
+    Description: If user query passed in the url,
+                 it will return only projects created by the user.
+                 Search project by query s=search_item
+                 Get only collaborated projects by query collaborator=true 
+                 for admin. 
+                 For non admin it always return collaborated projects only.
+    '''
+
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
     serializer_class = ProjectListSerializer
     pagination_class = PageNumberPagination
@@ -92,18 +96,22 @@ class ProjectList(generics.ListCreateAPIView):
             super(ProjectList, self).dispatch)(request, *args, **kwargs)
 
 
-# Route: /review/projects/<int:pk>/?<s_review=review_name>&<user_review=true>&
-# <collaborator=true>
-# Access: Admin and restricted user
-# Description: If user_review query passed in the url,
-    # it will filter reviews assosiated with the project by review created by
-    #   the user - Admin only
-    # Filter reviews assosiated with the  project by review name by passing
-    #   query s_review=review_name
-    # Filter reviews assosiated with the project by collaborated by query
-    #   collaborator=true - Admin only
-    # For non admin it always return collaborated reviews with the project
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
+    '''Retrieve, Update, Destroy a Project
+    Route: /review/projects/<int:pk>/?<s_review=review_name>&<user_review=true>
+           &<collaborator=true>
+    Access: Admin and restricted user
+    Description: If user_review query passed in the url,
+                 it will filter reviews assosiated with the project by review 
+                 created by the user - Admin only.
+                 Filter reviews assosiated with the project by review name by 
+                 passing query s_review=review_name.
+                 Filter reviews assosiated with the project by collaborated by 
+                 query collaborator=true - Admin only.
+                 For non admin it always return collaborated reviews with 
+                 the project.
+    '''
+
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
     serializer_class = ProjectSerializer
 
