@@ -1,4 +1,5 @@
 # review/views/review.py
+'''Review view for CRUD operation to Review Model'''
 
 import hashlib
 import logging
@@ -24,17 +25,21 @@ from user.utils import is_admin
 logger = logging.getLogger(__name__)
 
 
-# Route:
-# /review/reviews/?<user=true>&<collaborator=true>&<project=int:id>&<s=item>
-# description: GET all the reviews if the user is in collaborators
-# only admin can POST and GET all reviews
-# If user query passed into the url it will return user created reviews (Admin)
-# If collaborator=true query passed it will return only reviwes which admin is
-# involved, for non admin this is a default behaviour no need to pass this
-# query
-# If project=4 query passed it will filter reviews assosiated with the project,
-# for non admin in this case it will filter with collaborator in.
 class ReviewList(generics.ListCreateAPIView):
+    '''Get All the Reviews or Create A Review
+    Route: /review/reviews/?<user=true>&<collaborator=true>&<project=int:id>&
+           <s=item>
+    description: GET all the reviews if the user is in collaborators
+                 only admin can POST and GET all reviews.
+                 If user query passed into the url it will return user created 
+                 reviews (Admin).
+                 If collaborator=true query passed it will return only reviwes 
+                 which admin is involved, for non admin this is a default 
+                 behaviour no need to pass this query.
+                 If project=4 query passed it will filter reviews assosiated 
+                 with the project, for non admin in this case it will filter 
+                 with collaborator in.
+    '''
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly)
     serializer_class = ReviewSerializer
     pagination_class = PageNumberPagination
@@ -116,8 +121,10 @@ class ReviewList(generics.ListCreateAPIView):
             super(ReviewList, self).dispatch)(request, *args, **kwargs)
 
 
-# Route: review/reviews/<int:pk>/
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    '''Retrieve, Update, Destroy a Review
+       Route: review/reviews/<int:pk>/
+    '''
     permission_classes = (
         IsAuthenticated, IsCreatorOrReadOnly, IsCollaborator | IsAdmin,)
     queryset = Review.objects.all()
