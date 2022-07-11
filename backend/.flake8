@@ -6,6 +6,7 @@ exclude =
   manage.py,
   settings.py,
   apps.py,
+  app.py,
   __temp__.py,
   cloud/views.py,
   transcript/views.py,
