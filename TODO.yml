@@ -1,7 +1,8 @@
 BACKEND:
+  - Add doc string to views
 
 FRONTEND:
   - Fix logging error, when logging faild delete stored local data.
 
 FEATURE:
-  - Dockerize application
+
