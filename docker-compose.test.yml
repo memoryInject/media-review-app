@@ -84,7 +84,7 @@ services:
             - DB_USER=myuser
             - DB_PASSWORD=mypass
         ports:
-            - 5558:5555
+            - 4448:4444
         depends_on:
             - redis
             - db
