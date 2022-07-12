@@ -1,4 +1,5 @@
 # review/views/asset.py
+'''Asset view for CRUD operation to Asset Model'''
 
 import hashlib
 import logging
@@ -18,8 +19,12 @@ from review.permissions import IsAdmin, IsCreatorOrReadOnly
 logger = logging.getLogger(__name__)
 
 
-# Route: review/assets/?<user=true>/
 class AssetList(generics.ListCreateAPIView):
+    '''Get All the Feedbacks or Create A Feedback
+    Route: review/assets/?<user=true>/
+    Description: GET all the assets, if the user=true in query it will filter
+                 assets created by the logged in admin.
+    '''
     permission_classes = (IsAuthenticated, IsAdmin)
     serializer_class = AssetSerializer
 
@@ -56,8 +61,10 @@ class AssetList(generics.ListCreateAPIView):
             super(AssetList, self).dispatch)(request, *args, **kwargs)
 
 
-# Route: review/assets/<int:pk>/
 class AssetDetail(generics.RetrieveUpdateDestroyAPIView):
+    '''Retrieve, Update, Destroy an Asset
+    Route: review/assets/<int:pk>/
+    '''
     permission_classes = (
         IsAuthenticated, IsCreatorOrReadOnly, IsAdmin,)
     queryset = Asset.objects.all()

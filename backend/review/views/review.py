@@ -31,13 +31,13 @@ class ReviewList(generics.ListCreateAPIView):
            <s=item>
     description: GET all the reviews if the user is in collaborators
                  only admin can POST and GET all reviews.
-                 If user query passed into the url it will return user created 
+                 If user query passed into the url it will return user created
                  reviews (Admin).
-                 If collaborator=true query passed it will return only reviwes 
-                 which admin is involved, for non admin this is a default 
+                 If collaborator=true query passed it will return only reviwes
+                 which admin is involved, for non admin this is a default
                  behaviour no need to pass this query.
-                 If project=4 query passed it will filter reviews assosiated 
-                 with the project, for non admin in this case it will filter 
+                 If project=4 query passed it will filter reviews assosiated
+                 with the project, for non admin in this case it will filter
                  with collaborator in.
     '''
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly)
@@ -123,7 +123,7 @@ class ReviewList(generics.ListCreateAPIView):
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     '''Retrieve, Update, Destroy a Review
-       Route: review/reviews/<int:pk>/
+    Route: review/reviews/<int:pk>/
     '''
     permission_classes = (
         IsAuthenticated, IsCreatorOrReadOnly, IsCollaborator | IsAdmin,)

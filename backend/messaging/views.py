@@ -1,4 +1,5 @@
 # messaging/views.py
+'''Messaging view for Notification Model'''
 
 import logging
 
@@ -15,6 +16,12 @@ logger = logging.getLogger(__name__)
 
 
 class NotificationList(APIView, PageNumberPagination):
+    '''Get All the Notifications or delete
+    Route: notifications/
+    Methods: GET, DELETE
+    Description: GET all the notifications for loggedin user.
+                 DELETE all the notifications for loggedin user.
+    '''
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):
@@ -32,6 +39,12 @@ class NotificationList(APIView, PageNumberPagination):
 
 
 class NotificationDetail(APIView):
+    '''Get a Notifications or delete
+    Route: notifications/<int:pk>/
+    Methods: GET, DELETE
+    Description: GET a notification for given id for loggedin user.
+                 DELETE a notifications for given id for loggedin user.
+    '''
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):

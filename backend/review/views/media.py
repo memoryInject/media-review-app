@@ -1,4 +1,5 @@
 # review/views/media.py
+'''Media view for CRUD operation to Media Model'''
 
 import hashlib
 import logging
@@ -22,10 +23,12 @@ from user.utils import is_admin
 logger = logging.getLogger(__name__)
 
 
-# Route: review/media/?<user=true>&<review=int:id>&<collaborator=true>/
-# description: GET all the media if the user is in collaborators
-# of review assosiated with the media
 class MediaList(generics.ListCreateAPIView):
+    '''Get All the Media or Create A Media
+    Route: review/media/?<user=true>&<review=int:id>&<collaborator=true>/
+    description: GET all the media if the user is in collaborators
+                 of review assosiated with the media.
+    '''
     permission_classes = (IsAuthenticated, IsAdminOrReadOnly)
     serializer_class = MediaSerializer
 
@@ -134,8 +137,10 @@ class MediaList(generics.ListCreateAPIView):
             super(MediaList, self).dispatch)(request, *args, **kwargs)
 
 
-# Route: review/media/<int:pk>/
 class MediaDetail(generics.RetrieveUpdateDestroyAPIView):
+    '''Retrieve, Update, Destroy a Media
+    Route: review/media/<int:pk>/
+    '''
     permission_classes = (IsAuthenticated, IsCreatorOrReadOnly,
                           IsCollaboratorMedia | IsAdmin,)
     queryset = Media.objects.all()

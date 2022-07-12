@@ -34,8 +34,8 @@ class ProjectList(generics.ListCreateAPIView):
     Description: If user query passed in the url,
                  it will return only projects created by the user.
                  Search project by query s=search_item
-                 Get only collaborated projects by query collaborator=true 
-                 for admin. 
+                 Get only collaborated projects by query collaborator=true
+                 for admin.
                  For non admin it always return collaborated projects only.
     '''
 
@@ -102,13 +102,13 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
            &<collaborator=true>
     Access: Admin and restricted user
     Description: If user_review query passed in the url,
-                 it will filter reviews assosiated with the project by review 
+                 it will filter reviews assosiated with the project by review
                  created by the user - Admin only.
-                 Filter reviews assosiated with the project by review name by 
+                 Filter reviews assosiated with the project by review name by
                  passing query s_review=review_name.
-                 Filter reviews assosiated with the project by collaborated by 
+                 Filter reviews assosiated with the project by collaborated by
                  query collaborator=true - Admin only.
-                 For non admin it always return collaborated reviews with 
+                 For non admin it always return collaborated reviews with
                  the project.
     '''
 

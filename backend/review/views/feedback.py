@@ -1,4 +1,5 @@
 # review/views/feedback.py
+'''Feedback view for CRUD operation to Feedback Model'''
 
 import hashlib
 import logging
@@ -23,9 +24,16 @@ from user.utils import is_admin
 logger = logging.getLogger(__name__)
 
 
-# Route: review/feedbacks/?<user=true>&<media=int:id>&<all=true>/
-# description: GET all the feedbacks created by the user
 class FeedbackList(generics.ListCreateAPIView):
+    '''Get All the Feedbacks or Create A Feedback
+    Route: review/feedbacks/?<user=true>&<media=int:id>&<all=true>/
+    description: GET all the feedbacks created by the user or create a
+                 new feedback.
+                 If query has media then it will return all the feedback
+                 assosiated with that media.
+                 If query has user=true then it will filter the feedback
+                 created by the logged in user.
+    '''
     permission_classes = (IsAuthenticated, )
     serializer_class = FeedbackSerializer
 
@@ -110,8 +118,10 @@ class FeedbackList(generics.ListCreateAPIView):
             super(FeedbackList, self).dispatch)(request, *args, **kwargs)
 
 
-# Route: review/feedbacks/<int:pk>/
 class FeedbackDetail(generics.RetrieveUpdateDestroyAPIView):
+    '''Retrieve, Update, Destroy a Feedback
+    Route: review/feedbacks/<int:pk>/
+    '''
     permission_classes = (IsAuthenticated, IsCreatorOrReadOnly,
                           IsCollaboratorFeedback | IsAdmin,)
     queryset = Feedback.objects.all()
