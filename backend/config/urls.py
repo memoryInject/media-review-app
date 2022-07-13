@@ -25,6 +25,7 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.shortcuts import render
+from rest_framework.schemas import get_schema_view
 
 from user.views import accept_invite
 
@@ -79,6 +80,13 @@ urlpatterns = [
     path(API + 'messaging/', include('messaging.urls')),
     path(API + 'transcript/', include('transcript.urls')),
 
+    # OpenAPI schema view
+    path('openapi', get_schema_view(
+        title='MediaReview API',
+        description='Review media in cloud',
+        version='1.0.0'
+        ), name='openapi-schema'),
+
     # For react pwa and seo
     path('robots.txt', TemplateView.as_view(
         template_name='robots.txt', content_type='text/plain')),
@@ -106,5 +114,5 @@ urlpatterns.append(re_path(r'^api/v1/', render_api_doc))
 
 # For react index.html at root and all other routes
 urlpatterns.append(re_path(r'^$', render_react))
-# urlpatterns.append(re_path(r'^(?:.*)/?$', render_react))
+urlpatterns.append(re_path(r'^(?:.*)/?$', render_react))
 urlpatterns.append(re_path(r'^(?!.*media)(?!.*static)(?:.*)/?$', render_react))

@@ -28,10 +28,11 @@ logger = logging.getLogger(__name__)
 
 
 class ProjectList(generics.ListCreateAPIView):
-    '''Get All the Projects or Create a Project
-    Route: /review/projects/?<user=true>&<s=search_item>&<collaborator=true>
-    Access: Admin and restricted user
-    Description: If user query passed in the url,
+    '''
+    Get All the Projects or Create a Project
+    Route-  /review/projects/?<user=true>&<s=search_item>&<collaborator=true>
+    Access- Admin and restricted user
+    Description- If user query passed in the url,
                  it will return only projects created by the user.
                  Search project by query s=search_item
                  Get only collaborated projects by query collaborator=true
@@ -97,11 +98,12 @@ class ProjectList(generics.ListCreateAPIView):
 
 
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
-    '''Retrieve, Update, Destroy a Project
-    Route: /review/projects/<int:pk>/?<s_review=review_name>&<user_review=true>
+    '''
+    Retrieve, Update, Destroy a Project
+    Route- /review/projects/<int:pk>/?<s_review=review_name>&<user_review=true>
            &<collaborator=true>
-    Access: Admin and restricted user
-    Description: If user_review query passed in the url,
+    Access- Admin and restricted user
+    Description- If user_review query passed in the url,
                  it will filter reviews assosiated with the project by review
                  created by the user - Admin only.
                  Filter reviews assosiated with the project by review name by

@@ -25,9 +25,10 @@ logger = logging.getLogger(__name__)
 
 
 class FeedbackList(generics.ListCreateAPIView):
-    '''Get All the Feedbacks or Create A Feedback
-    Route: review/feedbacks/?<user=true>&<media=int:id>&<all=true>/
-    description: GET all the feedbacks created by the user or create a
+    '''
+    Get All the Feedbacks or Create A Feedback
+    Route- review/feedbacks/?<user=true>&<media=int:id>&<all=true>/
+    description- GET all the feedbacks created by the user or create a
                  new feedback.
                  If query has media then it will return all the feedback
                  assosiated with that media.
@@ -119,8 +120,9 @@ class FeedbackList(generics.ListCreateAPIView):
 
 
 class FeedbackDetail(generics.RetrieveUpdateDestroyAPIView):
-    '''Retrieve, Update, Destroy a Feedback
-    Route: review/feedbacks/<int:pk>/
+    '''
+    Retrieve, Update, Destroy a Feedback
+    Route- review/feedbacks/<int:pk>/
     '''
     permission_classes = (IsAuthenticated, IsCreatorOrReadOnly,
                           IsCollaboratorFeedback | IsAdmin,)
