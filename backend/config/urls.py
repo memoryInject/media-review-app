@@ -25,7 +25,11 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.shortcuts import render
-from rest_framework.schemas import get_schema_view
+
+from rest_framework import permissions
+
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from user.views import accept_invite
 
@@ -56,6 +60,19 @@ def get_css_map():
         return 'static/css/' + 'main.c9aead2c.chunk.css.map'
 
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title='Media-Review API',
+        default_version='v1',
+        description='Media Review backend',
+        contact=openapi.Contact(email='msmahesh@live.com'),
+        license=openapi.License(name='MIT License')
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
+
 urlpatterns = [
     # Override for email invitations
     # accept-invite must implement in frontend
@@ -80,12 +97,12 @@ urlpatterns = [
     path(API + 'messaging/', include('messaging.urls')),
     path(API + 'transcript/', include('transcript.urls')),
 
-    # OpenAPI schema view
-    path('openapi', get_schema_view(
-        title='MediaReview API',
-        description='Review media in cloud',
-        version='1.0.0'
-        ), name='openapi-schema'),
+    # swagger doc and redoc
+    path(API + 'swagger/', schema_view.with_ui('swagger',
+         cache_timeout=0), name='schema-swagger-ui'),
+    path(API + 'redoc/', schema_view.with_ui('redoc',
+         cache_timeout=0), name='schema-redoc'),
+
 
     # For react pwa and seo
     path('robots.txt', TemplateView.as_view(

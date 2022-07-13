@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'invitations',
     'cloudinary',
     'corsheaders',
+    'drf_yasg',
 
     # local
     'user.apps.UserConfig',
