@@ -3,6 +3,8 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.schemas import AutoSchema
+from rest_framework.compat import coreapi
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -21,9 +23,12 @@ from user.permissions import IsAdmin
 from user.utils import is_admin, key_expired
 
 
-# Route: /users/?<s=username>/
-# Access: Admin only
 class UserList(generics.ListAPIView):
+    '''
+    Get all the users or get user(s) by username with search query
+    Route- /users/?<s=username>/
+    Access- Admin only
+    '''
     permission_classes = (IsAuthenticated, IsAdmin)
     serializer_class = UserViewSerializer
 
@@ -38,9 +43,12 @@ class UserList(generics.ListAPIView):
         return queryset
 
 
-# Route: /users/<int:pk>/
-# Access: Admin only
 class UserDetail(generics.RetrieveAPIView):
+    '''
+    Get a user by user id
+    Route- /users/<int:pk>
+    Access- Admin only
+    '''
     permission_classes = (IsAuthenticated, IsAdmin)
     queryset = get_user_model().objects.all()
     serializer_class = UserViewSerializer
@@ -55,7 +63,7 @@ def user_invite(request):
     """
     Receive a email address from request then send an invitation
     for registration
-    eg json: {"email": "user@email.com"}
+    eg json- {"email": "user@email.com"}
     """
 
     if request.method == 'POST':
@@ -120,7 +128,7 @@ def user_invite(request):
 def user_accept(request):
     """
     Receive email, password and key from request then regiter a user,
-    eg json:
+    eg json-
     {
         "email": "user@email.com",
         "password": "newpassword",
@@ -128,7 +136,7 @@ def user_accept(request):
     }
     </br>
     or get the email assosiated with the key by sending a query with url,
-    eg: url - /auth/accept/?email=true,
+    eg- url - /auth/accept/?email=true,
     json - { "key": "key form invitation" }
     """
 

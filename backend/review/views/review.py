@@ -26,10 +26,11 @@ logger = logging.getLogger(__name__)
 
 
 class ReviewList(generics.ListCreateAPIView):
-    '''Get All the Reviews or Create A Review
-    Route: /review/reviews/?<user=true>&<collaborator=true>&<project=int:id>&
+    '''
+    Get All the Reviews or Create A Review
+    Route- /review/reviews/?<user=true>&<collaborator=true>&<project=int:id>&
            <s=item>
-    description: GET all the reviews if the user is in collaborators
+    description- GET all the reviews if the user is in collaborators
                  only admin can POST and GET all reviews.
                  If user query passed into the url it will return user created
                  reviews (Admin).
@@ -122,8 +123,9 @@ class ReviewList(generics.ListCreateAPIView):
 
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
-    '''Retrieve, Update, Destroy a Review
-    Route: review/reviews/<int:pk>/
+    '''
+    Retrieve, Update, Destroy a Review
+    Route- review/reviews/<int:pk>/
     '''
     permission_classes = (
         IsAuthenticated, IsCreatorOrReadOnly, IsCollaborator | IsAdmin,)

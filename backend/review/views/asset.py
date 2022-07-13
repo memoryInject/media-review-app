@@ -20,9 +20,10 @@ logger = logging.getLogger(__name__)
 
 
 class AssetList(generics.ListCreateAPIView):
-    '''Get All the Feedbacks or Create A Feedback
-    Route: review/assets/?<user=true>/
-    Description: GET all the assets, if the user=true in query it will filter
+    '''
+    Get All the Assets or Create an Asset
+    Route- review/assets/?<user=true>/
+    Description- GET all the assets, if the user=true in query it will filter
                  assets created by the logged in admin.
     '''
     permission_classes = (IsAuthenticated, IsAdmin)
@@ -62,8 +63,9 @@ class AssetList(generics.ListCreateAPIView):
 
 
 class AssetDetail(generics.RetrieveUpdateDestroyAPIView):
-    '''Retrieve, Update, Destroy an Asset
-    Route: review/assets/<int:pk>/
+    '''
+    Retrieve, Update, Destroy an Asset
+    Route- review/assets/<int:pk>/
     '''
     permission_classes = (
         IsAuthenticated, IsCreatorOrReadOnly, IsAdmin,)
